@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:servicehub/view/become_seller.dart';
+import 'package:servicehub/view/home_screen.dart';
+import 'package:servicehub/view/seller/become_seller.dart';
 import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/select_service.dart';
 
@@ -19,7 +20,7 @@ class OnBoard extends StatelessWidget {
                 height: 640,
                 width: double.infinity,
                 child: Image.asset(
-                  'assets/onboard.png',
+                  'assets/aerial-view-businessman-using-computer.png',
                   fit: BoxFit.cover,
                 )),
             Positioned(
@@ -65,7 +66,13 @@ class OnBoard extends StatelessWidget {
                                           color: Color(0xFF7D2231)),
                                     )),
                                 TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  HomeScreen())));
+                                    },
                                     child: const Text(
                                       'Skip',
                                       style: TextStyle(
@@ -169,7 +176,7 @@ class OnBoard extends StatelessWidget {
                                 height: 10,
                               ),
                               const Text(
-                                'Become a seller',
+                                'Become a supplier',
                                 style: TextStyle(
                                   fontSize: 17,
                                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/view/client_signup.dart';
 import 'package:servicehub/view/forgot_password.dart';
+import 'package:servicehub/view/home_screen.dart';
 import 'package:servicehub/view/select_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -296,7 +297,13 @@ class _LoginPageState extends State<LoginPage> {
                                           color: Color(0xFF7D2231)),
                                     )),
                                 TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  HomeScreen())));
+                                    },
                                     child: const Text(
                                       'Skip',
                                       style: TextStyle(

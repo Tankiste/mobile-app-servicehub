@@ -9,11 +9,19 @@ class ClientSignUp extends StatefulWidget {
 }
 
 class _ClientSignUpState extends State<ClientSignUp> {
+  bool _isChecked = false;
   bool _obscurePassword = true;
+  bool _obscurePassword2 = true;
 
   void _togglePasswordVisibility() {
     setState(() {
       _obscurePassword = !_obscurePassword;
+    });
+  }
+
+  void _togglePasswordVisibility2() {
+    setState(() {
+      _obscurePassword2 = !_obscurePassword2;
     });
   }
 
@@ -89,7 +97,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
                                   color: Colors.grey.shade300,
                                 )),
                             child: TextFormField(
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.name,
                               decoration: InputDecoration(
                                   hintText: 'Enter your Username',
                                   contentPadding: EdgeInsets.only(left: 10),
@@ -122,7 +130,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
                             child: TextFormField(
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
-                                  hintText: 'Email or username',
+                                  hintText: 'Enter your mail',
                                   contentPadding: EdgeInsets.only(left: 10),
                                   hintStyle: TextStyle(
                                       color: Colors.grey.shade400,
@@ -201,10 +209,10 @@ class _ClientSignUpState extends State<ClientSignUp> {
                                       fontWeight: FontWeight.w300,
                                       fontSize: 15),
                                   suffixIcon: IconButton(
-                                      icon: Icon(_obscurePassword
+                                      icon: Icon(_obscurePassword2
                                           ? Icons.visibility_off
                                           : Icons.visibility),
-                                      onPressed: _togglePasswordVisibility)),
+                                      onPressed: _togglePasswordVisibility2)),
                             ),
                           ),
                         ),
@@ -215,8 +223,12 @@ class _ClientSignUpState extends State<ClientSignUp> {
                               side: BorderSide(color: Colors.grey.shade400),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
-                              value: false,
-                              onChanged: (value) {},
+                              value: _isChecked,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isChecked = value!;
+                                });
+                              },
                               activeColor: Color(0xFFC84457),
                             ),
                             Column(
@@ -277,7 +289,12 @@ class _ClientSignUpState extends State<ClientSignUp> {
               Padding(
                 padding: const EdgeInsets.only(left: 300),
                 child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => LoginPage())));
+                    },
                     child: const Text(
                       'Sign In',
                       style: TextStyle(fontSize: 17, color: Color(0xFF7D2231)),

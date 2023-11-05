@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/on_board.dart';
-import 'package:servicehub/view/widgets/service_list_widget.dart';
+import 'package:servicehub/controller/select_service_widget.dart';
 import 'package:provider/provider.dart';
 
 class SelectServicePage extends StatefulWidget {
@@ -108,9 +108,10 @@ class _SelectServicePageState extends State<SelectServicePage> {
                             borderRadius: BorderRadius.circular(20),
                           )),
                       child: Text(
-                        _stateProvider.atLeastOneInkwellSelected
-                            ? 'Continue'
-                            : 'Skip',
+                        'Continue',
+                        // _stateProvider.atLeastOneInkwellSelected
+                        //     ? 'Continue'
+                        //     : 'Skip',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:servicehub/view/on_board.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:servicehub/view/seller/seller_signup.dart';
 
 class BecomeSellerPage extends StatefulWidget {
   const BecomeSellerPage({super.key});
@@ -39,7 +40,7 @@ class _BecomeSellerPageState extends State<BecomeSellerPage> {
               const Padding(
                 padding: const EdgeInsets.only(left: 25),
                 child: Text(
-                  'Become A Seller',
+                  'Become A Supplier',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -284,7 +285,12 @@ class _BecomeSellerPageState extends State<BecomeSellerPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 25),
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => SellerSignUp())));
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFC84457),
                         shape: RoundedRectangleBorder(

@@ -1,0 +1,679 @@
+import 'package:flutter/material.dart';
+import 'package:servicehub/view/login.dart';
+import 'package:servicehub/view/request_send.dart';
+import 'package:servicehub/view/seller/become_seller.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
+
+class SellerSignUp extends StatefulWidget {
+  const SellerSignUp({super.key});
+
+  @override
+  State<SellerSignUp> createState() => _SellerSignUpState();
+}
+
+class _SellerSignUpState extends State<SellerSignUp> {
+  bool _isChecked = false;
+  bool _obscurePassword = true;
+  bool _obscurePassword2 = true;
+  File? image;
+
+  String? fileName;
+
+  Future<bool> requestGalleryPermission() async {
+    final status = await Permission.storage.status;
+    debugPrint("storage permission $status");
+    if (status.isDenied) {
+      debugPrint("storage permission === $status");
+      final granted = await Permission.storage.request();
+      return granted.isGranted;
+    } else if (status.isPermanentlyDenied) {
+      await openAppSettings();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future pickImage() async {
+    final hasPermission = await requestGalleryPermission();
+    if (!hasPermission) {
+      return null;
+    }
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+
+    if (result != null) {
+      setState(() {
+        image = File(result.files.single.path!);
+        fileName = result.files.first.name;
+      });
+    } else {
+      print('No Image Selected');
+    }
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
+  }
+
+  void _togglePasswordVisibility2() {
+    setState(() {
+      _obscurePassword2 = !_obscurePassword2;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 15, top: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BecomeSellerPage()));
+                    },
+                    icon: Icon(Icons.arrow_back_ios_new_rounded)),
+                const SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.only(left: 55),
+                  child: Image.asset(
+                    'assets/ServiceHub.png',
+                    scale: 1,
+                  ),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 15),
+                  child: Column(
+                    children: [
+                      Form(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              fontFamily: 'Gilroy',
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 7),
+                          Text('Create a new account',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade400,
+                              )),
+                          const SizedBox(height: 40),
+                          const Text('CEO Full Name',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.name,
+                                decoration: InputDecoration(
+                                    hintText: 'Firstname',
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.name,
+                                decoration: InputDecoration(
+                                    hintText: 'Lastname',
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          const Text("Company's Name",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.name,
+                                decoration: InputDecoration(
+                                    hintText: "Enter your Company's Name",
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          const Text("Company's Logo",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 110),
+                            child: Container(
+                              width: 140,
+                              height: 140,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  shape: BoxShape.circle),
+                              child: ClipOval(
+                                child: InkWell(
+                                  onTap: () {
+                                    pickImage();
+                                  },
+                                  child: image == null
+                                      ? Icon(
+                                          Icons.add_photo_alternate,
+                                          color: Colors.black,
+                                          size: 40,
+                                        )
+                                      : Image.file(
+                                          image!,
+                                          width: 140,
+                                          height: 140,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text("Description",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                decoration: InputDecoration(
+                                    hintText:
+                                        "Description on the enterprise as a whole",
+                                    contentPadding: EdgeInsets.only(
+                                        left: 10, right: 5, bottom: 5),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 215),
+                            child: Text(
+                              'At least 150 caracters',
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w300),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text("Sector",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.text,
+                                decoration: InputDecoration(
+                                    hintText:
+                                        "Main activity carried out by the enterprise",
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text("Physical Address",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.streetAddress,
+                                decoration: InputDecoration(
+                                    hintText: "Enter the enterprise’s location",
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text("Website (optional)",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                keyboardType: TextInputType.url,
+                                decoration: InputDecoration(
+                                    hintText: "Enter enterprise’s website",
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text("Company's Certifications (optional)",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.url,
+                                decoration: InputDecoration(
+                                    hintText: "Enter enterprise’s website",
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text("Phone Number",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.phone,
+                                decoration: InputDecoration(
+                                    prefixText: "(+237)",
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    prefixStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text('Email',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                    hintText: 'Enter your mail',
+                                    contentPadding: EdgeInsets.only(left: 10),
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    border: InputBorder.none),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          const Text('Password',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                obscureText: _obscurePassword,
+                                keyboardType: TextInputType.visiblePassword,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.only(left: 10, top: 10),
+                                    hintText: 'Password',
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    suffixIcon: IconButton(
+                                        icon: Icon(_obscurePassword
+                                            ? Icons.visibility_off
+                                            : Icons.visibility),
+                                        onPressed: _togglePasswordVisibility)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          const Text('Confirm Password',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Gilroy',
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  )),
+                              child: TextFormField(
+                                obscureText: _obscurePassword,
+                                keyboardType: TextInputType.visiblePassword,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.only(left: 10, top: 10),
+                                    hintText: 'Password',
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey.shade400,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15),
+                                    suffixIcon: IconButton(
+                                        icon: Icon(_obscurePassword2
+                                            ? Icons.visibility_off
+                                            : Icons.visibility),
+                                        onPressed: _togglePasswordVisibility2)),
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Checkbox(
+                                side: BorderSide(color: Colors.grey.shade400),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
+                                value: _isChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isChecked = value!;
+                                  });
+                                },
+                                activeColor: Color(0xFFC84457),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'By creating an account, you are agreeing with our terms',
+                                    style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.grey.shade500),
+                                  ),
+                                  Text(
+                                    '& conditions.',
+                                    style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.grey.shade500),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) =>
+                                              RequestSend())));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFC84457),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    )),
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 110,
+                                      right: 110,
+                                      top: 15,
+                                      bottom: 15),
+                                  child: Text(
+                                    'Sign Up',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Gilroy'),
+                                  ),
+                                )),
+                          ),
+                          const SizedBox(
+                            height: 7,
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      )),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 300),
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => LoginPage())));
+                      },
+                      child: const Text(
+                        'Sign In',
+                        style:
+                            TextStyle(fontSize: 17, color: Color(0xFF7D2231)),
+                      )),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
