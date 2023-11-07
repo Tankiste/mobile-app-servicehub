@@ -41,6 +41,9 @@ dependencies:
   image_picker: ^1.0.4
   file_picker: ^6.0.0
   permission_handler: ^11.0.1
+  intl: ^0.18.1
+  confetti: ^0.7.0
+  like_button: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +89,8 @@ flutter:
     - assets/floeurs.png
     - assets/undraw_specs.svg
     - assets/digital_marketing.png
+    - assets/video-production.png
+    - assets/femme_noire.png
     
 
 

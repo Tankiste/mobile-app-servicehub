@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/controller/recent_collab_search.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
-import 'package:servicehub/view/home_screen.dart';
+import 'package:servicehub/view/explore_screen.dart';
+// import 'package:servicehub/view/home_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -69,7 +70,9 @@ class _SearchScreenState extends State<SearchScreen>
 
   Widget buildContent() {
     if (selectedOption == 'Services') {
-      return RecentOrderSearchView();
+      return RecentOrderSearchView(
+        showText: true,
+      );
     } else {
       return RecentCollabSearchView();
     }
@@ -93,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
+                                builder: (context) => ExploreScreen()));
                       },
                       icon: Icon(Icons.arrow_back_ios_new_rounded)),
                   const SizedBox(

@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/view/explore_screen.dart';
 import 'package:servicehub/view/home_screen.dart';
+import 'package:servicehub/view/login.dart';
+import 'package:servicehub/view/profile_screen.dart';
 import 'package:servicehub/view/search_screen.dart';
 
 class SearchBarItem extends StatelessWidget {
@@ -92,7 +95,10 @@ class _BottomBarState extends State<BottomBar> {
                         builder: (context) => const HomeScreen()));
                 break;
               case 1:
-                print('Inbox');
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const LoginPage()));
                 break;
               case 2:
                 Navigator.push(
@@ -101,17 +107,23 @@ class _BottomBarState extends State<BottomBar> {
                         builder: (context) => const ExploreScreen()));
                 break;
               case 3:
-                print('Orders');
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const LoginPage()));
                 break;
               case 4:
-                print('Account');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
                 break;
               default:
-                print('Home Screen');
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const HomeScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HomeScreen()));
+
                 break;
             }
           });

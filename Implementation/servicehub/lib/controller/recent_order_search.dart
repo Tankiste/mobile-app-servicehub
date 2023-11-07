@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RecentOrderSearchView extends StatefulWidget {
-  const RecentOrderSearchView({super.key});
+  final bool showText;
+
+  const RecentOrderSearchView({super.key, required this.showText});
 
   @override
   State<RecentOrderSearchView> createState() => _RecentOrderSearchViewState();
@@ -141,29 +143,30 @@ class _RecentOrderSearchViewState extends State<RecentOrderSearchView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 15,
+        if (widget.showText)
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 15,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recently ordered services',
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
+                ),
+                TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFFC84457)),
+                    ))
+              ],
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Recently ordered services',
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
-              ),
-              TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Edit',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFFC84457)),
-                  ))
-            ],
-          ),
-        ),
         Container(
           height: 215,
           color: Colors.white,

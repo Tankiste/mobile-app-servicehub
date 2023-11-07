@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:servicehub/view/service_detail_view.dart';
 
 class ResultSearchListView extends StatefulWidget {
   const ResultSearchListView({super.key});
@@ -18,6 +20,10 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
         onTap: () {
           setState(() {
             selectedIndex = index;
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: ((context) => ServiceDetailView())));
           });
         },
         child: Container(
