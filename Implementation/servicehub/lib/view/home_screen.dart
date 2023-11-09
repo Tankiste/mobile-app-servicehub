@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:servicehub/controller/recent_order.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/controller/service_listview.dart';
+import 'package:servicehub/view/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,6 +12,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool showUser = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +29,44 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: Image.asset(
-                    'assets/ServiceHub.png',
-                    width: 200,
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/ServiceHub.png',
+                        width: 200,
+                      ),
+                      const SizedBox(
+                        width: 100,
+                      ),
+                      if (showUser)
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(),
+                                ));
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 4))
+                              ],
+                            ),
+                            child: ClipOval(
+                                child: Image.asset(
+                              'assets/supplier.png',
+                              fit: BoxFit.cover,
+                            )),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(

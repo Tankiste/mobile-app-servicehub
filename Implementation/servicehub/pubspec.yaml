@@ -44,6 +44,8 @@ dependencies:
   intl: ^0.18.1
   confetti: ^0.7.0
   like_button: ^2.0.5
+  grouped_list: ^5.1.2
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +93,9 @@ flutter:
     - assets/digital_marketing.png
     - assets/video-production.png
     - assets/femme_noire.png
+    - assets/undraw_writer_re.svg
+    - assets/undraw_color_palette.svg
+    - assets/concept-cloud-ai.png
     
 
 

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
 import 'package:servicehub/controller/review_listview.dart';
+import 'package:servicehub/view/chat_screen.dart';
+import 'package:servicehub/view/order_review.dart';
 import 'package:servicehub/view/result_search_view.dart';
 import 'package:like_button/like_button.dart';
 import 'package:servicehub/view/reviews_screen.dart';
@@ -451,11 +453,10 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: ((context) =>
-                              //             RequestSend())));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) => OrderReview())));
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFC84457),
@@ -529,7 +530,10 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                   ],
                 ),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ChatScreen()));
+                  },
                   child: Row(children: [
                     Container(
                       width: 36,
