@@ -144,7 +144,11 @@ class _OrderReviewState extends State<OrderReview> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-          text: 'Order Review', showFilter: false, returnButton: true),
+          text: 'Order Review',
+          showFilter: false,
+          returnButton: true,
+          showText: false,
+          actionText: ''),
       body: Padding(
         padding: const EdgeInsets.only(left: 15, right: 25, top: 10),
         child: Column(

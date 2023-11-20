@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:servicehub/controller/messages_listview.dart';
+import 'package:servicehub/controller/orders_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 
-class InboxScreen extends StatefulWidget {
-  const InboxScreen({super.key});
+class SupplierOrderScreen extends StatefulWidget {
+  const SupplierOrderScreen({super.key});
 
   @override
-  State<InboxScreen> createState() => _InboxScreenState();
+  State<SupplierOrderScreen> createState() => _SupplierOrderScreenState();
 }
 
-class _InboxScreenState extends State<InboxScreen> {
-  bool noMessage = false;
+class _SupplierOrderScreenState extends State<SupplierOrderScreen> {
+  bool noOrder = false;
 
   @override
   Widget build(BuildContext context) {
     final appBar = CustomAppbar(
-        text: 'Inbox',
-        showFilter: !noMessage,
+        text: 'Orders',
+        showFilter: !noOrder,
         returnButton: false,
         showText: false,
         actionText: '');
@@ -29,19 +29,19 @@ class _InboxScreenState extends State<InboxScreen> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            child: noMessage
+            child: noOrder
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
-                        'assets/undraw_writer_re.svg',
+                        'assets/undraw_color_palette.svg',
                         width: 200,
                       ),
                       const SizedBox(
                         height: 50,
                       ),
                       Text(
-                        'No message yet',
+                        'No order yet',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
@@ -52,15 +52,14 @@ class _InboxScreenState extends State<InboxScreen> {
                         height: 70,
                         width: 270,
                         child: Text(
-                          'You will find your various exchanges with suppliers here. Send your first message.',
+                          'You will find your various orders here. Start purchasing services for your projects.',
                           textAlign: TextAlign.center,
                           maxLines: 3,
                           overflow: TextOverflow.clip,
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.grey.shade500,
-                          ),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.grey.shade500),
                         ),
                       )
                     ],
@@ -68,7 +67,10 @@ class _InboxScreenState extends State<InboxScreen> {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MessagesListView(),
+                      OrdersListView(
+                        showSupplier: true,
+                        isSupplier: true,
+                      ),
                     ],
                   ),
           ),
@@ -92,7 +94,7 @@ class _InboxScreenState extends State<InboxScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 1, isSeller: false)),
+                  child: BottomBar(initialIndex: 2, isSeller: true)),
             ),
           )
         ],

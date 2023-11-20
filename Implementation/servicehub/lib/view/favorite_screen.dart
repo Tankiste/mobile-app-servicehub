@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:servicehub/controller/messages_listview.dart';
+import 'package:servicehub/controller/result_search_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 
-class InboxScreen extends StatefulWidget {
-  const InboxScreen({super.key});
+class FavoriteScreen extends StatefulWidget {
+  const FavoriteScreen({super.key});
 
   @override
-  State<InboxScreen> createState() => _InboxScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _InboxScreenState extends State<InboxScreen> {
-  bool noMessage = false;
+class _FavoriteScreenState extends State<FavoriteScreen> {
+  bool noMessage = true;
 
   @override
   Widget build(BuildContext context) {
     final appBar = CustomAppbar(
-        text: 'Inbox',
-        showFilter: !noMessage,
-        returnButton: false,
+        text: 'My List',
+        showFilter: false,
+        returnButton: true,
         showText: false,
         actionText: '');
 
@@ -34,25 +34,25 @@ class _InboxScreenState extends State<InboxScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
-                        'assets/undraw_writer_re.svg',
-                        width: 200,
+                        'assets/undraw_different_love.svg',
+                        width: 210,
                       ),
                       const SizedBox(
-                        height: 50,
+                        height: 20,
                       ),
                       Text(
-                        'No message yet',
+                        'Find all of your favorites here.',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 10,
                       ),
                       SizedBox(
                         height: 70,
                         width: 270,
                         child: Text(
-                          'You will find your various exchanges with suppliers here. Send your first message.',
+                          'Explore the different services offered and like what most attracts you.',
                           textAlign: TextAlign.center,
                           maxLines: 3,
                           overflow: TextOverflow.clip,
@@ -68,7 +68,7 @@ class _InboxScreenState extends State<InboxScreen> {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MessagesListView(),
+                      ResultSearchListView(),
                     ],
                   ),
           ),
@@ -92,7 +92,7 @@ class _InboxScreenState extends State<InboxScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 1, isSeller: false)),
+                  child: BottomBar(initialIndex: 4, isSeller: false)),
             ),
           )
         ],

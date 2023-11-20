@@ -7,6 +7,10 @@ import 'package:servicehub/view/inbox_screen.dart';
 import 'package:servicehub/view/order_screen.dart';
 import 'package:servicehub/view/profile_screen.dart';
 import 'package:servicehub/view/search_screen.dart';
+import 'package:servicehub/view/seller/supplier_dashboard.dart';
+import 'package:servicehub/view/seller/supplier_inbox.dart';
+import 'package:servicehub/view/seller/supplier_order.dart';
+import 'package:servicehub/view/seller/supplier_profile.dart';
 
 class SearchBarItem extends StatelessWidget {
   const SearchBarItem({super.key});
@@ -55,15 +59,20 @@ class SearchBarItem extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   String text = 'Inbox';
+  String actionText = 'Withdrawal';
   bool showFilter = true;
   bool returnButton = true;
+  bool showText = false;
   CustomAppbar(
       {super.key,
       required this.text,
+      required this.actionText,
       required this.showFilter,
-      required this.returnButton});
+      required this.returnButton,
+      required this.showText});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +100,18 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               size: 20,
               color: Colors.black,
             ),
-          )
+          ),
+        if (showText)
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                actionText,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFFC84457),
+                  fontWeight: FontWeight.w500,
+                ),
+              ))
       ],
     );
   }
@@ -111,22 +131,18 @@ class Message {
 
 class BottomBar extends StatefulWidget {
   final int initialIndex;
+  final bool isSeller;
 
-  const BottomBar({super.key, required this.initialIndex});
+  const BottomBar(
+      {Key? key, required this.initialIndex, required this.isSeller})
+      : super(key: key);
 
   @override
   State<BottomBar> createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
-  late int currentPageIndex = 0;
-  // List<IconData> listOfIcons = [
-  //   Icons.home_rounded,
-  //   FontAwesomeIcons.envelope,
-  //   Icons.manage_search,
-  //   Icons.cases_rounded,
-  //   Icons.person_rounded
-  // ];
+  late int currentPageIndex;
 
   @override
   void initState() {
@@ -136,12 +152,51 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
-        // backgroundColor: Colors.white,
-        indicatorColor: Colors.transparent,
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
+    return BottomNavigationBar(
+      backgroundColor: Colors.white,
+      selectedItemColor:
+          widget.isSeller ? Color(0xFF289BED) : Color(0xFFC84457),
+      unselectedItemColor: Colors.black,
+      currentIndex: currentPageIndex,
+      type: BottomNavigationBarType.fixed,
+      elevation: 0,
+      onTap: (int index) {
+        setState(() {
+          currentPageIndex = index;
+          if (widget.isSeller) {
+            switch (currentPageIndex) {
+              case 0:
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SupplierDashboard()));
+                break;
+              case 1:
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const SupplierInboxScreen()));
+                break;
+              case 2:
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SupplierOrderScreen()));
+                break;
+              case 3:
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const SupplierProfileScreen()));
+                break;
+              default:
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SupplierDashboard()));
+                break;
+            }
+          } else {
             switch (currentPageIndex) {
               case 0:
                 Navigator.push(
@@ -178,111 +233,34 @@ class _BottomBarState extends State<BottomBar> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => const HomeScreen()));
-
                 break;
             }
-          });
-        },
-        selectedIndex: currentPageIndex,
-        destinations: <Widget>[
-          AnimatedContainer(
-            duration: Duration(seconds: 1),
-            curve: Curves.fastLinearToSlowEaseIn,
-            height: 50,
-            width: 60,
-            decoration: BoxDecoration(
-              color: currentPageIndex == 0
-                  ? Color(0xFFC84457).withOpacity(.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: NavigationDestination(
-                selectedIcon: Icon(
-                  Icons.home_rounded,
-                  color: Color(0xFFC84457),
-                  size: 33,
-                ),
-                icon: Icon(Icons.home_rounded, size: 33),
-                label: 'Home'),
+          }
+        });
+      },
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          label: 'Home',
+          icon: Icon(Icons.home_rounded),
+        ),
+        BottomNavigationBarItem(
+          label: 'Inbox',
+          icon: Icon(FontAwesomeIcons.envelope),
+        ),
+        if (!widget.isSeller)
+          BottomNavigationBarItem(
+            label: 'Explore',
+            icon: Icon(Icons.manage_search),
           ),
-          AnimatedContainer(
-            duration: Duration(seconds: 1),
-            curve: Curves.fastLinearToSlowEaseIn,
-            height: 50,
-            width: 60,
-            decoration: BoxDecoration(
-              color: currentPageIndex == 1
-                  ? Color(0xFFC84457).withOpacity(.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: NavigationDestination(
-                selectedIcon: Icon(
-                  FontAwesomeIcons.envelope,
-                  color: Color(0xFFC84457),
-                ),
-                icon: Icon(FontAwesomeIcons.envelope),
-                label: 'InBox'),
-          ),
-          AnimatedContainer(
-            duration: Duration(seconds: 1),
-            curve: Curves.fastLinearToSlowEaseIn,
-            height: 50,
-            width: 60,
-            decoration: BoxDecoration(
-              color: currentPageIndex == 2
-                  ? Color(0xFFC84457).withOpacity(.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: NavigationDestination(
-                selectedIcon: Icon(
-                  Icons.manage_search,
-                  color: Color(0xFFC84457),
-                  size: 35,
-                ),
-                icon: Icon(
-                  Icons.manage_search,
-                  size: 35,
-                ),
-                label: 'Explore'),
-          ),
-          AnimatedContainer(
-            duration: Duration(seconds: 1),
-            curve: Curves.fastLinearToSlowEaseIn,
-            height: 50,
-            width: 60,
-            decoration: BoxDecoration(
-              color: currentPageIndex == 3
-                  ? Color(0xFFC84457).withOpacity(.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: NavigationDestination(
-                selectedIcon: Icon(
-                  Icons.cases_rounded,
-                  color: Color(0xFFC84457),
-                ),
-                icon: Icon(Icons.cases_rounded),
-                label: 'Orders'),
-          ),
-          AnimatedContainer(
-            duration: Duration(seconds: 1),
-            curve: Curves.fastLinearToSlowEaseIn,
-            height: 50,
-            width: 60,
-            decoration: BoxDecoration(
-              color: currentPageIndex == 4
-                  ? Color(0xFFC84457).withOpacity(.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: NavigationDestination(
-                selectedIcon: Icon(Icons.person_rounded,
-                    color: Color(0xFFC84457), size: 33),
-                icon: Icon(Icons.person_rounded, size: 33),
-                label: 'Account'),
-          ),
-        ]);
+        BottomNavigationBarItem(
+          label: 'Orders',
+          icon: Icon(Icons.cases_rounded),
+        ),
+        BottomNavigationBarItem(
+          label: 'Account',
+          icon: Icon(Icons.person_rounded),
+        ),
+      ],
+    );
   }
 }

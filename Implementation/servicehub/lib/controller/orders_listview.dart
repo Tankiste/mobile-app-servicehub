@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:servicehub/view/seller/manage_order.dart';
 
 class OrdersListView extends StatefulWidget {
-  bool showSupplier = false;
+  bool showSupplier;
+  bool isSupplier;
 
-  OrdersListView({super.key, required this.showSupplier});
+  OrdersListView(
+      {super.key, required this.showSupplier, required this.isSupplier});
 
   @override
   State<OrdersListView> createState() => _OrdersListViewState();
@@ -148,14 +151,30 @@ class _OrdersListViewState extends State<OrdersListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: 2,
-          itemBuilder: (BuildContext context, int index) {
-            return serviceWidget(index);
-          }),
-    );
+    return widget.isSupplier
+        ? InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: ((context) => ManageOrderView())));
+            },
+            child: Container(
+              color: Colors.white,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 2,
+                  itemBuilder: (BuildContext context, int index) {
+                    return serviceWidget(index);
+                  }),
+            ),
+          )
+        : Container(
+            color: Colors.white,
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: 2,
+                itemBuilder: (BuildContext context, int index) {
+                  return serviceWidget(index);
+                }),
+          );
   }
 }

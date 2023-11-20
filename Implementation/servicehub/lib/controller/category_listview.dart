@@ -75,16 +75,18 @@ class _CategoryListViewState extends State<CategoryListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      color: Colors.white,
-      child: ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          itemCount: 6,
-          itemBuilder: (BuildContext context, int index) {
-            return serviceWidget(index);
-          }),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: 6,
+              itemBuilder: (BuildContext context, int index) {
+                return serviceWidget(index);
+              }),
+        ],
+      ),
     );
   }
 }

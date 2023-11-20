@@ -104,80 +104,101 @@ class _ExploreScreenState extends State<ExploreScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+        body: Stack(
+      children: [
+        Container(
           height: double.infinity,
           width: double.infinity,
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(top: 60, bottom: 10),
-              child: Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Categories',
-                            style: TextStyle(
-                                fontSize: 28, fontWeight: FontWeight.w600),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) =>
-                                            SearchScreen())));
-                              },
-                              icon: Icon(Icons.search)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextButton(
-                          onPressed: () => _updateSelectedOption('Categories'),
-                          child: Text(
-                            'Categories',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: selectedOption == 'Categories'
-                                  ? Color(0xFFC84457)
-                                  : Colors.grey.shade500,
-                            ),
-                          ),
+                        Text(
+                          'Categories',
+                          style: TextStyle(
+                              fontSize: 28, fontWeight: FontWeight.w600),
                         ),
-                        TextButton(
-                          onPressed: () => _updateSelectedOption('Interest'),
-                          child: Text(
-                            'Interest',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: selectedOption == 'Interest'
-                                  ? Color(0xFFC84457)
-                                  : Colors.grey.shade500,
-                            ),
-                          ),
-                        ),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) => SearchScreen())));
+                            },
+                            icon: Icon(Icons.search)),
                       ],
                     ),
-                    buildDivider(),
-                    buildContent(),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () => _updateSelectedOption('Categories'),
+                        child: Text(
+                          'Categories',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: selectedOption == 'Categories'
+                                ? Color(0xFFC84457)
+                                : Colors.grey.shade500,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => _updateSelectedOption('Interest'),
+                        child: Text(
+                          'Interest',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: selectedOption == 'Interest'
+                                ? Color(0xFFC84457)
+                                : Colors.grey.shade500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  buildDivider(),
+                  buildContent(),
+                ],
               ),
             ),
           ),
         ),
-        bottomNavigationBar: BottomBar(
-          initialIndex: 2,
-        ));
+        Positioned(
+          bottom: 10,
+          left: 15,
+          right: 15,
+          child: Container(
+            padding: EdgeInsets.zero,
+            margin: EdgeInsets.zero,
+            height: 70,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.shade400,
+                    blurRadius: 5,
+                    offset: Offset(0, 4))
+              ],
+            ),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: BottomBar(initialIndex: 2, isSeller: false)),
+          ),
+        )
+      ],
+    ));
   }
 }

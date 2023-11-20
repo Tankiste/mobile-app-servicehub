@@ -84,75 +84,100 @@ class _ResultSearchViewState extends State<ResultSearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 60,
-              ),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            AdvancedSearchView()));
-                              },
-                              icon: Icon(Icons.arrow_back_ios_new_rounded)),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) =>
-                                            SearchScreen())));
-                              },
-                              icon: Icon(Icons.search)),
-                        ],
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 60,
+                ),
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdvancedSearchView()));
+                                },
+                                icon: Icon(Icons.arrow_back_ios_new_rounded)),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) =>
+                                              SearchScreen())));
+                                },
+                                icon: Icon(Icons.search)),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 25),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: Text(
-                        'Lorem Ipsum',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w500),
+                      const SizedBox(height: 25),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Text(
+                          'Lorem Ipsum',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 40,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: buttonTexts.length,
-                        itemBuilder: (context, index) {
-                          return buildButton(index);
-                        },
+                      const SizedBox(
+                        height: 20,
                       ),
-                    ),
-                    buildContainer(),
-                  ],
+                      Container(
+                        height: 40,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: buttonTexts.length,
+                          itemBuilder: (context, index) {
+                            return buildButton(index);
+                          },
+                        ),
+                      ),
+                      buildContainer(),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        bottomNavigationBar: BottomBar(
-          initialIndex: 2,
-        ));
+          Positioned(
+            bottom: 10,
+            left: 15,
+            right: 15,
+            child: Container(
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.grey.shade400,
+                      blurRadius: 5,
+                      offset: Offset(0, 4))
+                ],
+              ),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: BottomBar(initialIndex: 2, isSeller: false)),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

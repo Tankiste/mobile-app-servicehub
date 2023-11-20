@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "922072732183",
+    "project_id": "servicehub-c8538",
+    "storage_bucket": "servicehub-c8538.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922072732183:android:350b837509b56a4f080252",
+        "android_client_info": {
+          "package_name": "com.example.servicehub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq8UNQMkdblE0wtASijgLiz75qjoTG9kQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

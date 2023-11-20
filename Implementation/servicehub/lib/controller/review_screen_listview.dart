@@ -126,6 +126,7 @@ class _ReviewScreenListViewState extends State<ReviewScreenListView> {
       child: ListView.builder(
           shrinkWrap: true,
           itemCount: 3,
+          scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
             return serviceWidget(index);
           }),

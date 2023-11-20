@@ -32,8 +32,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          CustomAppbar(text: 'Payment', showFilter: false, returnButton: true),
+      appBar: CustomAppbar(
+          text: 'Payment',
+          showFilter: false,
+          returnButton: true,
+          showText: false,
+          actionText: ''),
       body: Padding(
         padding: EdgeInsets.fromLTRB(25, 25, 35, 40),
         child: Column(

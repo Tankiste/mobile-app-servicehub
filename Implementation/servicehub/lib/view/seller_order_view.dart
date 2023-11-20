@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/controller/orders_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
-import 'package:servicehub/view/login.dart';
 
 class SellerOrderView extends StatefulWidget {
   const SellerOrderView({super.key});
@@ -15,7 +14,11 @@ class _SellerOrderViewState extends State<SellerOrderView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-          text: 'Orders with Binho', showFilter: false, returnButton: true),
+          text: 'Orders with Binho',
+          showFilter: false,
+          returnButton: true,
+          showText: false,
+          actionText: ''),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -61,7 +64,10 @@ class _SellerOrderViewState extends State<SellerOrderView> {
                   //             offset: Offset(0, 4))
                   //       ]),
                   // ),
-                  OrdersListView(showSupplier: false),
+                  OrdersListView(
+                    showSupplier: false,
+                    isSupplier: false,
+                  ),
                 ],
               ),
             ),

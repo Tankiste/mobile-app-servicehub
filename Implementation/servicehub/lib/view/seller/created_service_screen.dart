@@ -1,17 +1,16 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-// import 'package:servicehub/view/home_screen.dart';
-import 'package:servicehub/view/seller/supplier_dashboard.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 
-class RequestSend extends StatefulWidget {
-  const RequestSend({super.key});
+class CreatedServiceScreen extends StatefulWidget {
+  const CreatedServiceScreen({super.key});
 
   @override
-  State<RequestSend> createState() => _RequestSendState();
+  State<CreatedServiceScreen> createState() => _CreatedServiceScreenState();
 }
 
-class _RequestSendState extends State<RequestSend> {
+class _CreatedServiceScreenState extends State<CreatedServiceScreen> {
   bool isPlaying = false;
   final controller = ConfettiController();
 
@@ -42,44 +41,50 @@ class _RequestSendState extends State<RequestSend> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'REQUEST TO SELL',
+                  'SERVICE CREATED',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                 ),
-                const SizedBox(height: 150),
+                const SizedBox(height: 170),
                 SvgPicture.asset(
-                  'assets/undraw_mail_sent.svg',
-                  width: 200,
+                  'assets/undraw_done.svg',
+                  width: 220,
                 ),
                 const SizedBox(height: 35),
                 Text(
-                  'SUPPLIER REQUEST',
+                  'SERVICE SUCCESSFULLY',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text('SUBMITTED',
+                Text('CREATED',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                     )),
-                Text(
-                  "You’ll be notified by ServiceHub once it",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.grey.shade500),
-                ),
-                Text(
-                  'has been reviewed.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.grey.shade500,
+                SizedBox(
+                  height: 70,
+                  width: 240,
+                  child: Text(
+                    "You are done. Your service is now available on the market place for buyers to purchase.",
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.grey.shade500),
                   ),
                 ),
+                // Text(
+                //   'has been reviewed.',
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     fontWeight: FontWeight.w300,
+                //     color: Colors.grey.shade500,
+                //   ),
+                // ),
                 const SizedBox(
-                  height: 140,
+                  height: 120,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 15, right: 15),
@@ -88,7 +93,7 @@ class _RequestSendState extends State<RequestSend> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: ((context) => SupplierDashboard())));
+                                builder: ((context) => NewServiceView())));
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFC84457),
@@ -101,10 +106,10 @@ class _RequestSendState extends State<RequestSend> {
                         child: Text(
                           'Continue',
                           style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Gilroy'),
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       )),
                 ),
