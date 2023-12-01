@@ -5,9 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
-import 'package:servicehub/view/client_signup.dart';
-import 'package:servicehub/view/home_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:servicehub/model/auth/user_data.dart';
+// import 'package:servicehub/view/client_signup.dart';
+// import 'package:servicehub/view/home_screen.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
 
 class UpdateAccountScreen extends StatefulWidget {
@@ -20,17 +21,31 @@ class UpdateAccountScreen extends StatefulWidget {
 class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
   final AuthService _authService = AuthService();
 
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
   signoutUser() async {
     ApplicationState appState = Provider.of(context, listen: false);
     await appState.logoutUser(context);
     await _authService.logout();
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => ClientSignUp(),
+      builder: (context) => LoginPage(),
     ));
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
   }
 
   @override
   Widget build(BuildContext context) {
+    UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    bool showUser = userData != null;
+    String? logoUrl = userData?.logo;
     final appBar = CustomAppbar(
         text: 'Account',
         showFilter: false,
@@ -65,10 +80,37 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      'assets/supplier.png',
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: logoUrl != null
+                                        ? Image.network(logoUrl,
+                                            fit: BoxFit.cover, loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ));
+                                          }, errorBuilder:
+                                                (BuildContext context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                            return Icon(Icons.error);
+                                          })
+                                        : Image.asset(
+                                            "assets/avatar.png",
+                                            fit: BoxFit.cover,
+                                          ),
                                   )),
                               Positioned(
                                   bottom: 0,

@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/view/client_signup.dart';
 import 'package:servicehub/view/favorite_screen.dart';
 import 'package:servicehub/view/language_screen.dart';
 import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/notifications_screen.dart';
 import 'package:servicehub/view/select_service.dart';
+import 'package:servicehub/view/seller/seller_signup.dart';
 import 'package:servicehub/view/update_account_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -34,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     bool isClient = userData != null;
+    String? logoUrl = userData?.logo;
 
     return Scaffold(
       body: Stack(
@@ -102,10 +105,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: isClient
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      'assets/supplier.png',
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: logoUrl != null
+                                        ? Image.network(logoUrl,
+                                            fit: BoxFit.cover, loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ));
+                                          }, errorBuilder:
+                                                (BuildContext context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                            return Icon(Icons.error);
+                                          })
+                                        : Image.asset(
+                                            "assets/avatar.png",
+                                            fit: BoxFit.cover,
+                                          ),
                                   )
                                 : Icon(
                                     Icons.person,
@@ -337,7 +367,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: ((context) => LoginPage())));
+                                          builder: ((context) =>
+                                              ClientSignUp())));
                                 },
                                 child: Row(
                                   children: [
@@ -374,7 +405,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 height: 20,
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) => LoginPage())));
+                                },
                                 child: Row(
                                   children: [
                                     Container(
@@ -410,7 +446,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 height: 20,
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) =>
+                                              LanguageScreen())));
+                                },
                                 child: Row(
                                   children: [
                                     Container(
@@ -462,7 +504,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => SellerSignUp())));
+                          },
                           child: Row(
                             children: [
                               Container(

@@ -1,6 +1,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:servicehub/view/login.dart';
 // import 'package:servicehub/view/home_screen.dart';
 import 'package:servicehub/view/seller/supplier_dashboard.dart';
 
@@ -85,10 +86,10 @@ class _RequestSendState extends State<RequestSend> {
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
+                        Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                                builder: ((context) => SupplierDashboard())));
+                                builder: (context) => const LoginPage()),
+                            (Route<dynamic> route) => false);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFC84457),

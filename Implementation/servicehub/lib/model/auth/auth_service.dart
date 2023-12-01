@@ -1,10 +1,16 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:servicehub/model/auth/user_data.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AuthService {
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final firebase_storage.FirebaseStorage _storage =
+      firebase_storage.FirebaseStorage.instance;
 
   // final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   // UserData? _userExist(auth.User? user) {
@@ -21,6 +27,8 @@ class AuthService {
   // Future<UserData?> register(String email, String password) async {}
 
   // Future<void> signOuit() async {}
+
+  String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
 
   Future<String> registerUser({
     required String email,
@@ -57,6 +65,90 @@ class AuthService {
       resp = err.toString();
     }
     return resp;
+  }
+
+  Future<String> registerSeller({
+    required String name,
+    required String email,
+    required String username,
+    required File logo,
+    required String description,
+    required String sector,
+    required String address,
+    String? website,
+    String? certification,
+    required int phonenumber,
+    required String password,
+    required String confirmpassword,
+  }) async {
+    String resp = 'Some Error occured';
+    try {
+      if (email.isNotEmpty &&
+          password.isNotEmpty &&
+          username.isNotEmpty &&
+          confirmpassword.isNotEmpty &&
+          name.isNotEmpty &&
+          description.isNotEmpty &&
+          sector.isNotEmpty &&
+          address.isNotEmpty) {
+        String imageUrl = await uploadImageToStorage('Logo', logo);
+        auth.UserCredential cred = await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+
+        UserData userData = UserData(
+            uid: cred.user!.uid,
+            name: name,
+            username: username,
+            email: email,
+            logo: imageUrl,
+            description: description,
+            sector: sector,
+            address: address,
+            website: website,
+            certification: certification,
+            phonenumber: phonenumber,
+            password: password,
+            confirmpassword: confirmpassword);
+
+        userData.isSeller = false;
+
+        await _firestore
+            .collection('users')
+            .doc(cred.user!.uid)
+            .set(userData.toMapSupplier());
+
+        await createRequestDocument(username, cred.user!.uid);
+
+        resp = 'success';
+      }
+    } catch (err) {
+      resp = err.toString();
+    }
+    return resp;
+  }
+
+  Future<void> createRequestDocument(
+      String companyName, String sellerUid) async {
+    try {
+      bool collectionExists = await _firestore
+          .collection("Requests")
+          .doc()
+          .get()
+          .then((doc) => doc.exists);
+
+      if (!collectionExists) {
+        await _firestore.collection("Requests").doc();
+      }
+
+      Map<String, dynamic> requestData = {
+        'companyName': companyName,
+        'sellerUid': sellerUid,
+      };
+
+      await _firestore.collection('Requests').doc(companyName).set(requestData);
+    } catch (err) {
+      throw err;
+    }
   }
 
   Future<String> loginUser(
@@ -105,6 +197,15 @@ class AuthService {
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
     return UserData.fromSnap(snap);
+  }
+
+  Future<String> uploadImageToStorage(String fileName, File file) async {
+    firebase_storage.Reference ref =
+        _storage.ref().child(fileName).child(uniqueFileName);
+    firebase_storage.UploadTask uploadTask = ref.putFile(file);
+    firebase_storage.TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
   }
 
   Future<void> logout() async {

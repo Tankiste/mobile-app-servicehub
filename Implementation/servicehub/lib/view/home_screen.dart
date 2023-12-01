@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     bool showUser = userData != null;
+    String? logoUrl = userData?.logo;
 
     return Scaffold(
       body: Stack(
@@ -65,23 +66,55 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ));
                               },
                               child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey,
-                                        blurRadius: 5,
-                                        offset: Offset(0, 4))
-                                  ],
-                                ),
-                                child: ClipOval(
-                                    child: Image.asset(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 5,
+                                          offset: Offset(0, 4))
+                                    ],
+                                  ),
+                                  child: ClipOval(
+                                    child: /*Image.asset(
                                   'assets/supplier.png',
                                   fit: BoxFit.cover,
-                                )),
-                              ),
+                                )*/
+                                        logoUrl != null
+                                            ? Image.network(logoUrl,
+                                                fit: BoxFit.cover,
+                                                loadingBuilder:
+                                                    (BuildContext context,
+                                                        Widget child,
+                                                        ImageChunkEvent?
+                                                            loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                                ));
+                                              }, errorBuilder: (BuildContext
+                                                        context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                                return Icon(Icons.error);
+                                              })
+                                            : Image.asset(
+                                                "/assets/avatar.png",
+                                                fit: BoxFit.cover,
+                                              ),
+                                  )),
                             ),
                         ],
                       ),

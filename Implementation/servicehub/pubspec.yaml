@@ -53,6 +53,8 @@ dependencies:
   firebase_ui_auth: ^1.10.0
   firebase_storage: ^11.5.1
   google_sign_in: ^6.1.6
+  flutter_admin_scaffold: ^1.2.0
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:
@@ -107,6 +109,8 @@ flutter:
     - assets/undraw_different_love.svg
     - assets/realite-virtuelle.png
     - assets/undraw_done.svg
+    - assets/alert.png
+    - assets/avatar.png
     
 
 

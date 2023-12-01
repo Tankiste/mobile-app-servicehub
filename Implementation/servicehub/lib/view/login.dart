@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
 
   bool _obscurePassword = true;
   String errorMessage = '';
@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginUser() async {
-    if (_formKey.currentState!.validate()) {
+    if (_loginFormKey.currentState!.validate()) {
       String res = await AuthService().loginUser(
           usernameOrEmail: _emailController.text,
           password: _passwordController.text);
@@ -68,10 +68,11 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   IconButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectServicePage()));
+                        Navigator.maybePop(context);
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SelectServicePage()));
                       },
                       icon: Icon(Icons.arrow_back_ios_new_rounded)),
                   const SizedBox(height: 40),
@@ -90,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       children: [
                         Form(
-                            key: _formKey,
+                            key: _loginFormKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

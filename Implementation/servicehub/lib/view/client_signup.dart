@@ -18,7 +18,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
   bool _obscurePassword = true;
   bool _obscurePassword2 = true;
   bool _isButtonPressed = false;
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -44,7 +44,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
   @override
   Widget build(BuildContext context) {
     void registerUser() async {
-      if (_formKey.currentState!.validate()) {
+      if (_registerFormKey.currentState!.validate()) {
         String resp = await AuthService().registerUser(
             email: _emailController.text,
             username: _usernameController.text,
@@ -71,8 +71,9 @@ class _ClientSignUpState extends State<ClientSignUp> {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                      Navigator.maybePop(context);
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     icon: Icon(Icons.arrow_back_ios_new_rounded)),
                 const SizedBox(height: 40),
@@ -91,7 +92,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
                   child: Column(
                     children: [
                       Form(
-                          key: _formKey,
+                          key: _registerFormKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
