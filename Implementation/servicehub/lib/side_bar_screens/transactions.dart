@@ -11,6 +11,16 @@ class Transactions extends StatefulWidget {
 class _TransactionsState extends State<Transactions> {
   @override
   Widget build(BuildContext context) {
-    return Column();
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: Column(
+        children: [
+          const Text(
+            'Transactions',
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
   }
 }
