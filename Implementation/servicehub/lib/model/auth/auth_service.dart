@@ -208,6 +208,79 @@ class AuthService {
     return downloadUrl;
   }
 
+  Future<void> updateUserStatus(String sellerUid, bool value) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('users')
+          .where('uid', isEqualTo: sellerUid)
+          .get();
+      //     .then((value) {
+      //   print('Got the user $value');
+      // });
+
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        String documentId = userDoc.id;
+        print('User id is : $documentId');
+        await _firestore
+            .collection('users')
+            .doc(documentId)
+            .update({'isSeller': value});
+      }
+
+      // DocumentSnapshot sellerDoc =
+      //     await _firestore.collection('users').doc(sellerUid).get();
+
+      // if (sellerDoc.exists) {
+      //   await _firestore
+      //       .collection('users')
+      //       .doc(sellerUid)
+      //       .update({'isSeller': value});
+      // }
+    } catch (err) {
+      print('Error updating user: $err');
+    }
+  }
+
+  Future<bool> getUserStatus(String sellerUid) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('users')
+          .where('uid', isEqualTo: sellerUid)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        // print('is seller : ${userDoc['isSeller'].toString()}');
+        return userDoc['isSeller'] ?? false;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      print('Error getting user status: $err');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserData(String sellerUid) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('users')
+          .where('uid', isEqualTo: sellerUid)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        return userDoc.data() as Map<String, dynamic>;
+      } else {
+        return {};
+      }
+    } catch (err) {
+      print('Error getting user data: $err');
+      return {};
+    }
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
   }

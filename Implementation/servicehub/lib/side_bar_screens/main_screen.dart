@@ -49,10 +49,19 @@ class _MainScreenState extends State<MainScreen> {
         title: const Center(
             child: Text(
           'Admin Pannel',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         )),
       ),
       sideBar: SideBar(
+        borderColor: Colors.grey.shade300,
+        iconColor: Colors.black,
+        activeIconColor: Colors.deepPurple.shade900,
+        textStyle: TextStyle(
+            color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+        activeTextStyle: TextStyle(
+            color: Colors.deepPurple.shade900,
+            fontSize: 18,
+            fontWeight: FontWeight.w600),
         items: const [
           AdminMenuItem(
             title: 'Dashboard',

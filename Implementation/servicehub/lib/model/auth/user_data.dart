@@ -71,4 +71,18 @@ class UserData {
       logo: snapshot['logoLink'],
     );
   }
+
+  // static UserData fromSellerSnap(DocumentSnapshot snap) {
+  //   var snapshot = snap.data() as Map<String, dynamic>;
+
+  //   String username = snapshot['username'] ?? snapshot['company name'];
+  //   return UserData(
+  //     uid: snapshot['uid'],
+  //     name: snapshot['CEO name'],
+  //     username: username,
+  //     email: snapshot['email'],
+  //     logo: snapshot['logoLink'],
+  //     description: snapshot['description'],
+  //   );
+  // }
 }

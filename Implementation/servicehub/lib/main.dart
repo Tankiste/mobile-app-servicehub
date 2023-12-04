@@ -57,22 +57,25 @@ class MyDashBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ServiceHub',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return ChangeNotifierProvider<ApplicationState>(
+      create: (_) => ApplicationState(),
+      child: MaterialApp(
+        title: 'ServiceHub',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        initialRoute: SplashScreen.id,
+        routes: {
+          SplashScreen.id: (context) => SplashScreen(),
+          MainScreen.id: (context) => MainScreen(),
+          Requests.id: (context) => Requests(),
+          Transactions.id: (context) => Transactions(),
+          Orders.id: (context) => Orders(),
+          DashBoardScreen.id: (context) => DashBoardScreen(),
+        },
       ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: SplashScreen.id,
-      routes: {
-        SplashScreen.id: (context) => SplashScreen(),
-        MainScreen.id: (context) => MainScreen(),
-        Requests.id: (context) => Requests(),
-        Transactions.id: (context) => Transactions(),
-        Orders.id: (context) => Orders(),
-        DashBoardScreen.id: (context) => DashBoardScreen(),
-      },
     );
   }
 }
