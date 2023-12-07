@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:servicehub/firebase_services.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -11,6 +12,7 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
+  final FirebaseServices _services = FirebaseServices();
 
   // final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   // UserData? _userExist(auth.User? user) {
@@ -111,6 +113,7 @@ class AuthService {
             confirmpassword: confirmpassword);
 
         userData.isSeller = false;
+        userData.sellerMode = false;
 
         await _firestore
             .collection('users')
@@ -143,6 +146,7 @@ class AuthService {
       Map<String, dynamic> requestData = {
         'companyName': companyName,
         'sellerUid': sellerUid,
+        'isSeller': false,
       };
 
       await _firestore.collection('Requests').doc(companyName).set(requestData);
@@ -208,6 +212,22 @@ class AuthService {
     return downloadUrl;
   }
 
+  Future<void> updateRequestStatus(String companyName, bool value) async {
+    try {
+      DocumentSnapshot sellerDoc =
+          await _firestore.collection('Requests').doc(companyName).get();
+
+      if (sellerDoc.exists) {
+        await _firestore
+            .collection('Requests')
+            .doc(companyName)
+            .update({'isSeller': value});
+      }
+    } catch (err) {
+      print('Error updating user: $err');
+    }
+  }
+
   Future<void> updateUserStatus(String sellerUid, bool value) async {
     try {
       QuerySnapshot query = await _firestore
@@ -242,20 +262,38 @@ class AuthService {
     }
   }
 
-  Future<bool> getUserStatus(String sellerUid) async {
+  Future<bool> getCurrentUserStatus() async {
     try {
-      QuerySnapshot query = await _firestore
-          .collection('users')
-          .where('uid', isEqualTo: sellerUid)
-          .get();
+      if (_services.user != null) {
+        QuerySnapshot query = await _firestore
+            .collection('users')
+            .where('uid', isEqualTo: _services.user!.uid.toString())
+            .get();
 
-      if (query.docs.isNotEmpty) {
-        var userDoc = query.docs.first;
-        // print('is seller : ${userDoc['isSeller'].toString()}');
-        return userDoc['isSeller'] ?? false;
-      } else {
-        return false;
+        if (query.docs.isNotEmpty) {
+          var userDoc = query.docs.first;
+          bool isSeller = userDoc['isSeller'];
+          print('The seller status is : ${isSeller.toString()}');
+          return isSeller;
+        }
       }
+      return false;
+    } catch (err) {
+      print('Erreor getting current user status: $err');
+      return false;
+    }
+  }
+
+  Future<bool> getUserStatus(String companyName) async {
+    try {
+      DocumentSnapshot sellerDoc =
+          await _firestore.collection('Requests').doc(companyName).get();
+
+      if (sellerDoc.exists) {
+        bool isSeller = sellerDoc['isSeller'];
+        return isSeller;
+      }
+      return false;
     } catch (err) {
       print('Error getting user status: $err');
       return false;

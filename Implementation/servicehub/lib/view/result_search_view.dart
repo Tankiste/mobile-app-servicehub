@@ -105,11 +105,7 @@ class _ResultSearchViewState extends State<ResultSearchView> {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AdvancedSearchView()));
+                                  Navigator.maybePop(context);
                                 },
                                 icon: Icon(Icons.arrow_back_ios_new_rounded)),
                             IconButton(

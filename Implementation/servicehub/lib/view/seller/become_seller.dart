@@ -26,8 +26,7 @@ class _BecomeSellerPageState extends State<BecomeSellerPage> {
             children: [
               IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OnBoard()));
+                    Navigator.maybePop(context);
                   },
                   icon: Icon(Icons.arrow_back_ios_new_rounded)),
               Padding(

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:servicehub/model/user_interface.dart';
 import 'package:servicehub/view/client_signup.dart';
 import 'package:servicehub/view/forgot_password.dart';
 import 'package:servicehub/view/home_screen.dart';
 import 'package:servicehub/view/select_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
+import 'package:servicehub/view/seller/supplier_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,22 +36,54 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  // Future<Widget> loginUser() async {
+  //   if (_loginFormKey.currentState!.validate()) {
+  //     String res = await AuthService().loginUser(
+  //         usernameOrEmail: _emailController.text,
+  //         password: _passwordController.text);
+
+  //     if (res == 'success') {
+  //       // Navigator.of(context).pushAndRemoveUntil(
+  //       //     MaterialPageRoute(builder: (context) => const HomeScreen()),
+  //       //     (Route<dynamic> route) => false);
+  //       return buildUserInterfaces();
+  //     } else if (res != 'Please Enter All The Fields!') {
+  //       setState(() {
+  //         errorMessage = res;
+  //       });
+  //     }
+  //     return Text('Error!');
+  //   }
+  //   return Container(
+  //     padding: EdgeInsets.all(10),
+  //     child: Center(child: Text('Error!')),
+  //   );
+  // }
+
   void loginUser() async {
     if (_loginFormKey.currentState!.validate()) {
       String res = await AuthService().loginUser(
-          usernameOrEmail: _emailController.text,
-          password: _passwordController.text);
+        usernameOrEmail: _emailController.text,
+        password: _passwordController.text,
+      );
 
       if (res == 'success') {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-            (Route<dynamic> route) => false);
+        bool isSeller = await AuthService().getCurrentUserStatus();
+        if (isSeller) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => const SupplierDashboard()),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (Route<dynamic> route) => false);
+        }
       } else if (res != 'Please Enter All The Fields!') {
         setState(() {
           errorMessage = res;
         });
       }
-      return null;
     }
   }
 

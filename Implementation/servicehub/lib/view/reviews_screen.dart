@@ -24,10 +24,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ServiceDetailView()));
+                      Navigator.maybePop(context);
                     },
                     icon: Icon(Icons.arrow_back_ios_new_rounded)),
                 const SizedBox(height: 25),

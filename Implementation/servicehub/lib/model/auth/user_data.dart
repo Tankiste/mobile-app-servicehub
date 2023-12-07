@@ -18,6 +18,7 @@ class UserData {
   String? password;
   String? confirmpassword;
   bool isSeller = false;
+  bool sellerMode = false;
 
   UserData(
       {required this.uid,
@@ -57,6 +58,7 @@ class UserData {
       'email': email,
       'logoLink': logo,
       'isSeller': isSeller,
+      'sellerMode': sellerMode,
     };
   }
 

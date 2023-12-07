@@ -26,10 +26,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     children: [
                       IconButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
+                            Navigator.maybePop(context);
                           },
                           icon: Icon(Icons.arrow_back_ios_new_rounded)),
                       const SizedBox(

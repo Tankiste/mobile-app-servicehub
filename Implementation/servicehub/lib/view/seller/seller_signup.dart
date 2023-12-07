@@ -146,10 +146,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BecomeSellerPage()));
+                      Navigator.maybePop(context);
                     },
                     icon: Icon(Icons.arrow_back_ios_new_rounded)),
                 const SizedBox(height: 40),

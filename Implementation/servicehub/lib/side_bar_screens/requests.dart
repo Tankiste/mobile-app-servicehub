@@ -60,13 +60,33 @@ class _RequestsState extends State<Requests> {
     }
   }
 
+  // Future<bool> getRequestStatus(String sellerUid) async {
+  //   try {
+  //     await _authService.getUserStatus(sellerUid);
+  //   } catch (err) {
+  //     rethrow;
+  //   }
+  //   return false;
+  // }
+
+  void updateRequestStatus(String companyName, bool value) async {
+    try {
+      await _authService.updateRequestStatus(companyName, value);
+      _appstate.refreshUser();
+    } catch (err) {
+      rethrow;
+    }
+  }
+
   Future<List<DataRow>> createDataRows(List<DocumentSnapshot> docs) async {
     final List<DataRow> rows = [];
 
     for (DocumentSnapshot document in docs) {
       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
       final sellerUid = data['sellerUid'] as String;
-      _switchValues.putIfAbsent(sellerUid, () => _appstate.isRequestSwitched);
+      final companyName = data['companyName'] as String;
+      final switchValue = data['isSeller'] as bool;
+      // _switchValues.putIfAbsent(sellerUid, () => _appstate.isRequestSwitched);
 
       // restoreSwitchState();
 
@@ -83,7 +103,13 @@ class _RequestsState extends State<Requests> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                              return Center(
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
                             } else if (snapshot.hasError) {
                               return Text(
                                   'Error loading seller data: ${snapshot.error}');
@@ -188,16 +214,18 @@ class _RequestsState extends State<Requests> {
               Transform.scale(
                 scale: 0.9,
                 child: Switch(
-                  value: _switchValues[sellerUid] ?? false,
+                  value: switchValue,
                   activeColor: Color(0xFFC84457),
                   activeTrackColor: Color(0xFFFB8F9F),
                   onChanged: (bool value) {
-                    setState(() {
-                      _switchValues[sellerUid] = value;
-                    });
+                    // setState(() {
+                    //   _switchValues[sellerUid] = value;
+                    // });
                     // updateSwitchState(value, sellerUid);
                     _appstate.toggleRequestSwitch(value);
                     updateSellerStatus(sellerUid, value);
+                    updateRequestStatus(companyName, value);
+                    print(switchValue.toString());
                   },
                 ),
               ),

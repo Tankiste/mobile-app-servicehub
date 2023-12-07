@@ -31,9 +31,9 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
     ApplicationState appState = Provider.of(context, listen: false);
     await appState.logoutUser(context);
     await _authService.logout();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => LoginPage(),
-    ));
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+        (Route<dynamic> route) => false);
   }
 
   updateData() async {

@@ -8,6 +8,8 @@ class FirebaseServices {
       firebase_storage.FirebaseStorage.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference requests =
+      FirebaseFirestore.instance.collection('Requests');
 }
 
 

@@ -78,10 +78,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Row(children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => InboxScreen()));
+                      Navigator.maybePop(context);
                     },
                     icon: Icon(Icons.arrow_back_ios_new_rounded)),
                 const SizedBox(width: 20),

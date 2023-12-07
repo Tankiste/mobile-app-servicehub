@@ -47,11 +47,7 @@ class _NewServiceViewState extends State<NewServiceView> {
                                 child: IconButton(
                                     padding: EdgeInsets.only(right: 5),
                                     onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ResultSearchView()));
+                                      Navigator.maybePop(context);
                                     },
                                     icon:
                                         Icon(Icons.arrow_back_ios_new_rounded)),

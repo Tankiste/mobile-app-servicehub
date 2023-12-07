@@ -104,10 +104,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                 children: [
                   IconButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SupplierProfileScreen()));
+                        Navigator.maybePop(context);
                       },
                       icon: Icon(Icons.arrow_back_ios_new_rounded)),
                   Padding(

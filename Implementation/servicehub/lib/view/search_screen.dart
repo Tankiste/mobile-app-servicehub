@@ -93,10 +93,7 @@ class _SearchScreenState extends State<SearchScreen>
                 children: [
                   IconButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ExploreScreen()));
+                        Navigator.maybePop(context);
                       },
                       icon: Icon(Icons.arrow_back_ios_new_rounded)),
                   const SizedBox(
