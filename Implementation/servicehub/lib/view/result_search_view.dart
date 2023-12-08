@@ -3,6 +3,8 @@ import 'package:servicehub/controller/result_search_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/view/advanced_search_view.dart';
 import 'package:servicehub/view/search_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class ResultSearchView extends StatefulWidget {
   const ResultSearchView({super.key});
@@ -19,6 +21,17 @@ class _ResultSearchViewState extends State<ResultSearchView> {
     'Delivery Time',
     'Price'
   ];
+
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
 
   Widget buildButton(int index) {
     bool isSelected = selectedIndex == index;
@@ -169,7 +182,7 @@ class _ResultSearchViewState extends State<ResultSearchView> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 2, isSeller: false)),
+                  child: BottomBar(initialIndex: 2)),
             ),
           )
         ],

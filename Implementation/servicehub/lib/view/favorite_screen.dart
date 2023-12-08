@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:servicehub/controller/result_search_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -12,6 +14,17 @@ class FavoriteScreen extends StatefulWidget {
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
   bool noMessage = true;
+
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +105,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 4, isSeller: false)),
+                  child: BottomBar(initialIndex: 4)),
             ),
           )
         ],

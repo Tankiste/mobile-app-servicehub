@@ -54,7 +54,15 @@ class _RequestsState extends State<Requests> {
   void updateSellerStatus(String sellerUid, bool value) async {
     try {
       await _authService.updateUserStatus(sellerUid, value);
-      _appstate.refreshUser();
+      // _appstate.refreshUser();
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  void updateSellerMode(String sellerUid, bool value) async {
+    try {
+      await _authService.updateSellerMode(sellerUid, value);
     } catch (err) {
       rethrow;
     }
@@ -222,9 +230,10 @@ class _RequestsState extends State<Requests> {
                     //   _switchValues[sellerUid] = value;
                     // });
                     // updateSwitchState(value, sellerUid);
-                    _appstate.toggleRequestSwitch(value);
+                    // _appstate.toggleRequestSwitch(value);
                     updateSellerStatus(sellerUid, value);
                     updateRequestStatus(companyName, value);
+                    updateSellerMode(sellerUid, value);
                     print(switchValue.toString());
                   },
                 ),

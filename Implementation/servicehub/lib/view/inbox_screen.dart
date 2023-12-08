@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:servicehub/controller/messages_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});
@@ -12,6 +14,17 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   bool noMessage = false;
+
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +105,7 @@ class _InboxScreenState extends State<InboxScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 1, isSeller: false)),
+                  child: BottomBar(initialIndex: 1)),
             ),
           )
         ],

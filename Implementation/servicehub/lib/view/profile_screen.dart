@@ -650,7 +650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 4, isSeller: false)),
+                  child: BottomBar(initialIndex: 4)),
             ),
           )
         ],

@@ -3,6 +3,8 @@ import 'package:servicehub/controller/category_listview.dart';
 import 'package:servicehub/controller/interest_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/view/search_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -20,6 +22,7 @@ class _ExploreScreenState extends State<ExploreScreen>
   @override
   void initState() {
     super.initState();
+    updateData();
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 300),
@@ -28,6 +31,11 @@ class _ExploreScreenState extends State<ExploreScreen>
       begin: const Offset(0.0, 0.0),
       end: const Offset(0.0, 0.0),
     ).animate(_controller);
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
   }
 
   @override
@@ -195,7 +203,7 @@ class _ExploreScreenState extends State<ExploreScreen>
             ),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
-                child: BottomBar(initialIndex: 2, isSeller: false)),
+                child: BottomBar(initialIndex: 2)),
           ),
         )
       ],

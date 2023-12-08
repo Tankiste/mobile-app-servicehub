@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/controller/notifications_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -12,7 +14,19 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ApplicationState _appState = Provider.of(context, listen: true);
     return Scaffold(
       appBar: CustomAppbar(
           text: 'Account notifications',
@@ -71,7 +85,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 4, isSeller: false)),
+                  child:
+                      BottomBar(initialIndex: _appState.isSellerMode ? 3 : 4)),
             ),
           )
         ],

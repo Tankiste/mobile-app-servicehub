@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:servicehub/controller/orders_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
@@ -12,6 +14,17 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   bool noOrder = false;
+
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +107,7 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 3, isSeller: false)),
+                  child: BottomBar(initialIndex: 3)),
             ),
           )
         ],

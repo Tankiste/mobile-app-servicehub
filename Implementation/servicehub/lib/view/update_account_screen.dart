@@ -43,6 +43,7 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ApplicationState _appState = Provider.of(context, listen: true);
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     bool showUser = userData != null;
     String? logoUrl = userData?.logo;
@@ -269,7 +270,8 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 4, isSeller: false)),
+                  child:
+                      BottomBar(initialIndex: _appState.isSellerMode ? 3 : 4)),
             ),
           )
         ],

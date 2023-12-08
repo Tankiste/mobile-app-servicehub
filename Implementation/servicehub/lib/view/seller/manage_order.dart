@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class ManageOrderView extends StatefulWidget {
   const ManageOrderView({super.key});
@@ -10,6 +12,17 @@ class ManageOrderView extends StatefulWidget {
 }
 
 class _ManageOrderViewState extends State<ManageOrderView> {
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,7 +228,7 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                 ),
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: BottomBar(initialIndex: 2, isSeller: true)),
+                    child: BottomBar(initialIndex: 2)),
               ),
             )
           ],

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class SupplierDashboard extends StatefulWidget {
   const SupplierDashboard({super.key});
@@ -11,6 +13,17 @@ class SupplierDashboard extends StatefulWidget {
 }
 
 class _SupplierDashboardState extends State<SupplierDashboard> {
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -440,7 +453,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 0, isSeller: true)),
+                  child: BottomBar(initialIndex: 0)),
             ),
           )
         ],

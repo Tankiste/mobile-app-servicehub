@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:servicehub/firebase_services.dart';
+import 'package:servicehub/model/auth/auth_service.dart';
 import 'package:servicehub/view/favorite_screen.dart';
 import 'package:servicehub/view/language_screen.dart';
 import 'package:servicehub/view/notifications_screen.dart';
@@ -21,12 +23,40 @@ class SupplierProfileScreen extends StatefulWidget {
 
 class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
   bool _isAuth = true;
-  bool _isSellerMode = true;
+  AuthService _authService = AuthService();
+  FirebaseServices _services = FirebaseServices();
+  // bool _isSellerMode = true;
   // bool isSwitched = true;
 
   @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  // void toggleMode(bool value) {
+  //   final provider = Provider.of<ApplicationState>(context, listen: false);
+  //   int newIndex = value ? 3 : 4;
+  //   provider.updateIndex(value, newIndex);
+  // }
+
+  void updateSellerMode(String sellerUid, bool value) async {
+    try {
+      await _authService.updateSellerMode(sellerUid, value);
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<ApplicationState>(context);
+    final appState = Provider.of<ApplicationState>(context, listen: true);
+    final currentUser = _services.user!.uid.toString();
     return Scaffold(
       body: Stack(
         children: [
@@ -74,7 +104,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                     padding: EdgeInsets.fromLTRB(12, 12, 12, 12),
                     decoration: BoxDecoration(
                         color:
-                            appState.isSwitched ? Colors.black : Colors.white,
+                            appState.isSellerMode ? Colors.black : Colors.white,
                         boxShadow: [
                           BoxShadow(
                               color: Colors.grey.shade400,
@@ -113,7 +143,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                               ? Text(
                                   'Binho',
                                   style: TextStyle(
-                                      color: appState.isSwitched
+                                      color: appState.isSellerMode
                                           ? Colors.white
                                           : Colors.black,
                                       fontSize: 22,
@@ -150,7 +180,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: appState.isSwitched
+                                        color: appState.isSellerMode
                                             ? Colors.white
                                             : Colors.black,
                                       )),
@@ -159,13 +189,18 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                                     child: Switch(
                                         activeColor: Color(0xFFC84457),
                                         activeTrackColor: Color(0xFFFB8F9F),
-                                        value: appState.isSwitched,
+                                        value: appState.isSellerMode,
                                         onChanged: (value) {
                                           final provider =
                                               Provider.of<ApplicationState>(
                                                   context,
                                                   listen: false);
-                                          provider.toggleMode(value);
+                                          // provider.toggleMode(value);
+                                          provider.refreshUser();
+                                          // toggleMode(value);
+                                          updateSellerMode(currentUser, value);
+                                          appState.refreshUser();
+
                                           // setState(() {
                                           //   isSwitched = value;
                                           // });
@@ -190,7 +225,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                           borderRadius: BorderRadius.circular(12),
                           color: Colors.white,
                           border: Border.all(color: Colors.grey.shade300)),
-                      child: appState.isSwitched
+                      child: appState.isSellerMode
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -654,7 +689,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                   ),
                   if (_isAuth)
                     Padding(
-                      padding: appState.isSwitched
+                      padding: appState.isSellerMode
                           ? const EdgeInsets.only(top: 4, left: 150)
                           : const EdgeInsets.only(top: 60, left: 150),
                       child: Text(
@@ -689,7 +724,9 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 3, isSeller: true)),
+                  child: appState.isSellerMode
+                      ? BottomBar(initialIndex: 3)
+                      : BottomBar(initialIndex: 4)),
             ),
           )
         ],

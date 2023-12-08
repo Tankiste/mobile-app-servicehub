@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -10,6 +12,17 @@ class LanguageScreen extends StatefulWidget {
 
 class _LanguageScreenState extends State<LanguageScreen> {
   String selectedOption = '';
+
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
 
   void setSelectedOption(String option) {
     setState(() {
@@ -88,6 +101,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ApplicationState _appState = Provider.of(context, listen: true);
     final appBar = CustomAppbar(
         text: 'Language',
         showFilter: false,
@@ -132,7 +146,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 4, isSeller: false)),
+                  child:
+                      BottomBar(initialIndex: _appState.isSellerMode ? 3 : 4)),
             ),
           )
         ],

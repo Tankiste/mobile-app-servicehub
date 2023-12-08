@@ -3,6 +3,8 @@ import 'package:servicehub/controller/advanced_search_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/view/explore_screen.dart';
 import 'package:servicehub/view/search_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class AdvancedSearchView extends StatefulWidget {
   const AdvancedSearchView({super.key});
@@ -12,6 +14,17 @@ class AdvancedSearchView extends StatefulWidget {
 }
 
 class _AdvancedSearchViewState extends State<AdvancedSearchView> {
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +92,7 @@ class _AdvancedSearchViewState extends State<AdvancedSearchView> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 2, isSeller: false)),
+                  child: BottomBar(initialIndex: 2)),
             ),
           )
         ],

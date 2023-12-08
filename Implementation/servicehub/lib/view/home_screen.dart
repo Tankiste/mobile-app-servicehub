@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 0, isSeller: false)),
+                  child: BottomBar(initialIndex: 0)),
             ),
           )
         ],

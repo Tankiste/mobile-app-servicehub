@@ -262,6 +262,27 @@ class AuthService {
     }
   }
 
+  Future<void> updateSellerMode(String sellerUid, bool value) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('users')
+          .where('uid', isEqualTo: sellerUid)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        String documentId = userDoc.id;
+        print('User id is : $documentId');
+        await _firestore
+            .collection('users')
+            .doc(documentId)
+            .update({'sellerMode': value});
+      }
+    } catch (err) {
+      print('Error updating user: $err');
+    }
+  }
+
   Future<bool> getCurrentUserStatus() async {
     try {
       if (_services.user != null) {
@@ -275,6 +296,28 @@ class AuthService {
           bool isSeller = userDoc['isSeller'];
           print('The seller status is : ${isSeller.toString()}');
           return isSeller;
+        }
+      }
+      return false;
+    } catch (err) {
+      print('Erreor getting current user status: $err');
+      return false;
+    }
+  }
+
+  Future<bool> getCurrentSellerMode() async {
+    try {
+      if (_services.user != null) {
+        QuerySnapshot query = await _firestore
+            .collection('users')
+            .where('uid', isEqualTo: _services.user!.uid.toString())
+            .get();
+
+        if (query.docs.isNotEmpty) {
+          var userDoc = query.docs.first;
+          bool sellerMode = userDoc['sellerMode'];
+          // print('The seller status is : ${sellerMode.toString()}');
+          return sellerMode;
         }
       }
       return false;

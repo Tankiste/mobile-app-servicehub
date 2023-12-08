@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 
 class EarningsScreen extends StatefulWidget {
   const EarningsScreen({super.key});
@@ -9,6 +11,17 @@ class EarningsScreen extends StatefulWidget {
 }
 
 class _EarningsScreenState extends State<EarningsScreen> {
+  @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,7 +209,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
               ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 3, isSeller: true)),
+                  child: BottomBar(initialIndex: 3)),
             ),
           )
         ],
