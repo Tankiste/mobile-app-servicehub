@@ -130,26 +130,33 @@ class _LanguageScreenState extends State<LanguageScreen> {
             bottom: 10,
             left: 15,
             right: 15,
-            child: Container(
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero,
-              height: 70,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 5,
-                      offset: Offset(0, 4))
-                ],
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child:
-                      BottomBar(initialIndex: _appState.isSellerMode ? 3 : 4)),
-            ),
+            child: FloatingBar(),
           )
+
+          // Positioned(
+          //   bottom: 10,
+          //   left: 15,
+          //   right: 15,
+          //   child: Container(
+          //     padding: EdgeInsets.zero,
+          //     margin: EdgeInsets.zero,
+          //     height: 70,
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(15),
+          //       boxShadow: [
+          //         BoxShadow(
+          //             color: Colors.grey.shade400,
+          //             blurRadius: 5,
+          //             offset: Offset(0, 4))
+          //       ],
+          //     ),
+          //     child: ClipRRect(
+          //         borderRadius: BorderRadius.circular(15),
+          //         child:
+          //             BottomBar(initialIndex: _appState.isSellerMode ? 3 : 4)),
+          //   ),
+          // )
         ],
       ),
     );

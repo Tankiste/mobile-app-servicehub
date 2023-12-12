@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:servicehub/model/services/services.dart';
 
 import 'package:servicehub/view/request_send.dart';
 import 'package:file_picker/file_picker.dart';
@@ -492,11 +493,13 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                           padding: const EdgeInsets.only(left: 5),
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) =>
-                                            CreatedServiceScreen())));
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: ((context) =>
+                                //             CreatedServiceScreen())));
+                                Services _services = Services();
+                                _services.addCategory();
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFC84457),

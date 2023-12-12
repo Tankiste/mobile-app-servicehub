@@ -25,6 +25,16 @@ class ApplicationState extends ChangeNotifier {
     }
   }
 
+  void switchMode() {
+    isSellerMode = !isSellerMode;
+    if (isSellerMode) {
+      currentIndex = 3;
+    } else {
+      currentIndex = 4;
+    }
+    notifyListeners();
+  }
+
   // void updateIndex(bool isSeller, int newIndex) {
   //   isSellerMode = isSeller;
   //   currentIndex = newIndex;

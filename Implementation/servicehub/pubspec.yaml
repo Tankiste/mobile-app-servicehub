@@ -112,6 +112,37 @@ flutter:
     - assets/undraw_done.svg
     - assets/alert.png
     - assets/avatar.png
+    - assets/undraw_nakamoto.svg
+    - assets/network-security.png
+    - assets/network-config.png
+    - assets/wireless-network.png
+    - assets/undraw_programming.svg
+    - assets/web-dev.png
+    - assets/game-dev.png
+    - assets/undraw_security_on.svg
+    - assets/ethical-hacking.png
+    - assets/cryptography.png
+    - assets/rdbms.png
+    - assets/nosql.png
+    - assets/data-warehousing.png
+    - assets/undraw_weather_notification.svg
+    - assets/platform-as-a-service.png
+    - assets/software-as-a-service.png
+    - assets/undraw_firmware.svg
+    - assets/deep-learning.png
+    - assets/computer-vision.png
+    - assets/undraw_smart_home.svg
+    - assets/smart-home-tech.png
+    - assets/industrial-iot.png
+    - assets/undraw_data.svg
+    - assets/predictive-analysis.png
+    - assets/big-data.png
+    - assets/business-intelligence.png
+    - assets/user-experience.png
+    - assets/undraw_add_to_cart.svg
+    - assets/search-engine-opt.png
+    - assets/social-media.png
+    - assets/e-commerce-management.png
     
 
 

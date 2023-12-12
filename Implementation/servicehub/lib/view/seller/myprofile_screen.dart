@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:servicehub/controller/about_view.dart';
 import 'package:servicehub/controller/supplier_reviews.dart';
 import 'package:servicehub/controller/supplier_service.dart';
+import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/view/seller/supplier_profile.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -91,6 +94,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    String? logoUrl = userData?.logo;
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -118,10 +123,33 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                             shape: BoxShape.circle,
                           ),
                           child: ClipOval(
-                              child: Image.asset(
-                            'assets/supplier.png',
-                            fit: BoxFit.cover,
-                          )),
+                            child: logoUrl != null
+                                ? Image.network(logoUrl, fit: BoxFit.cover,
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                        child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ));
+                                  }, errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                    return Icon(Icons.error);
+                                  })
+                                : Image.asset(
+                                    "assets/avatar.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Text('Binho Ltd',

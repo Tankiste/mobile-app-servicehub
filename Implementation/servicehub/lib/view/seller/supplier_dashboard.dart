@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/user_data.dart';
 
 class SupplierDashboard extends StatefulWidget {
   const SupplierDashboard({super.key});
@@ -26,6 +27,8 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    String? logoUrl = userData?.logo;
     return Scaffold(
       body: Stack(
         children: [
@@ -34,7 +37,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
             width: double.infinity,
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 70, 20, 25),
+                padding: const EdgeInsets.fromLTRB(20, 70, 20, 90),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -43,7 +46,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Binho',
+                          userData!.username,
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.w800,
@@ -70,10 +73,33 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                               ],
                             ),
                             child: ClipOval(
-                                child: Image.asset(
-                              'assets/supplier.png',
-                              fit: BoxFit.cover,
-                            )),
+                              child: logoUrl != null
+                                  ? Image.network(logoUrl, fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                          child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                      ));
+                                    }, errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                      return Icon(Icons.error);
+                                    })
+                                  : Image.asset(
+                                      "assets/avatar.png",
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
                           ),
                         ),
                       ],
@@ -433,29 +459,29 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 10,
-            left: 15,
-            right: 15,
-            child: Container(
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero,
-              height: 70,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 5,
-                      offset: Offset(0, 4))
-                ],
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 0)),
-            ),
-          )
+          // Positioned(
+          //   bottom: 10,
+          //   left: 15,
+          //   right: 15,
+          //   child: Container(
+          //     padding: EdgeInsets.zero,
+          //     margin: EdgeInsets.zero,
+          //     height: 70,
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(15),
+          //       boxShadow: [
+          //         BoxShadow(
+          //             color: Colors.grey.shade400,
+          //             blurRadius: 5,
+          //             offset: Offset(0, 4))
+          //       ],
+          //     ),
+          //     child: ClipRRect(
+          //         borderRadius: BorderRadius.circular(15),
+          //         child: BottomBar(initialIndex: 0)),
+          //   ),
+          // )
         ],
       ),
     );

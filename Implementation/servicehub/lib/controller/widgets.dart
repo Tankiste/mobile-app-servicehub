@@ -4,7 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/view/explore_screen.dart';
+import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/home_screen.dart';
+import 'package:servicehub/view/home_supplier.dart';
 import 'package:servicehub/view/inbox_screen.dart';
 import 'package:servicehub/view/order_screen.dart';
 import 'package:servicehub/view/profile_screen.dart';
@@ -310,5 +312,411 @@ class _BottomBarState extends State<BottomBar> {
               ),
             ],
           );
+  }
+}
+
+// Widget floatingBar() {
+//   // final appState = ApplicationState();
+//   Consumer<ApplicationState>(builder: (context, appState, _) {
+//     if (appState.isSeller) {
+//       return Container(
+//         height: 70,
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(15),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.grey.shade400,
+//               blurRadius: 5,
+//               offset: Offset(0, 4),
+//             ),
+//           ],
+//         ),
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.circular(15),
+//           child: appState.isSellerMode
+//               ? BottomNavigationBar(
+//                   backgroundColor: Colors.transparent,
+//                   selectedItemColor: Color(0xFF289BED),
+//                   unselectedItemColor: Colors.black,
+//                   currentIndex: appState.currentIndex,
+//                   type: BottomNavigationBarType.fixed,
+//                   elevation: 0,
+//                   onTap: (int index) {
+//                     appState.currentIndex = index;
+//                   },
+//                   items: <BottomNavigationBarItem>[
+//                     BottomNavigationBarItem(
+//                       label: 'Home',
+//                       icon: Icon(Icons.home_rounded),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Inbox',
+//                       icon: Icon(FontAwesomeIcons.envelope),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Orders',
+//                       icon: Icon(Icons.cases_rounded),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Account',
+//                       icon: Icon(Icons.person_rounded),
+//                     ),
+//                   ],
+//                 )
+//               : BottomNavigationBar(
+//                   backgroundColor: Colors.white,
+//                   selectedItemColor: Color(0xFFC84457),
+//                   unselectedItemColor: Colors.black,
+//                   currentIndex: appState.currentIndex,
+//                   type: BottomNavigationBarType.fixed,
+//                   elevation: 0,
+//                   onTap: (int index) {
+//                     appState.currentIndex = index;
+//                   },
+//                   items: <BottomNavigationBarItem>[
+//                     BottomNavigationBarItem(
+//                       label: 'Home',
+//                       icon: Icon(Icons.home_rounded),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Inbox',
+//                       icon: Icon(FontAwesomeIcons.envelope),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Explore',
+//                       icon: Icon(Icons.manage_search),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Orders',
+//                       icon: Icon(Icons.cases_rounded),
+//                     ),
+//                     BottomNavigationBarItem(
+//                       label: 'Account',
+//                       icon: Icon(Icons.person_rounded),
+//                     ),
+//                   ],
+//                 ),
+//         ),
+//       );
+//     } else {
+//       return Container(
+//         // margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+//         height: 70,
+//         decoration: BoxDecoration(
+//           color: Colors.transparent,
+//           borderRadius: BorderRadius.circular(15),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.grey.shade400,
+//               blurRadius: 5,
+//               offset: Offset(0, 4),
+//             ),
+//           ],
+//         ),
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.circular(15),
+//           child: BottomNavigationBar(
+//             backgroundColor: Colors.white,
+//             selectedItemColor: Color(0xFFC84457),
+//             unselectedItemColor: Colors.black,
+//             currentIndex: appState.currentIndex,
+//             type: BottomNavigationBarType.fixed,
+//             elevation: 0,
+//             onTap: (int index) {
+//               appState.currentIndex = index;
+//             },
+//             items: <BottomNavigationBarItem>[
+//               BottomNavigationBarItem(
+//                 label: 'Home',
+//                 icon: Icon(Icons.home_rounded),
+//               ),
+//               BottomNavigationBarItem(
+//                 label: 'Inbox',
+//                 icon: Icon(FontAwesomeIcons.envelope),
+//               ),
+//               BottomNavigationBarItem(
+//                 label: 'Explore',
+//                 icon: Icon(Icons.manage_search),
+//               ),
+//               BottomNavigationBarItem(
+//                 label: 'Orders',
+//                 icon: Icon(Icons.cases_rounded),
+//               ),
+//               BottomNavigationBarItem(
+//                 label: 'Account',
+//                 icon: Icon(Icons.person_rounded),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     }
+//   });
+//   return Container(height: 50, width: 300, color: Colors.white);
+// }
+
+class FloatingBar extends StatefulWidget {
+  const FloatingBar({super.key});
+
+  @override
+  State<FloatingBar> createState() => _FloatingBarState();
+}
+
+class _FloatingBarState extends State<FloatingBar> {
+  // late int currentPageIndex;
+
+  // @override
+  // void initState(){
+  //   currentPageIndex =
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ApplicationState>(builder: (context, appState, _) {
+      if (appState.isSeller) {
+        return Container(
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade400,
+                blurRadius: 5,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: appState.isSellerMode
+                ? BottomNavigationBar(
+                    backgroundColor: Colors.transparent,
+                    selectedItemColor: Color(0xFF289BED),
+                    unselectedItemColor: Colors.black,
+                    currentIndex: appState.currentIndex,
+                    type: BottomNavigationBarType.fixed,
+                    elevation: 0,
+                    onTap: (int index) {
+                      appState.currentIndex = index;
+                      // print(appState.currentIndex);
+                      switch (appState.currentIndex) {
+                        case 0:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 1:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 2:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 3:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        default:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                      }
+                    },
+                    items: <BottomNavigationBarItem>[
+                      BottomNavigationBarItem(
+                        label: 'Home',
+                        icon: Icon(Icons.home_rounded),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Inbox',
+                        icon: Icon(FontAwesomeIcons.envelope),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Orders',
+                        icon: Icon(Icons.cases_rounded),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Account',
+                        icon: Icon(Icons.person_rounded),
+                      ),
+                    ],
+                  )
+                : BottomNavigationBar(
+                    backgroundColor: Colors.white,
+                    selectedItemColor: Color(0xFFC84457),
+                    unselectedItemColor: Colors.black,
+                    currentIndex: appState.currentIndex,
+                    type: BottomNavigationBarType.fixed,
+                    elevation: 0,
+                    onTap: (int index) {
+                      appState.currentIndex = index;
+                      switch (appState.currentIndex) {
+                        case 0:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 1:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 2:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 3:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        case 4:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                        default:
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeSupplier()));
+                          break;
+                      }
+                    },
+                    items: <BottomNavigationBarItem>[
+                      BottomNavigationBarItem(
+                        label: 'Home',
+                        icon: Icon(Icons.home_rounded),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Inbox',
+                        icon: Icon(FontAwesomeIcons.envelope),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Explore',
+                        icon: Icon(Icons.manage_search),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Orders',
+                        icon: Icon(Icons.cases_rounded),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Account',
+                        icon: Icon(Icons.person_rounded),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      } else {
+        return Container(
+          // margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade400,
+                blurRadius: 5,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              selectedItemColor: Color(0xFFC84457),
+              unselectedItemColor: Colors.black,
+              currentIndex: appState.currentIndex,
+              type: BottomNavigationBarType.fixed,
+              elevation: 0,
+              onTap: (int index) {
+                appState.currentIndex = index;
+                switch (appState.currentIndex) {
+                  case 0:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeClient()));
+                    break;
+                  case 1:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeClient()));
+                    break;
+                  case 2:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeClient()));
+                    break;
+                  case 3:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeClient()));
+                    break;
+                  case 4:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeClient()));
+                    break;
+                  default:
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeClient()));
+                    break;
+                }
+              },
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  label: 'Home',
+                  icon: Icon(Icons.home_rounded),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Inbox',
+                  icon: Icon(FontAwesomeIcons.envelope),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Explore',
+                  icon: Icon(Icons.manage_search),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Orders',
+                  icon: Icon(Icons.cases_rounded),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Account',
+                  icon: Icon(Icons.person_rounded),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    });
   }
 }

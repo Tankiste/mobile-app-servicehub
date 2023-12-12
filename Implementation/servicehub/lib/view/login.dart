@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/user_interface.dart';
 import 'package:servicehub/view/client_signup.dart';
 import 'package:servicehub/view/forgot_password.dart';
+import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/home_screen.dart';
+import 'package:servicehub/view/home_supplier.dart';
 import 'package:servicehub/view/select_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
@@ -19,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  final appState = ApplicationState();
 
   bool _obscurePassword = true;
   String errorMessage = '';
@@ -70,13 +75,14 @@ class _LoginPageState extends State<LoginPage> {
       if (res == 'success') {
         bool isSeller = await AuthService().getCurrentUserStatus();
         if (isSeller) {
+          // appState.currentIndex = 0;
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: (context) => const SupplierDashboard()),
+              MaterialPageRoute(builder: (context) => const HomeSupplier()),
               (Route<dynamic> route) => false);
         } else {
+          // appState.currentIndex = 0;
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              MaterialPageRoute(builder: (context) => const HomeClient()),
               (Route<dynamic> route) => false);
         }
       } else if (res != 'Please Enter All The Fields!') {
@@ -408,7 +414,7 @@ class _LoginPageState extends State<LoginPage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: ((context) =>
-                                                      HomeScreen())));
+                                                      HomeClient())));
                                         },
                                         child: const Text(
                                           'Skip',

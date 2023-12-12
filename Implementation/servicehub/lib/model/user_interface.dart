@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:servicehub/firebase_services.dart';
+import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
+import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/home_screen.dart';
+import 'package:servicehub/view/home_supplier.dart';
 import 'package:servicehub/view/seller/supplier_dashboard.dart';
 
 Widget buildUserInterfaces() {
@@ -30,9 +34,9 @@ Widget buildUserInterfaces() {
         return Text('Error: ${snapshot.error}');
       } else {
         if (snapshot.data == true) {
-          return SupplierDashboard();
+          return HomeSupplier();
         } else {
-          return HomeScreen();
+          return HomeClient();
         }
       }
     },

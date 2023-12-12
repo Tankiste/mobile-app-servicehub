@@ -13,6 +13,7 @@ import 'package:servicehub/view/seller/myservices_screen.dart';
 import 'package:servicehub/view/update_account_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/user_data.dart';
 
 class SupplierProfileScreen extends StatefulWidget {
   const SupplierProfileScreen({super.key});
@@ -57,6 +58,8 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context, listen: true);
     final currentUser = _services.user!.uid.toString();
+    UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    String? logoUrl = userData?.logo;
     return Scaffold(
       body: Stack(
         children: [
@@ -125,10 +128,37 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                             child: _isAuth
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      'assets/supplier.png',
-                                      fit: BoxFit.cover,
-                                    ),
+                                    child: logoUrl != null
+                                        ? Image.network(logoUrl,
+                                            fit: BoxFit.cover, loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ));
+                                          }, errorBuilder:
+                                                (BuildContext context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                            return Icon(Icons.error);
+                                          })
+                                        : Image.asset(
+                                            "assets/avatar.png",
+                                            fit: BoxFit.cover,
+                                          ),
                                   )
                                 : Icon(
                                     Icons.person,
@@ -141,7 +171,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                           ),
                           _isAuth
                               ? Text(
-                                  'Binho',
+                                  userData!.username,
                                   style: TextStyle(
                                       color: appState.isSellerMode
                                           ? Colors.white
@@ -196,10 +226,11 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                                                   context,
                                                   listen: false);
                                           // provider.toggleMode(value);
-                                          provider.refreshUser();
+                                          // provider.refreshUser();
+                                          provider.switchMode();
                                           // toggleMode(value);
                                           updateSellerMode(currentUser, value);
-                                          appState.refreshUser();
+                                          // appState.refreshUser();
 
                                           // setState(() {
                                           //   isSwitched = value;
@@ -704,33 +735,34 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 10,
-            left: 15,
-            right: 15,
-            child: Container(
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero,
-              height: 70,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 5,
-                      offset: Offset(0, 4))
-                ],
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: appState.isSellerMode
-                      ? BottomBar(initialIndex: 3)
-                      : BottomBar(initialIndex: 4)),
-            ),
-          )
+          // Positioned(
+          //   bottom: 10,
+          //   left: 15,
+          //   right: 15,
+          //   child: Container(
+          //     padding: EdgeInsets.zero,
+          //     margin: EdgeInsets.zero,
+          //     height: 70,
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(15),
+          //       boxShadow: [
+          //         BoxShadow(
+          //             color: Colors.grey.shade400,
+          //             blurRadius: 5,
+          //             offset: Offset(0, 4))
+          //       ],
+          //     ),
+          //     child: ClipRRect(
+          //         borderRadius: BorderRadius.circular(15),
+          //         child: appState.isSellerMode
+          //             ? BottomBar(initialIndex: 3)
+          //             : BottomBar(initialIndex: 4)),
+          //   ),
+          // )
         ],
       ),
+
       // bottomNavigationBar: appState.isSwitched
       //     ? BottomBar(
       //         initialIndex: 3,
