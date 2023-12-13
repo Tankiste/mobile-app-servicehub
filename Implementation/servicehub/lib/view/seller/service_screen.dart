@@ -18,20 +18,23 @@ class AddServiceScreen extends StatefulWidget {
 }
 
 class _AddServiceScreenState extends State<AddServiceScreen> {
+  Services _services = Services();
   bool _isChecked = false;
   File? image;
   final _formkey = GlobalKey<FormState>();
 
+  List<String> categories = [];
+  List<String> serviceTypes = [];
   String? categoryDropdown;
   String? typeDropdown;
   String? dateDropdown;
-  List<String> fields = [
-    'Network Administration',
-    'Software Development',
-    'Cybersecurity',
-    'Database Management',
-    'Cloud Computing',
-  ];
+  // List<String> fields = [
+  //   'Network Administration',
+  //   'Software Development',
+  //   'Cybersecurity',
+  //   'Database Management',
+  //   'Cloud Computing',
+  // ];
 
   List<String> dates = [
     '1 day',
@@ -45,82 +48,143 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
   String? fileName;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  void fetchCategories() async {
+    List<String> fetchedCategories = await _services.getCategories();
+    setState(() {
+      categories = fetchedCategories;
+    });
+  }
+
+  void fetchServiceTypes(String selectedCategory) async {
+    List<String> fetchedServiceTypes =
+        await _services.getServiceTypes(selectedCategory);
+    setState(() {
+      serviceTypes = fetchedServiceTypes;
+    });
+  }
+
   Widget _catdropDownButton() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 80),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: DropdownButtonFormField(
-          value: categoryDropdown,
-          iconEnabledColor: Colors.grey.shade400,
-          hint: Text(
-            'Select a Category ',
-            style: TextStyle(
-                color: Colors.grey.shade400, fontWeight: FontWeight.w300),
-          ),
-          style: TextStyle(color: Colors.grey.shade300, fontSize: 15),
-          items: fields.map((field) {
-            return DropdownMenuItem<String>(
-              value: field,
-              child: Text(
-                field,
-                style: TextStyle(color: Colors.black),
+    return FutureBuilder<List<String>>(
+        future: _services.getCategories(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 80),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: DropdownButtonFormField(
+                  value: categoryDropdown,
+                  iconEnabledColor: Colors.grey.shade400,
+                  hint: Text(
+                    'Select a Category ',
+                    style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.w300),
+                  ),
+                  style: TextStyle(color: Colors.grey.shade300, fontSize: 15),
+                  items: categories.map((category) {
+                    return DropdownMenuItem<String>(
+                      value: category,
+                      child: Text(
+                        category,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      categoryDropdown = value!;
+                      typeDropdown = null;
+                      categoryDropdown != null
+                          ? fetchServiceTypes(value)
+                          : setState(() {
+                              serviceTypes = [];
+                              typeDropdown = null;
+                            });
+                    });
+                  },
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(10, 3, 5, 3)),
+                ),
               ),
             );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              categoryDropdown = value!;
-            });
-          },
-          decoration: InputDecoration(
-              border: UnderlineInputBorder(
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: EdgeInsets.fromLTRB(10, 3, 5, 3)),
-        ),
-      ),
-    );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
   }
 
   Widget _typedropDownButton() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 80),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: DropdownButtonFormField(
-          value: typeDropdown,
-          iconEnabledColor: Colors.grey.shade400,
-          hint: Text('Select A Type ',
-              style: TextStyle(
-                  color: Colors.grey.shade400, fontWeight: FontWeight.w300)),
-          style: TextStyle(color: Colors.grey.shade300, fontSize: 15),
-          items: fields.map((field) {
-            return DropdownMenuItem<String>(
-              value: field,
-              child: Text(
-                field,
-                style: TextStyle(color: Colors.black),
-              ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              typeDropdown = value!;
-            });
-          },
-          decoration: InputDecoration(
-              border: UnderlineInputBorder(borderSide: BorderSide.none),
-              contentPadding: EdgeInsets.fromLTRB(10, 3, 5, 3)),
-        ),
-      ),
-    );
+    return categoryDropdown != null
+        ? FutureBuilder<List<String>>(
+            future: _services.getServiceTypes(categoryDropdown!),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 80),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: DropdownButtonFormField(
+                      value: typeDropdown,
+                      iconEnabledColor: Colors.grey.shade400,
+                      hint: Text('Select A Type ',
+                          style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontWeight: FontWeight.w300)),
+                      style:
+                          TextStyle(color: Colors.grey.shade300, fontSize: 15),
+                      items: categoryDropdown != null
+                          ? serviceTypes.map((type) {
+                              return DropdownMenuItem<String>(
+                                value: type,
+                                child: SizedBox(
+                                  height: 20,
+                                  width: 230,
+                                  child: Text(
+                                    type,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              );
+                            }).toList()
+                          : [],
+                      onChanged: (value) {
+                        setState(() {
+                          typeDropdown = value as String?;
+                        });
+                      },
+                      decoration: InputDecoration(
+                          border:
+                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          contentPadding: EdgeInsets.fromLTRB(10, 3, 5, 3)),
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return CircularProgressIndicator();
+              }
+            })
+        : SizedBox();
   }
 
   Widget _datedropDownButton() {
@@ -405,7 +469,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         ),
                         Row(
                           children: [
-                            const Text("Delivery Time",
+                            const Text("Delivary Time",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 20,
@@ -498,8 +562,6 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                 //     MaterialPageRoute(
                                 //         builder: ((context) =>
                                 //             CreatedServiceScreen())));
-                                Services _services = Services();
-                                _services.addCategory();
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFC84457),
