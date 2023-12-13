@@ -104,6 +104,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     setState(() {
                       categoryDropdown = value!;
                       typeDropdown = null;
+                      serviceTypes = [];
                       categoryDropdown != null
                           ? fetchServiceTypes(value)
                           : setState(() {
@@ -129,62 +130,54 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   }
 
   Widget _typedropDownButton() {
-    return categoryDropdown != null
-        ? FutureBuilder<List<String>>(
-            future: _services.getServiceTypes(categoryDropdown!),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 80),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8.0),
+    return Padding(
+      padding: const EdgeInsets.only(right: 80),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: DropdownButtonFormField<String>(
+          value: typeDropdown,
+          iconEnabledColor: Colors.grey.shade400,
+          hint: Text(
+            'Select A Type',
+            style: TextStyle(
+              color: Colors.grey.shade400,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+          style: TextStyle(color: Colors.grey.shade300, fontSize: 15),
+          items: categoryDropdown != null
+              ? serviceTypes.map((type) {
+                  return DropdownMenuItem<String>(
+                    value: type,
+                    child: SizedBox(
+                      height: 20,
+                      width: 230,
+                      child: Text(
+                        type,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
-                    child: DropdownButtonFormField(
-                      value: typeDropdown,
-                      iconEnabledColor: Colors.grey.shade400,
-                      hint: Text('Select A Type ',
-                          style: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontWeight: FontWeight.w300)),
-                      style:
-                          TextStyle(color: Colors.grey.shade300, fontSize: 15),
-                      items: categoryDropdown != null
-                          ? serviceTypes.map((type) {
-                              return DropdownMenuItem<String>(
-                                value: type,
-                                child: SizedBox(
-                                  height: 20,
-                                  width: 230,
-                                  child: Text(
-                                    type,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                              );
-                            }).toList()
-                          : [],
-                      onChanged: (value) {
-                        setState(() {
-                          typeDropdown = value as String?;
-                        });
-                      },
-                      decoration: InputDecoration(
-                          border:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
-                          contentPadding: EdgeInsets.fromLTRB(10, 3, 5, 3)),
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return CircularProgressIndicator();
-              }
-            })
-        : SizedBox();
+                  );
+                }).toList()
+              : [],
+          onChanged: (value) {
+            setState(() {
+              typeDropdown = value as String?;
+            });
+          },
+
+          // categoryDropdown != null ? (value) => typeDropdown = value : null,
+          decoration: InputDecoration(
+            border: UnderlineInputBorder(borderSide: BorderSide.none),
+            contentPadding: EdgeInsets.fromLTRB(10, 3, 5, 3),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _datedropDownButton() {
