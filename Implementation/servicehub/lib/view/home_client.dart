@@ -32,7 +32,7 @@ class _HomeClientState extends State<HomeClient> {
     // final isSeller = appState.isSeller;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white.withOpacity(0.5),
       body: Stack(
         children: [
           IndexedStack(index: appState.currentIndex, children: [

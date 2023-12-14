@@ -12,16 +12,18 @@ class _ServiceListViewState extends State<ServiceListView> {
 
   Widget serviceWidget(int index) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
       child: Container(
         height: 145,
         width: 135,
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                  color: Colors.grey, blurRadius: 10, offset: Offset(0, 5))
+                  color: Colors.grey.withOpacity(0.5),
+                  blurRadius: 5,
+                  offset: Offset(0, 5))
             ]),
         child: InkWell(
           onTap: () {

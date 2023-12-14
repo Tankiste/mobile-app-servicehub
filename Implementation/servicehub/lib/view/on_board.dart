@@ -4,6 +4,7 @@ import 'package:servicehub/view/home_screen.dart';
 import 'package:servicehub/view/seller/become_seller.dart';
 import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/select_service.dart';
+import 'package:servicehub/view/home_client.dart';
 
 class OnBoard extends StatelessWidget {
   const OnBoard({super.key});
@@ -71,7 +72,7 @@ class OnBoard extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: ((context) =>
-                                                  HomeScreen())));
+                                                  HomeClient())));
                                     },
                                     child: const Text(
                                       'Skip',

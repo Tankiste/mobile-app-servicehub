@@ -13,7 +13,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
 
   Widget serviceWidget(int index) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
       child: InkWell(
         onTap: () {
           setState(() {
@@ -26,9 +26,11 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                    color: Colors.grey, blurRadius: 10, offset: Offset(0, 5))
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 5,
+                    offset: Offset(0, 5))
               ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -170,7 +172,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
   Widget build(BuildContext context) {
     return Container(
       height: 200,
-      color: Colors.white,
+      color: Colors.transparent,
       child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,

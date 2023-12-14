@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Stack(
           children: [
             Container(
@@ -41,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 15, top: 70, bottom: 10),
+                  padding:
+                      const EdgeInsets.only(left: 15, top: 70, bottom: 100),
                   child: Expanded(
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
