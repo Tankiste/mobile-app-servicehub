@@ -10,7 +10,10 @@ class FirebaseServices {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference requests =
       FirebaseFirestore.instance.collection('Requests');
-  CollectionReference categories = FirebaseFirestore.instance.collection('categories');
+  CollectionReference categories =
+      FirebaseFirestore.instance.collection('categories');
+  CollectionReference services =
+      FirebaseFirestore.instance.collection('services');
 }
 
 

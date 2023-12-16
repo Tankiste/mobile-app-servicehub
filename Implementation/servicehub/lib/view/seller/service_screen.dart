@@ -19,6 +19,10 @@ class AddServiceScreen extends StatefulWidget {
 
 class _AddServiceScreenState extends State<AddServiceScreen> {
   Services _services = Services();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+
   bool _isChecked = false;
   File? image;
   final _formkey = GlobalKey<FormState>();
@@ -113,6 +117,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                             });
                     });
                   },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a category';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                       border: UnderlineInputBorder(
                         borderSide: BorderSide.none,
@@ -164,6 +174,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                   );
                 }).toList()
               : [],
+          validator: (value) {
+            if (value == null) {
+              return 'Please select a type';
+            }
+            return null; // Retourner null si la validation réussit
+          },
           onChanged: (value) {
             setState(() {
               typeDropdown = value as String?;
@@ -209,6 +225,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           setState(() {
             dateDropdown = value!;
           });
+        },
+        validator: (value) {
+          if (value == null) {
+            return 'Please select a delivary time';
+          }
+          return null; // Retourner null si la validation réussit
         },
         decoration: InputDecoration(
             border: UnderlineInputBorder(
@@ -256,6 +278,62 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void createService() async {
+      if (_formkey.currentState!.validate()) {
+        if (image != null) {
+          String resp = await Services().createService(
+              title: _titleController.text,
+              category: categoryDropdown!,
+              type: typeDropdown!,
+              price: int.parse(_priceController.text),
+              description: _descriptionController.text,
+              delivaryTime: dateDropdown!,
+              poster: image!);
+          bool successResp = resp.contains('success:');
+
+          if (successResp) {
+            String newServiceId = resp.replaceFirst('success:', '');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) =>
+                        CreatedServiceScreen(newServiceId: newServiceId))));
+          }
+          print(resp);
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                icon: Image.asset(
+                  'assets/alert.png',
+                  width: 30,
+                ),
+                title: Text('Image Required'),
+                content: Text('Please select an image!'),
+                actions: [
+                  TextButton(
+                    child: Text('OK',
+                        style: TextStyle(
+                            color: Color(0xFFC84457),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20)),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please fill all required fields.')));
+      }
+    }
+
     return Scaffold(
       appBar: CustomAppbar(
           text: 'New service',
@@ -296,6 +374,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                   color: Colors.grey.shade300,
                                 )),
                             child: TextFormField(
+                              controller: _titleController,
                               maxLines: null,
                               keyboardType: TextInputType.multiline,
                               decoration: InputDecoration(
@@ -307,6 +386,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                       fontWeight: FontWeight.w300,
                                       fontSize: 15),
                                   border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a title for your service';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                         ),
@@ -390,18 +475,19 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                       color: Colors.grey.shade300,
                                     )),
                                 child: TextFormField(
+                                  controller: _priceController,
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
-                                      suffixText: '€',
+                                      suffixText: 'XAF',
                                       suffixStyle: TextStyle(
                                           color: Colors.grey.shade400,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 17),
                                       hintText: "0.00",
                                       contentPadding: EdgeInsets.only(
-                                        left: 50,
+                                        left: 20,
                                         right: 20,
                                       ),
                                       hintStyle: TextStyle(
@@ -409,6 +495,12 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                           fontWeight: FontWeight.w300,
                                           fontSize: 17),
                                       border: InputBorder.none),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter the price of your service';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
                             ),
@@ -435,12 +527,22 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                   color: Colors.grey.shade300,
                                 )),
                             child: TextFormField(
+                              controller: _descriptionController,
                               maxLines: null,
                               keyboardType: TextInputType.multiline,
                               decoration: InputDecoration(
                                   contentPadding: EdgeInsets.only(
                                       left: 10, right: 5, bottom: 5),
                                   border: InputBorder.none),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter the description of your service';
+                                }
+                                if (value.length < 150) {
+                                  return 'Please enter atleast 150 words';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                         ),
@@ -535,11 +637,22 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                           ],
                                         ),
                                       )
-                                    : Image.file(
-                                        image!,
-                                        width: 210,
-                                        height: 160,
-                                        fit: BoxFit.cover,
+                                    : Stack(
+                                        children: [
+                                          Image.file(
+                                            image!,
+                                            width: 210,
+                                            height: 160,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Positioned(
+                                              bottom: 60,
+                                              right: 80,
+                                              child: Icon(
+                                                  Icons.camera_alt_rounded,
+                                                  color: Colors.grey.shade400,
+                                                  size: 40))
+                                        ],
                                       ),
                               ),
                             ),
@@ -549,13 +662,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 5),
                           child: ElevatedButton(
-                              onPressed: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: ((context) =>
-                                //             CreatedServiceScreen())));
-                              },
+                              onPressed: createService,
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFC84457),
                                   shape: RoundedRectangleBorder(

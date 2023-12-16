@@ -4,7 +4,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:servicehub/view/seller/new_service_view.dart';
 
 class CreatedServiceScreen extends StatefulWidget {
-  const CreatedServiceScreen({super.key});
+  final String newServiceId; // Ajoutez cette variable
+
+  const CreatedServiceScreen({Key? key, required this.newServiceId})
+      : super(key: key);
 
   @override
   State<CreatedServiceScreen> createState() => _CreatedServiceScreenState();
@@ -93,7 +96,9 @@ class _CreatedServiceScreenState extends State<CreatedServiceScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: ((context) => NewServiceView())));
+                                builder: ((context) => NewServiceView(
+                                      newServiceId: widget.newServiceId,
+                                    ))));
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFC84457),

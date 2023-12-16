@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
+import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/result_search_view.dart';
 import 'package:like_button/like_button.dart';
+import 'package:servicehub/view/seller/myservices_screen.dart';
 
 class NewServiceView extends StatefulWidget {
-  const NewServiceView({super.key});
+  final String newServiceId;
+  const NewServiceView({super.key, required this.newServiceId});
 
   @override
   State<NewServiceView> createState() => _NewServiceViewState();
@@ -13,214 +19,329 @@ class NewServiceView extends StatefulWidget {
 
 class _NewServiceViewState extends State<NewServiceView> {
   // bool _isFavorite = false;
+  ServiceData? serviceData;
+  Services _services = Services();
+
+  @override
+  void initState() {
+    fetchServiceDetails();
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
+  Future<void> fetchServiceDetails() async {
+    ServiceData? data = await _services.getServiceById(widget.newServiceId);
+    if (data != null) {
+      setState(() {
+        serviceData = data;
+        print(serviceData);
+      });
+    } else
+      return null;
+  }
 
   @override
   Widget build(BuildContext context) {
+    String? posterUrl = serviceData?.poster;
+    UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    String? logoUrl = userData?.logo;
+
     return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
+      body: serviceData == null
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               child: Column(children: [
-            Container(
-                height: 340,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('assets/video-production.png'),
-                        fit: BoxFit.cover),
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20))),
-                child: Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15, top: 60),
-                    child: Stack(
-                      children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white),
-                                child: IconButton(
-                                    padding: EdgeInsets.only(right: 5),
-                                    onPressed: () {
-                                      Navigator.maybePop(context);
-                                    },
-                                    icon:
-                                        Icon(Icons.arrow_back_ios_new_rounded)),
-                              ),
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white),
-                                child: IconButton(
-                                    padding:
-                                        EdgeInsets.only(right: 1, bottom: 3),
-                                    onPressed: () {},
-                                    icon: Icon(Icons.ios_share_rounded)),
-                              ),
-                            ])
-                      ],
-                    ))),
-            const SizedBox(
-              height: 15,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Stack(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 25),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Container(
+                      height: 340,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          // image: DecorationImage(
+                          //     image: AssetImage('assets/video-production.png'),
+                          //     fit: BoxFit.cover),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20))),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20)),
+                        child: posterUrl != null
+                            ? Image.network(posterUrl, fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                    child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ));
+                              }, errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                return Icon(Icons.error);
+                              })
+                            : Image.asset(
+                                'assets/video-production.png',
+                                fit: BoxFit.cover,
+                              ),
+                      )),
+                  Positioned(
+                      left: 20,
+                      top: 50,
+                      child: Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Lorem ipsum dolor',
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 32,
-                                      height: 32,
-                                      decoration:
-                                          BoxDecoration(shape: BoxShape.circle),
-                                      child: ClipOval(
-                                          child: Image.asset(
-                                        'assets/supplier.png',
-                                        fit: BoxFit.cover,
-                                      )),
-                                    ),
-                                    const SizedBox(width: 7),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Binho',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Level 2 Supplier',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey.shade400,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: IconButton(
+                                  padding: EdgeInsets.only(right: 5),
+                                  onPressed: () {
+                                    Navigator.maybePop(context);
+                                  },
+                                  icon: Icon(Icons.arrow_back_ios_new_rounded)),
                             ),
                             const SizedBox(
-                              width: 60,
+                              width: 280,
                             ),
-                            LikeButton(
-                              // onTap: (isLiked) {
-
-                              // },
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Text(
-                          'Description',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          height: 3,
-                        ),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed dolor non turpis euismod convallis. Pellentesque lacinia mattis aliquet. Phasellus vitae dolor in ipsumt. Aliquam et elit auctor, semper justo vel, sagittis massa.',
-                          maxLines: 7,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                              overflow: TextOverflow.clip,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey.shade500),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Price',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: IconButton(
+                                  padding: EdgeInsets.only(right: 1, bottom: 3),
+                                  onPressed: () {},
+                                  icon: Icon(Icons.ios_share_rounded)),
                             ),
-                            Text(
-                              '€57.63',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade400),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Column(
+                          ]))
+                ],
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 25),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    serviceData!.title,
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle),
+                                        child: ClipOval(
+                                          child: logoUrl != null
+                                              ? Image.network(logoUrl,
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder:
+                                                      (BuildContext context,
+                                                          Widget child,
+                                                          ImageChunkEvent?
+                                                              loadingProgress) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
+                                                  ));
+                                                }, errorBuilder: (BuildContext
+                                                          context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                                  return Icon(Icons.error);
+                                                })
+                                              : Image.asset(
+                                                  "assets/avatar.png",
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 7),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            userData!.username,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Level 2 Supplier',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade400,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 60,
+                              ),
+                              LikeButton(
+                                // onTap: (isLiked) {
+
+                                // },
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 40,
+                          ),
                           Text(
-                            'Related services',
+                            'Description',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 3,
                           ),
-                          RecentOrderSearchView(
-                            showText: false,
+                          Text(
+                            serviceData!.description,
+                            maxLines: 7,
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                                overflow: TextOverflow.clip,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade500),
                           ),
-                        ]),
-                  )
-                ],
-              ),
-            )
-          ])),
-        ],
-      ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Price',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                '${serviceData!.price.toString()} XAF',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey.shade400),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Divider(
+                      color: Colors.grey.shade300,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Related services',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            RecentOrderSearchView(
+                              showText: false,
+                            ),
+                          ]),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 15),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) =>
+                                        MyServicesScreen())));
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFC84457),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              )),
+                          child: const Padding(
+                            padding: EdgeInsets.only(
+                                left: 120, right: 120, top: 15, bottom: 15),
+                            child: Text(
+                              'Continue',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+              )
+            ])),
     );
   }
 }
