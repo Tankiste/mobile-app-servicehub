@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        // backgroundColor: Colors.transparent,
         body: Stack(
           children: [
             Container(
@@ -148,7 +148,30 @@ class _HomeScreenState extends State<HomeScreen> {
                               ))
                         ],
                       ),
-                      ServiceListView(),
+                      DevListView(),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Manage your Databases',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w700),
+                          ),
+                          TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'See All',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFFC84457),
+                                ),
+                              ))
+                        ],
+                      ),
+                      DatabaseListView(),
                       const SizedBox(
                         height: 40,
                       ),
@@ -171,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ))
                         ],
                       ),
-                      ServiceListView(),
+                      InfographyListView(),
                       const SizedBox(
                         height: 40,
                       ),

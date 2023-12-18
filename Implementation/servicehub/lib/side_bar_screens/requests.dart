@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:servicehub/firebase_services.dart';
+// import 'package:servicehub/firebase_services.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class Requests extends StatefulWidget {
   const Requests({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _RequestsState extends State<Requests> {
   late Stream<QuerySnapshot> _requestStream;
   AuthService _authService = AuthService();
   late ApplicationState _appstate;
-  Map<String, bool> _switchValues = {};
+  // Map<String, bool> _switchValues = {};
 
   // void updateSwitchState(bool value, String sellerUid) async {
   //   final prefs = await SharedPreferences.getInstance();

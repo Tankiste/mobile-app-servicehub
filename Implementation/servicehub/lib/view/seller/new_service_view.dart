@@ -5,7 +5,7 @@ import 'package:servicehub/controller/recent_order_search.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/model/services/services.dart';
-import 'package:servicehub/view/result_search_view.dart';
+// import 'package:servicehub/view/result_search_view.dart';
 import 'package:like_button/like_button.dart';
 import 'package:servicehub/view/seller/myservices_screen.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
+// import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:servicehub/firebase_services.dart';
 
@@ -44,7 +44,7 @@ class ServiceData {
 }
 
 class Services {
-  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+  // final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
@@ -71,6 +71,7 @@ class Services {
   //   });
   //   return 'success';
   // }
+
   String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
   // String? _newService;
   // String? get getService => _newService;
@@ -167,5 +168,15 @@ class Services {
     } else {
       return null;
     }
+  }
+
+  Future<List<DocumentSnapshot>> getServiceTypesDocs(
+      String categoryName) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('categories')
+        .doc(categoryName)
+        .collection('serviceTypes')
+        .get();
+    return querySnapshot.docs;
   }
 }

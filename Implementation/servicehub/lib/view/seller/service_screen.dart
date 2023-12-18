@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/services/services.dart';
 
-import 'package:servicehub/view/request_send.dart';
+// import 'package:servicehub/view/request_send.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
@@ -23,7 +23,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   TextEditingController _priceController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
 
-  bool _isChecked = false;
+  // bool _isChecked = false;
   File? image;
   final _formkey = GlobalKey<FormState>();
 

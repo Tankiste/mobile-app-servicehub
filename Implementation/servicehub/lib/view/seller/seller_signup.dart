@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
 import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/request_send.dart';
-import 'package:servicehub/view/seller/become_seller.dart';
+// import 'package:servicehub/view/seller/become_seller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';

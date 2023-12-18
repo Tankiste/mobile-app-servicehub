@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:servicehub/controller/widgets.dart';
+// import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/view/client_signup.dart';
@@ -148,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           isClient
                               ? Text(
-                                  userData!.username,
+                                  userData.username,
                                   style: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w800),
