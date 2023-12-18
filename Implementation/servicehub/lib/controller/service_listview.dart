@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/result_search_view.dart';
 
 class DevListView extends StatefulWidget {
   const DevListView({super.key});
@@ -10,29 +11,32 @@ class DevListView extends StatefulWidget {
 }
 
 class _DevListViewState extends State<DevListView> {
-  int selectedIndex = -1;
+  // int selectedIndex = -1;
 
   Widget serviceWidget(int index, String name, String imageName) {
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
-      child: Container(
-        height: 145,
-        width: 135,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  blurRadius: 5,
-                  offset: Offset(0, 5))
-            ]),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => ResultSearchView(
+                        serviceType: name,
+                      ))));
+        },
+        child: Container(
+          height: 145,
+          width: 135,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 5,
+                    offset: Offset(0, 5))
+              ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,

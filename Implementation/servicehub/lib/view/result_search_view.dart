@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
 
 class ResultSearchView extends StatefulWidget {
-  const ResultSearchView({super.key});
+  final String serviceType;
+  const ResultSearchView({super.key, required this.serviceType});
 
   @override
   State<ResultSearchView> createState() => _ResultSearchViewState();
@@ -137,7 +138,7 @@ class _ResultSearchViewState extends State<ResultSearchView> {
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Text(
-                          'Lorem Ipsum',
+                          widget.serviceType,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w500),
                         ),

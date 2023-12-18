@@ -35,33 +35,71 @@ class SearchBarItem extends StatelessWidget {
               )
             ]),
         child: Padding(
-          padding: EdgeInsets.only(top: 5),
+          padding: EdgeInsets.only(top: 10, left: 10, bottom: 10),
           child: InkWell(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: ((context) => SearchScreen())));
-            },
-            child: TextField(
-              style: TextStyle(fontSize: 13),
-              decoration: InputDecoration(
-                  hintText: 'Search Categories',
-                  hintStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey.shade400,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        SearchScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      Animation<Offset> offsetAnimation = Tween<Offset>(
+                        begin: const Offset(0.0, 1.0),
+                        end: Offset.zero,
+                      ).animate(CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOut,
+                      ));
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
                   ),
-                  prefixIcon: Icon(
+                );
+              },
+              child: Row(
+                children: [
+                  Icon(
                     Icons.search,
                     color: Colors.grey.shade400,
                   ),
-                  border: InputBorder.none),
-            ),
-          ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Text(
+                    'Search Categories',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey.shade400,
+                    ),
+                  )
+                ],
+              )),
         ),
       ),
     );
   }
 }
+// TextField(
+//               readOnly: true,
+//               style: TextStyle(fontSize: 13),
+//               decoration: InputDecoration(
+//                   hintText: 'Search Categories',
+//                   hintStyle: TextStyle(
+//                     fontSize: 16,
+//                     fontWeight: FontWeight.w400,
+//                     color: Colors.grey.shade400,
+//                   ),
+//                   prefixIcon: Icon(
+//                     Icons.search,
+//                     color: Colors.grey.shade400,
+//                   ),
+//                   border: InputBorder.none),
+//             ),
 
 // ignore: must_be_immutable
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
