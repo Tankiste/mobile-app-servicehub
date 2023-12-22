@@ -106,8 +106,10 @@ class _DevListViewState extends State<DevListView> {
             } else if (snapshot.hasError) {
               return Text('Erreur: ${snapshot.error}');
             } else {
-              return Container(
-                  height: 20, width: 20, child: CircularProgressIndicator());
+              return Center(
+                child: Container(
+                    height: 30, width: 30, child: CircularProgressIndicator()),
+              );
             }
           }),
     );
@@ -122,29 +124,30 @@ class InfographyListView extends StatefulWidget {
 }
 
 class _InfographyListViewState extends State<InfographyListView> {
-  int selectedIndex = -1;
-
   Widget serviceWidget(int index, String name, String imageName) {
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
-      child: Container(
-        height: 145,
-        width: 135,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  blurRadius: 5,
-                  offset: Offset(0, 5))
-            ]),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => ResultSearchView(
+                        serviceType: name,
+                      ))));
+        },
+        child: Container(
+          height: 145,
+          width: 135,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 5,
+                    offset: Offset(0, 5))
+              ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,8 +215,10 @@ class _InfographyListViewState extends State<InfographyListView> {
             } else if (snapshot.hasError) {
               return Text('Erreur: ${snapshot.error}');
             } else {
-              return Container(
-                  height: 20, width: 20, child: CircularProgressIndicator());
+              return Center(
+                child: Container(
+                    height: 30, width: 30, child: CircularProgressIndicator()),
+              );
             }
           }),
     );
@@ -228,29 +233,30 @@ class DatabaseListView extends StatefulWidget {
 }
 
 class _DatabaseListViewState extends State<DatabaseListView> {
-  int selectedIndex = -1;
-
   Widget serviceWidget(int index, String name, String imageName) {
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
-      child: Container(
-        height: 145,
-        width: 135,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  blurRadius: 5,
-                  offset: Offset(0, 5))
-            ]),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => ResultSearchView(
+                        serviceType: name,
+                      ))));
+        },
+        child: Container(
+          height: 145,
+          width: 135,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 5,
+                    offset: Offset(0, 5))
+              ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,8 +324,10 @@ class _DatabaseListViewState extends State<DatabaseListView> {
             } else if (snapshot.hasError) {
               return Text('Erreur: ${snapshot.error}');
             } else {
-              return Container(
-                  height: 20, width: 20, child: CircularProgressIndicator());
+              return Center(
+                child: Container(
+                    height: 30, width: 30, child: CircularProgressIndicator()),
+              );
             }
           }),
     );

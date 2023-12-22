@@ -70,17 +70,14 @@ class _InterestListViewState extends State<InterestListView> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: 10,
-              itemBuilder: (BuildContext context, int index) {
-                return serviceWidget(index);
-              }),
-        ],
-      ),
+      child: ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: 10,
+          itemBuilder: (BuildContext context, int index) {
+            return serviceWidget(index);
+          }),
     );
   }
 }

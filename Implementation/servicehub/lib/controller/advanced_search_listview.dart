@@ -12,14 +12,19 @@ class AdvancedSearchListView extends StatefulWidget {
 
 class _AdvancedSearchListViewState extends State<AdvancedSearchListView> {
   int selectedIndex = -1;
+  String serviceType = ""; //Will move to a constructor required attribute later
 
   Widget serviceWidget(int index) {
     return InkWell(
       onTap: () {
         setState(() {
           selectedIndex = index;
-          Navigator.push(context,
-              CupertinoPageRoute(builder: ((context) => ResultSearchView())));
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: ((context) => ResultSearchView(
+                        serviceType: serviceType,
+                      ))));
         });
       },
       child: Padding(

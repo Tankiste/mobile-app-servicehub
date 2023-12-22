@@ -14,6 +14,7 @@ class FavoriteScreen extends StatefulWidget {
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
   bool noMessage = true;
+  String serviceType = "";
 
   @override
   void initState() {
@@ -81,7 +82,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ResultSearchListView(),
+                      ResultSearchListView(
+                        serviceType: serviceType,
+                      ),
                     ],
                   ),
           ),

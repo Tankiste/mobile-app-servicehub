@@ -133,13 +133,20 @@ class _MessagesListViewState extends State<MessagesListView> {
       padding: EdgeInsets.only(left: 15, right: 15, top: 10),
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
-      child: ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          itemCount: 3,
-          itemBuilder: (BuildContext context, int index) {
-            return serviceWidget(index);
-          }),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: 3,
+                itemBuilder: (BuildContext context, int index) {
+                  return serviceWidget(index);
+                }),
+          ],
+        ),
+      ),
     );
   }
 }

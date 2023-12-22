@@ -1,30 +1,60 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/service_detail_view.dart';
 
 class ResultSearchListView extends StatefulWidget {
-  const ResultSearchListView({super.key});
+  final String serviceType;
+  const ResultSearchListView({super.key, required this.serviceType});
 
   @override
   State<ResultSearchListView> createState() => _ResultSearchListViewState();
 }
 
 class _ResultSearchListViewState extends State<ResultSearchListView> {
-  int selectedIndex = -1;
-  List<bool> isFavoriteList = List.generate(3, (index) => false);
+  // int selectedIndex = -1;
+  // bool isFavorite = false;
+  Services services = Services();
+  late List<bool> isFavoriteList;
 
-  Widget serviceWidget(int index) {
+  // @override
+  // void initState() {
+  //   // isFavoriteList = List.filled(0, false);
+  //   super.initState();
+  //   _fetchData();
+  // }
+
+  Future<void> _fetchData() async {
+    List<DocumentSnapshot> documents =
+        await services.getResultServices(widget.serviceType);
+    setState(() {
+      isFavoriteList = List.generate(documents.length, (_) => false);
+    });
+  }
+
+  void likeService(int index) {
+    setState(() {
+      isFavoriteList[index] = !isFavoriteList[index];
+    });
+  }
+
+  // void likeService() {
+  //   isFavorite = !isFavorite;
+  // }
+
+  Widget serviceWidget(
+      DocumentSnapshot document, int index, Function() updateState) {
+    String? posterUrl = document['poster'];
     return Padding(
-      padding: const EdgeInsets.only(left: 15, right: 20, bottom: 25),
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
       child: InkWell(
         onTap: () {
-          setState(() {
-            selectedIndex = index;
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: ((context) => ServiceDetailView())));
-          });
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: ((context) =>
+                      ServiceDetailView(serviceId: document.id))));
         },
         child: Container(
           height: 160,
@@ -51,10 +81,26 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15)),
-                  child: Image.asset(
-                    'assets/digital_marketing.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child: posterUrl != null
+                      ? Image.network(posterUrl, fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                              child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ));
+                        }, errorBuilder: (BuildContext context,
+                              Object exception, StackTrace? stackTrace) {
+                          return Icon(Icons.error);
+                        })
+                      : Image.asset(
+                          'assets/digital_marketing.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Padding(
@@ -78,14 +124,23 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 80),
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isFavoriteList[index] = !isFavoriteList[index];
-                              });
+                        const SizedBox(width: 90),
+                        // IconButton(
+                        //     onPressed: () {
+                        //       likeService();
+                        //     },
+                        //     icon: Icon(
+                        //       Icons.favorite,
+                        //       color: isFavorite
+                        //           ? Colors.red
+                        //           : Colors.grey.shade300,
+                        //     )),
+                        GestureDetector(
+                            onTap: () {
+                              // likeService(index);
+                              updateState();
                             },
-                            icon: Icon(
+                            child: Icon(
                               Icons.favorite,
                               color: isFavoriteList[index]
                                   ? Colors.red
@@ -94,7 +149,7 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                       ],
                     ),
                     Text(
-                      'Lorem Ipsum dolor',
+                      document['title'],
                       maxLines: 2,
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -104,10 +159,10 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                       ),
                     ),
                     const SizedBox(
-                      height: 60,
+                      height: 70,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 80),
+                    Align(
+                      alignment: Alignment.bottomRight,
                       child: Row(
                         children: [
                           Text(
@@ -119,7 +174,7 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                             ),
                           ),
                           Text(
-                            '€37.52',
+                            'XAF${document['price']}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -140,13 +195,36 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: 3,
-          itemBuilder: (BuildContext context, int index) {
-            return serviceWidget(index);
+    return SingleChildScrollView(
+      // color: Colors.white,
+      child: FutureBuilder<List<DocumentSnapshot>>(
+          future: services.getResultServices(widget.serviceType),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error while loading data : ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No data found'));
+            } else {
+              List<DocumentSnapshot> documents = snapshot.data!;
+              isFavoriteList = List.filled(documents.length, false);
+
+              return StatefulBuilder(builder: (context, setState) {
+                return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: documents.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot document = documents[index];
+                      return serviceWidget(document, index, () {
+                        setState(() {
+                          likeService(index);
+                        });
+                      });
+                    });
+              });
+            }
           }),
     );
   }

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/advanced_search_view.dart';
 
 class CategoryListView extends StatefulWidget {
@@ -12,26 +14,28 @@ class CategoryListView extends StatefulWidget {
 
 class _CategoryListViewState extends State<CategoryListView> {
   int selectedIndex = -1;
+  Services services = Services();
 
-  Widget serviceWidget(int index) {
+  Widget serviceWidget(
+      int index, String name, String image, String description) {
     return Column(
       children: [
         InkWell(
           onTap: () {
-            setState(() {
-              selectedIndex = index;
-              Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                      builder: ((context) => AdvancedSearchView())));
-            });
+            // setState(() {
+            //   selectedIndex = index;
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: ((context) => AdvancedSearchView())));
+            // });
           },
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 25),
             child: Row(
               children: [
                 SvgPicture.asset(
-                  'assets/undraw_home_screen.svg',
+                  image,
                   width: 50,
                 ),
                 const SizedBox(width: 15),
@@ -42,14 +46,15 @@ class _CategoryListViewState extends State<CategoryListView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Lorem ipsum dolor',
+                        name,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                      Text(description,
                           maxLines: 2,
                           softWrap: true,
                           overflow: TextOverflow.clip,
@@ -76,17 +81,32 @@ class _CategoryListViewState extends State<CategoryListView> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: 6,
-              itemBuilder: (BuildContext context, int index) {
-                return serviceWidget(index);
-              }),
-        ],
-      ),
+      child: FutureBuilder<List<DocumentSnapshot>>(
+          future: services.getCategoriesDocs(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error while retrieving data : ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Text('No data found');
+            } else {
+              List<DocumentSnapshot> categories = snapshot.data!;
+
+              return ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: categories.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot category = categories[index];
+                    String name = category['name'];
+                    String image = category['image'];
+                    String description = category['description'];
+                    return serviceWidget(index, name, image, description);
+                  });
+            }
+          }),
     );
   }
 }

@@ -72,7 +72,9 @@ class _ResultSearchViewState extends State<ResultSearchView> {
     String containerContent = 'Contenu pour $selectedButton';
 
     if (selectedIndex == 0) {
-      return ResultSearchListView();
+      return ResultSearchListView(
+        serviceType: widget.serviceType,
+      );
     } else {
       return Padding(
         padding: const EdgeInsets.only(left: 50, top: 120),
@@ -105,9 +107,7 @@ class _ResultSearchViewState extends State<ResultSearchView> {
             width: double.infinity,
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 60,
-                ),
+                padding: const EdgeInsets.only(top: 60, bottom: 100),
                 child: Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,25 +167,31 @@ class _ResultSearchViewState extends State<ResultSearchView> {
             bottom: 10,
             left: 15,
             right: 15,
-            child: Container(
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero,
-              height: 70,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 5,
-                      offset: Offset(0, 4))
-                ],
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 2)),
-            ),
+            child: FloatingBar(),
           )
+          // Positioned(
+          //   bottom: 10,
+          //   left: 15,
+          //   right: 15,
+          //   child: Container(
+          //     padding: EdgeInsets.zero,
+          //     margin: EdgeInsets.zero,
+          //     height: 70,
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(15),
+          //       boxShadow: [
+          //         BoxShadow(
+          //             color: Colors.grey.shade400,
+          //             blurRadius: 5,
+          //             offset: Offset(0, 4))
+          //       ],
+          //     ),
+          //     child: ClipRRect(
+          //         borderRadius: BorderRadius.circular(15),
+          //         child: BottomBar(initialIndex: 2)),
+          //   ),
+          // )
         ],
       ),
     );

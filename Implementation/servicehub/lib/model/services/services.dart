@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:servicehub/firebase_services.dart';
+import 'package:servicehub/model/auth/user_data.dart';
 
 class ServiceData {
   String uid;
@@ -170,6 +171,28 @@ class Services {
     }
   }
 
+  Future<UserData?> getSupplier(String supplierId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('users').doc(supplierId).get();
+
+      if (snapshot.exists) {
+        return UserData(
+            uid: supplierId,
+            username: snapshot['company name'],
+            email: snapshot['email'],
+            description: snapshot['description'],
+            address: snapshot['address'],
+            logo: snapshot['logoLink']);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error when fetching user: $e');
+      return null;
+    }
+  }
+
   Future<List<DocumentSnapshot>> getServiceTypesDocs(
       String categoryName) async {
     QuerySnapshot querySnapshot = await _firestore
@@ -177,6 +200,21 @@ class Services {
         .doc(categoryName)
         .collection('serviceTypes')
         .get();
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> getCategoriesDocs() async {
+    QuerySnapshot querySnapshot =
+        await _firestore.collection('categories').get();
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> getResultServices(String serviceType) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('type', isEqualTo: serviceType)
+        .get();
+
     return querySnapshot.docs;
   }
 }

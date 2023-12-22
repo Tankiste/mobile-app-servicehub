@@ -39,9 +39,9 @@ class _InboxScreenState extends State<InboxScreen> {
       appBar: appBar,
       body: Stack(
         children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
+          SingleChildScrollView(
+            // width: double.infinity,
+            // height: double.infinity,
             child: noMessage
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -82,6 +82,7 @@ class _RecentCollabSearchViewState extends State<RecentCollabSearchView> {
           child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: 2,
               itemBuilder: (BuildContext context, int index) {
                 return serviceWidget(index);

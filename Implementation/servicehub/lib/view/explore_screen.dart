@@ -119,7 +119,7 @@ class _ExploreScreenState extends State<ExploreScreen>
           width: double.infinity,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(top: 60, bottom: 10),
+              padding: const EdgeInsets.only(top: 60, bottom: 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -130,6 +130,7 @@ flutter:
     - assets/deep-learning.png
     - assets/computer-vision.png
     - assets/undraw_smart_home.svg
+    - assets/undraw_server_cluster.svg
     - assets/smart-home-tech.png
     - assets/industrial-iot.png
     - assets/undraw_data.svg
