@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
+import 'package:servicehub/controller/related_service_listview.dart';
 import 'package:servicehub/controller/review_listview.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
@@ -15,7 +16,9 @@ import 'package:servicehub/view/reviews_screen.dart';
 
 class ServiceDetailView extends StatefulWidget {
   final String serviceId;
-  const ServiceDetailView({super.key, required this.serviceId});
+  final serviceType;
+  const ServiceDetailView(
+      {super.key, required this.serviceId, required this.serviceType});
 
   @override
   State<ServiceDetailView> createState() => _ServiceDetailViewState();
@@ -307,11 +310,16 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        serviceData!.title,
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w700),
+                                      SizedBox(
+                                        width: 290,
+                                        child: Text(
+                                          serviceData!.title,
+                                          overflow: TextOverflow.clip,
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w700),
+                                        ),
                                       ),
                                       Row(
                                         crossAxisAlignment:
@@ -384,9 +392,9 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    width: 60,
-                                  ),
+                                  // const SizedBox(
+                                  //   width: 60,
+                                  // ),
                                   LikeButton(
                                     // onTap: (isLiked) {
 
@@ -568,8 +576,9 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: ((context) =>
-                                                OrderReview())));
+                                            builder: ((context) => OrderReview(
+                                                  serviceId: widget.serviceId,
+                                                ))));
                                   },
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFC84457),
@@ -579,11 +588,11 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         left: 60,
-                                        right: 70,
+                                        right: 60,
                                         top: 15,
                                         bottom: 15),
                                     child: Text(
-                                      'Continue (XAF${serviceData!.price})',
+                                      'Continue (XAF ${serviceData!.price})',
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 17,
@@ -621,9 +630,10 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                RecentOrderSearchView(
-                                  showText: false,
-                                ),
+                                RelatedServiceListView(
+                                    showText: false,
+                                    serviceType: widget.serviceType,
+                                    serviceId: widget.serviceId),
                               ]),
                         )
                         // const SizedBox(height: 15),

@@ -18,33 +18,32 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
   Services services = Services();
   late List<bool> isFavoriteList;
 
-  // @override
-  // void initState() {
-  //   // isFavoriteList = List.filled(0, false);
-  //   super.initState();
-  //   _fetchData();
-  // }
+  @override
+  void initState() {
+    // isFavoriteList = List.filled(0, false);
+    super.initState();
+    _fetchData();
+  }
 
   Future<void> _fetchData() async {
     List<DocumentSnapshot> documents =
         await services.getResultServices(widget.serviceType);
     setState(() {
-      isFavoriteList = List.generate(documents.length, (_) => false);
+      isFavoriteList = List.generate(documents.length, (index) => false);
     });
   }
 
-  void likeService(int index) {
-    setState(() {
-      isFavoriteList[index] = !isFavoriteList[index];
-    });
-  }
+  // void likeService(int index) {
+  //   setState(() {
+  //     isFavoriteList[index] = !isFavoriteList[index];
+  //   });
+  // }
 
   // void likeService() {
   //   isFavorite = !isFavorite;
   // }
 
-  Widget serviceWidget(
-      DocumentSnapshot document, int index, Function() updateState) {
+  Widget serviceWidget(DocumentSnapshot document, int index) {
     String? posterUrl = document['poster'];
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
@@ -53,8 +52,9 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
           Navigator.push(
               context,
               CupertinoPageRoute(
-                  builder: ((context) =>
-                      ServiceDetailView(serviceId: document.id))));
+                  builder: ((context) => ServiceDetailView(
+                      serviceId: document.id,
+                      serviceType: widget.serviceType))));
         },
         child: Container(
           height: 160,
@@ -138,7 +138,9 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                         GestureDetector(
                             onTap: () {
                               // likeService(index);
-                              updateState();
+                              setState(() {
+                                isFavoriteList[index] = !isFavoriteList[index];
+                              });
                             },
                             child: Icon(
                               Icons.favorite,
@@ -148,18 +150,21 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                             ))
                       ],
                     ),
-                    Text(
-                      document['title'],
-                      maxLines: 2,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        overflow: TextOverflow.clip,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: 150,
+                      child: Text(
+                        document['title'],
+                        maxLines: 2,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     const SizedBox(
-                      height: 70,
+                      height: 60,
                     ),
                     Align(
                       alignment: Alignment.bottomRight,
@@ -208,22 +213,16 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
               return Center(child: Text('No data found'));
             } else {
               List<DocumentSnapshot> documents = snapshot.data!;
-              isFavoriteList = List.filled(documents.length, false);
+              // isFavoriteList = List.filled(documents.length, false);
 
-              return StatefulBuilder(builder: (context, setState) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: documents.length,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot document = documents[index];
-                      return serviceWidget(document, index, () {
-                        setState(() {
-                          likeService(index);
-                        });
-                      });
-                    });
-              });
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: documents.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot document = documents[index];
+                    return serviceWidget(document, index);
+                  });
             }
           }),
     );

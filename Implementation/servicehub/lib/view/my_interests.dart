@@ -4,14 +4,14 @@ import 'package:servicehub/view/on_board.dart';
 import 'package:servicehub/controller/select_service_widget.dart';
 import 'package:provider/provider.dart';
 
-class SelectServicePage extends StatefulWidget {
-  const SelectServicePage({super.key});
+class MyInterestPage extends StatefulWidget {
+  const MyInterestPage({super.key});
 
   @override
-  State<SelectServicePage> createState() => _SelectServicePageState();
+  State<MyInterestPage> createState() => _MyInterestPageState();
 }
 
-class _SelectServicePageState extends State<SelectServicePage> {
+class _MyInterestPageState extends State<MyInterestPage> {
   final MyInterestStateProvider _stateProvider = MyInterestStateProvider();
   // bool atLeastOneInkwellSelected = false;
 
@@ -87,15 +87,9 @@ class _SelectServicePageState extends State<SelectServicePage> {
                   child: ElevatedButton(
                       onPressed: () {
                         if (_stateProvider.atLeastOneInkwellSelected) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginPage()));
+                          Navigator.pop(context);
                         } else {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginPage()));
+                          Navigator.pop(context);
                         }
                       },
                       style: ElevatedButton.styleFrom(

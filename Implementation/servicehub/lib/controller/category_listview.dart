@@ -27,7 +27,11 @@ class _CategoryListViewState extends State<CategoryListView> {
             Navigator.push(
                 context,
                 CupertinoPageRoute(
-                    builder: ((context) => AdvancedSearchView())));
+                    builder: ((context) => AdvancedSearchView(
+                          name: name,
+                          image: image,
+                          description: description,
+                        ))));
             // });
           },
           child: Padding(

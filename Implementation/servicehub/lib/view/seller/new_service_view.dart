@@ -148,11 +148,16 @@ class _NewServiceViewState extends State<NewServiceView> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    serviceData!.title,
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w700),
+                                  SizedBox(
+                                    width: 280,
+                                    child: Text(
+                                      serviceData!.title,
+                                      overflow: TextOverflow.clip,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w700),
+                                    ),
                                   ),
                                   Row(
                                     crossAxisAlignment:
@@ -224,9 +229,9 @@ class _NewServiceViewState extends State<NewServiceView> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(
-                                width: 60,
-                              ),
+                              // const SizedBox(
+                              //   width: 60,
+                              // ),
                               LikeButton(
                                 // onTap: (isLiked) {
 

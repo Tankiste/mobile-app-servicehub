@@ -7,7 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
 
 class AdvancedSearchView extends StatefulWidget {
-  const AdvancedSearchView({super.key});
+  final String name, image, description;
+  const AdvancedSearchView(
+      {super.key,
+      required this.name,
+      required this.image,
+      required this.description});
 
   @override
   State<AdvancedSearchView> createState() => _AdvancedSearchViewState();
@@ -65,7 +70,11 @@ class _AdvancedSearchViewState extends State<AdvancedSearchView> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      AdvancedSearchListView(),
+                      AdvancedSearchListView(
+                        name: widget.name,
+                        image: widget.image,
+                        description: widget.description,
+                      ),
                     ],
                   ),
                 ),
@@ -76,25 +85,31 @@ class _AdvancedSearchViewState extends State<AdvancedSearchView> {
             bottom: 10,
             left: 15,
             right: 15,
-            child: Container(
-              padding: EdgeInsets.zero,
-              margin: EdgeInsets.zero,
-              height: 70,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 5,
-                      offset: Offset(0, 4))
-                ],
-              ),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: BottomBar(initialIndex: 2)),
-            ),
+            child: FloatingBar(),
           )
+          // Positioned(
+          //   bottom: 10,
+          //   left: 15,
+          //   right: 15,
+          //   child: Container(
+          //     padding: EdgeInsets.zero,
+          //     margin: EdgeInsets.zero,
+          //     height: 70,
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.circular(15),
+          //       boxShadow: [
+          //         BoxShadow(
+          //             color: Colors.grey.shade400,
+          //             blurRadius: 5,
+          //             offset: Offset(0, 4))
+          //       ],
+          //     ),
+          //     child: ClipRRect(
+          //         borderRadius: BorderRadius.circular(15),
+          //         child: BottomBar(initialIndex: 2)),
+          //   ),
+          // )
         ],
       ),
     );

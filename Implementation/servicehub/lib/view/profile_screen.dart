@@ -8,6 +8,7 @@ import 'package:servicehub/view/client_signup.dart';
 import 'package:servicehub/view/favorite_screen.dart';
 import 'package:servicehub/view/language_screen.dart';
 import 'package:servicehub/view/login.dart';
+import 'package:servicehub/view/my_interests.dart';
 import 'package:servicehub/view/notifications_screen.dart';
 import 'package:servicehub/view/select_service.dart';
 import 'package:servicehub/view/seller/seller_signup.dart';
@@ -240,7 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       context,
                                       MaterialPageRoute(
                                           builder: ((context) =>
-                                              SelectServicePage())));
+                                              MyInterestPage())));
                                 },
                                 child: Row(
                                   children: [

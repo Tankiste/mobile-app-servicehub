@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class ServiceListWidget extends StatefulWidget {
-  const ServiceListWidget({super.key});
+class MyInterestWidget extends StatefulWidget {
+  const MyInterestWidget({super.key});
 
   @override
-  State<ServiceListWidget> createState() => _ServiceListWidgetState();
+  State<MyInterestWidget> createState() => _MyInterestWidgetState();
 }
 
-class _ServiceListWidgetState extends State<ServiceListWidget> {
-  final SelectServiceStateProvider _stateProvider =
-      SelectServiceStateProvider();
+class _MyInterestWidgetState extends State<MyInterestWidget> {
+  final MyInterestStateProvider _stateProvider = MyInterestStateProvider();
   Color _borderColor = Colors.grey.shade100;
   Color _selectedBorderColor = Color(0xFFC84457);
   Map<int, Color> _borderColors = {};
@@ -92,7 +91,7 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
   }
 }
 
-class SelectServiceStateProvider extends ChangeNotifier {
+class MyInterestStateProvider extends ChangeNotifier {
   bool atLeastOneInkwellSelected = false;
 
   void updateAtLeastOneInkwellSelected() {

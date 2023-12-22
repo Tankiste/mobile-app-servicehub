@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/view/order_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  final price;
+  const PaymentScreen({super.key, required this.price});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -177,14 +178,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       )),
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 68, right: 68, top: 15, bottom: 15),
+                        left: 60, right: 60, top: 15, bottom: 15),
                     child: _isLoading
                         ? CircularProgressIndicator(
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           )
                         : Text(
-                            'Pay Now (€62.14)',
+                            'Pay Now (XAF${widget.price})',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 17,

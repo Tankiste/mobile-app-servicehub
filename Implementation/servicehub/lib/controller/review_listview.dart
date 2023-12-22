@@ -13,7 +13,7 @@ class _ReviewListViewState extends State<ReviewListView> {
 
   Widget serviceWidget(int index) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(right: 10, left: 10, top: 15, bottom: 15),
       child: Container(
         height: 160,
         width: 255,
@@ -105,7 +105,7 @@ class _ReviewListViewState extends State<ReviewListView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
+      height: 190,
       // color: Colors.white,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,

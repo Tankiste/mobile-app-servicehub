@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:servicehub/controller/widgets.dart';
+import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/payment_screen.dart';
 
 class OrderReview extends StatefulWidget {
-  const OrderReview({super.key});
+  final serviceId;
+  const OrderReview({super.key, required this.serviceId});
 
   @override
   State<OrderReview> createState() => _OrderReviewState();
@@ -12,11 +15,51 @@ class OrderReview extends StatefulWidget {
 
 class _OrderReviewState extends State<OrderReview> {
   String selectedOption = '';
+  Services _services = Services();
+  ServiceData? serviceData;
 
   void setSelectedOption(String option) {
     setState(() {
       selectedOption = option;
     });
+  }
+
+  @override
+  void initState() {
+    fetchServiceDetails();
+    super.initState();
+  }
+
+  DateTime addDuration(String duration, DateTime currentDate) {
+    if (duration.contains('day')) {
+      int days = int.parse(duration.split(' ')[0]);
+      return currentDate.add(Duration(days: days));
+    } else if (duration.contains('week')) {
+      int weeks = int.parse(duration.split(' ')[0]);
+      return currentDate.add(Duration(days: weeks * 7));
+    } else if (duration.contains('month')) {
+      int months = int.parse(duration.split(' ')[0]);
+      int newMonth = currentDate.month + months;
+      int newYear = currentDate.year + (newMonth ~/ 12);
+      newMonth = newMonth % 12;
+      return DateTime(newYear, newMonth, currentDate.day, currentDate.hour,
+          currentDate.minute, currentDate.second);
+    }
+    return currentDate;
+  }
+
+  String formatDate(DateTime date) {
+    return DateFormat('E, MMM d, y').format(date);
+  }
+
+  Future<void> fetchServiceDetails() async {
+    ServiceData? data = await _services.getServiceById(widget.serviceId);
+    if (data != null) {
+      setState(() {
+        serviceData = data;
+      });
+    } else
+      return null;
   }
 
   Widget buildOption(String optionName, IconData icon) {
@@ -142,6 +185,14 @@ class _OrderReviewState extends State<OrderReview> {
 
   @override
   Widget build(BuildContext context) {
+    String? posterUrl = serviceData?.poster;
+    int subtotal = serviceData!.price;
+    int service_fee = (serviceData!.price * 0.1).toInt();
+    int total_price = subtotal + service_fee;
+    DateTime currentDate = DateTime.now();
+    DateTime newDate = addDuration(serviceData!.delivaryTime, currentDate);
+    String formattedDate = formatDate(newDate);
+
     return Scaffold(
       appBar: CustomAppbar(
           text: 'Order Review',
@@ -149,253 +200,285 @@ class _OrderReviewState extends State<OrderReview> {
           returnButton: true,
           showText: false,
           actionText: ''),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 25, top: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.fromLTRB(10, 8, 15, 12),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey, blurRadius: 5, offset: Offset(0, 4))
-                  ]),
-              child: Row(
-                children: [
-                  Container(
-                    height: 125,
-                    width: 155,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        'assets/concept-cloud-ai.png',
-                        fit: BoxFit.cover,
+      body: serviceData == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 15, right: 25, top: 10, bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 8, 15, 12),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 5,
+                                offset: Offset(0, 4))
+                          ]),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 125,
+                            width: 155,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: posterUrl != null
+                                  ? Image.network(posterUrl, fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                          child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                      ));
+                                    }, errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                      return Icon(Icons.error);
+                                    })
+                                  : Image.asset(
+                                      'assets/concept-cloud-ai.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            height: 131,
+                            width: 160,
+                            child: Text(serviceData!.description,
+                                textAlign: TextAlign.justify,
+                                maxLines: 5,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey.shade500,
+                                )),
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    height: 131,
-                    width: 160,
-                    child: Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sed dolor non turpis euismod convallis.',
-                        textAlign: TextAlign.justify,
-                        maxLines: 5,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade500,
+                    const SizedBox(height: 25),
+                    Text(
+                      'Choose a payment method',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        buildOption('PayPal', FontAwesomeIcons.paypal),
+                        buildOption(
+                            'Credit Card', FontAwesomeIcons.ccMastercard),
+                        buildOption('Visa', FontAwesomeIcons.ccPaypal),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Order summary',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: ((context) {
+                                  return buildSheet();
+                                }));
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black),
+                            ),
+                            child: Icon(
+                              FontAwesomeIcons.question,
+                              size: 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 10, 15, 15),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade300,
+                                blurRadius: 5,
+                                offset: Offset(0, 4))
+                          ]),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Subtotal',
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w300),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                'Service Fee',
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'XAF $subtotal',
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w300),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                'XAF $service_fee',
+                                style: TextStyle(
+                                    fontSize: 17, fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              'Total Price',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                            Text(
+                              'XAF $total_price',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              'Delivery Date',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                            Text(
+                              formattedDate,
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'ServiceHub Inc, ServiceHub Limited',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.grey.shade400),
                         )),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 25),
-            Text(
-              'Choose a payment method',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                buildOption('PayPal', FontAwesomeIcons.paypal),
-                buildOption('Credit Card', FontAwesomeIcons.ccMastercard),
-                buildOption('Visa', FontAwesomeIcons.ccPaypal),
-              ],
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            Row(
-              children: [
-                Text(
-                  'Order summary',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: ((context) {
-                          return buildSheet();
-                        }));
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Icon(
-                      FontAwesomeIcons.question,
-                      size: 12,
-                      color: Colors.black,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(10, 10, 15, 15),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 5,
-                        offset: Offset(0, 4))
-                  ]),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Subtotal',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w300),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        'Service Fee',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '€56.64',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w300),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        '€5.50',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w300),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Text(
-                      'Total Price',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                    Text(
-                      '€62.14',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    )
+                    ElevatedButton(
+                        onPressed: () {
+                          if (selectedOption == 'Credit Card') {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) =>
+                                        PaymentScreen(price: total_price))));
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFC84457),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            )),
+                        child: const Padding(
+                          padding: EdgeInsets.only(
+                              left: 68, right: 68, top: 15, bottom: 15),
+                          child: Text(
+                            'Add payment method',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Gilroy'),
+                          ),
+                        )),
                   ],
                 ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      'Delivery Date',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                    Text(
-                      'Thu. Oct 28, 2023',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    )
-                  ],
-                )
-              ],
+              ),
             ),
-            const SizedBox(
-              height: 25,
-            ),
-            Align(
-                alignment: Alignment.center,
-                child: Text(
-                  'ServiceHub Inc, ServiceHub Limited',
-                  style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.grey.shade400),
-                )),
-            ElevatedButton(
-                onPressed: () {
-                  if (selectedOption == 'Credit Card') {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: ((context) => PaymentScreen())));
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC84457),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    )),
-                child: const Padding(
-                  padding:
-                      EdgeInsets.only(left: 68, right: 68, top: 15, bottom: 15),
-                  child: Text(
-                    'Add payment method',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Gilroy'),
-                  ),
-                )),
-          ],
-        ),
-      ),
     );
   }
 }

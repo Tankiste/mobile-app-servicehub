@@ -217,4 +217,15 @@ class Services {
 
     return querySnapshot.docs;
   }
+
+  Future<List<DocumentSnapshot>> getResultServicesExcludingCurrentService(
+      String serviceType, String currentServiceId) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('type', isEqualTo: serviceType)
+        .where(FieldPath.documentId, isNotEqualTo: currentServiceId)
+        .get();
+
+    return querySnapshot.docs;
+  }
 }
