@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
+import 'package:servicehub/controller/related_service_listview.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/model/services/services.dart';
@@ -11,7 +12,9 @@ import 'package:servicehub/view/seller/myservices_screen.dart';
 
 class NewServiceView extends StatefulWidget {
   final String newServiceId;
-  const NewServiceView({super.key, required this.newServiceId});
+  final String? serviceType;
+  const NewServiceView(
+      {super.key, required this.newServiceId, this.serviceType});
 
   @override
   State<NewServiceView> createState() => _NewServiceViewState();
@@ -307,8 +310,10 @@ class _NewServiceViewState extends State<NewServiceView> {
                             const SizedBox(
                               height: 15,
                             ),
-                            RecentOrderSearchView(
+                            RelatedServiceListView(
                               showText: false,
+                              serviceId: widget.newServiceId,
+                              serviceType: widget.serviceType,
                             ),
                           ]),
                     ),

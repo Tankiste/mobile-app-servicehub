@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 // import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:servicehub/firebase_services.dart';
@@ -50,6 +51,7 @@ class Services {
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
   final FirebaseServices _services = FirebaseServices();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   // Future<String> addCategory() async {
   //   CollectionReference categories = _firestore.collection('categories');
@@ -213,6 +215,16 @@ class Services {
     QuerySnapshot querySnapshot = await _firestore
         .collection('services')
         .where('type', isEqualTo: serviceType)
+        .get();
+
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> getResultServicesBySupplier() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('seller id', isEqualTo: currentUser.uid)
         .get();
 
     return querySnapshot.docs;

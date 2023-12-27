@@ -29,462 +29,478 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
   Widget build(BuildContext context) {
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     String? logoUrl = userData?.logo;
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 70, 20, 90),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          userData!.username,
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => ProfileScreen(),
-                            // ));
-                          },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 4))
-                              ],
-                            ),
-                            child: ClipOval(
-                              child: logoUrl != null
-                                  ? Image.network(logoUrl, fit: BoxFit.cover,
-                                      loadingBuilder: (BuildContext context,
-                                          Widget child,
-                                          ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        value: loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                            : null,
-                                      ));
-                                    }, errorBuilder: (BuildContext context,
-                                          Object exception,
-                                          StackTrace? stackTrace) {
-                                      return Icon(Icons.error);
-                                    })
-                                  : Image.asset(
-                                      "assets/avatar.png",
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 35,
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+    return userData == null
+        ? Center(
+            child: Container(
+                height: 50, width: 50, child: CircularProgressIndicator()),
+          )
+        : Scaffold(
+            body: Stack(
+              children: [
+                Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 70, 20, 90),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Performance',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                userData!.username,
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => ProfileScreen(),
+                                  // ));
+                                },
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 5,
+                                          offset: Offset(0, 4))
+                                    ],
+                                  ),
+                                  child: ClipOval(
+                                    child: logoUrl != null
+                                        ? Image.network(logoUrl,
+                                            fit: BoxFit.cover, loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ));
+                                          }, errorBuilder:
+                                                (BuildContext context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                            return Icon(Icons.error);
+                                          })
+                                        : Image.asset(
+                                            "assets/avatar.png",
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 35,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Performance',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Supplier level',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Level 2',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 30),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Next Evaluation',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Dec 10, 2023',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        CircularProgressBar(
+                                          percentage: 100,
+                                          isRating: false,
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        SizedBox(
+                                          width: 90,
+                                          height: 50,
+                                          child: Text(
+                                            'Order Completion',
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.clip,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.white),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        CircularProgressBar(
+                                          percentage: 70,
+                                          isRating: false,
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        SizedBox(
+                                          width: 70,
+                                          height: 50,
+                                          child: Text(
+                                            'On-time delivery',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.white),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        CircularProgressBar(
+                                          percentage: 2.0,
+                                          isRating: true,
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        SizedBox(
+                                          width: 70,
+                                          height: 50,
+                                          child: Text(
+                                            'Global rating',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.white),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 27,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 160),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'How to raise your level',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.white),
+                                      ),
+                                      const SizedBox(
+                                        width: 7,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          // showModalBottomSheet(
+                                          //     isScrollControlled: true,
+                                          //     context: context,
+                                          //     builder: ((context) {
+                                          //       return buildSheet();
+                                          //     }));
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.black,
+                                            border:
+                                                Border.all(color: Colors.white),
+                                          ),
+                                          child: Icon(
+                                            FontAwesomeIcons.question,
+                                            size: 12,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 25,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Supplier level',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                'Level 2',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Next Evaluation',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                'Dec 10, 2023',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  CircularProgressBar(
-                                    percentage: 100,
-                                    isRating: false,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: 90,
-                                    height: 50,
-                                    child: Text(
-                                      'Order Completion',
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.clip,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  CircularProgressBar(
-                                    percentage: 70,
-                                    isRating: false,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: 70,
-                                    height: 50,
-                                    child: Text(
-                                      'On-time delivery',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  CircularProgressBar(
-                                    percentage: 2.0,
-                                    isRating: true,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: 70,
-                                    height: 50,
-                                    child: Text(
-                                      'Global rating',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 27,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 160),
-                            child: Row(
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 30),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey.shade400,
+                                    blurRadius: 3,
+                                    offset: Offset(2, 2))
+                              ],
+                            ),
+                            child: Column(
+                              // crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'How to raise your level',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.white),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Earnings',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        'Details',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFFC84457),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(
-                                  width: 7,
+                                  height: 30,
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    // showModalBottomSheet(
-                                    //     isScrollControlled: true,
-                                    //     context: context,
-                                    //     builder: ((context) {
-                                    //       return buildSheet();
-                                    //     }));
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.black,
-                                      border: Border.all(color: Colors.white),
-                                    ),
-                                    child: Icon(
-                                      FontAwesomeIcons.question,
-                                      size: 12,
-                                      color: Colors.white,
+                                Text(
+                                  'Available for withdrawal',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '\$624.5',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFC84457),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey.shade400,
+                                    blurRadius: 3,
+                                    offset: Offset(2, 2))
+                              ],
+                            ),
+                            child: Column(
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'To-dos',
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                )
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  '2 Active Orders',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Get to it.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey.shade400,
+                                    blurRadius: 3,
+                                    offset: Offset(2, 2))
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'My Services',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Total No. of Reviews',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                    Text(
+                                      '38',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           )
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 30),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 3,
-                              offset: Offset(2, 2))
-                        ],
-                      ),
-                      child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Earnings',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'Details',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFFC84457),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Text(
-                            'Available for withdrawal',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            '\$624.5',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFC84457),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 3,
-                              offset: Offset(2, 2))
-                        ],
-                      ),
-                      child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'To-dos',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            '2 Active Orders',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Get to it.',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 3,
-                              offset: Offset(2, 2))
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'My Services',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Total No. of Reviews',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              Text(
-                                '38',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-              ),
+                // Positioned(
+                //   bottom: 10,
+                //   left: 15,
+                //   right: 15,
+                //   child: Container(
+                //     padding: EdgeInsets.zero,
+                //     margin: EdgeInsets.zero,
+                //     height: 70,
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(15),
+                //       boxShadow: [
+                //         BoxShadow(
+                //             color: Colors.grey.shade400,
+                //             blurRadius: 5,
+                //             offset: Offset(0, 4))
+                //       ],
+                //     ),
+                //     child: ClipRRect(
+                //         borderRadius: BorderRadius.circular(15),
+                //         child: BottomBar(initialIndex: 0)),
+                //   ),
+                // )
+              ],
             ),
-          ),
-          // Positioned(
-          //   bottom: 10,
-          //   left: 15,
-          //   right: 15,
-          //   child: Container(
-          //     padding: EdgeInsets.zero,
-          //     margin: EdgeInsets.zero,
-          //     height: 70,
-          //     decoration: BoxDecoration(
-          //       color: Colors.white,
-          //       borderRadius: BorderRadius.circular(15),
-          //       boxShadow: [
-          //         BoxShadow(
-          //             color: Colors.grey.shade400,
-          //             blurRadius: 5,
-          //             offset: Offset(0, 4))
-          //       ],
-          //     ),
-          //     child: ClipRRect(
-          //         borderRadius: BorderRadius.circular(15),
-          //         child: BottomBar(initialIndex: 0)),
-          //   ),
-          // )
-        ],
-      ),
-    );
+          );
   }
 }
 

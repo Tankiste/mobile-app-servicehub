@@ -26,6 +26,17 @@ class _HomeClientState extends State<HomeClient> {
   // ];
 
   @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appState = Provider.of<ApplicationState>(context);
     // final isSellerMode = appState.isSellerMode;

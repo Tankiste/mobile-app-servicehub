@@ -179,7 +179,7 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                             ),
                           ),
                           Text(
-                            'XAF${document['price']}',
+                            'XAF ${document['price']}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -211,7 +211,7 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
               return Text('Error while loading data : ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(child: Text('No data found'));
-            } else {
+            } else if (snapshot.hasData) {
               List<DocumentSnapshot> documents = snapshot.data!;
               // isFavoriteList = List.filled(documents.length, false);
 
@@ -223,7 +223,8 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                     DocumentSnapshot document = documents[index];
                     return serviceWidget(document, index);
                   });
-            }
+            } else
+              return Container();
           }),
     );
   }

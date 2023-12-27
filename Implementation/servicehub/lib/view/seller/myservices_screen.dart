@@ -30,10 +30,13 @@ class _MyServicesScreenState extends State<MyServicesScreen> {
                 child: Column(
                   children: [
                     Container(
-                      height: 600,
+                      height: 570,
                       child: Expanded(
                         child: SellerService(),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 20,
                     ),
                     ElevatedButton(
                       onPressed: () {

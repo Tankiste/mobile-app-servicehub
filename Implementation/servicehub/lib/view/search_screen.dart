@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:servicehub/controller/recent_collab_search.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
+import 'package:servicehub/firebase_services.dart';
 import 'package:servicehub/view/explore_screen.dart';
+import 'package:servicehub/view/result_search_view.dart';
 // import 'package:servicehub/view/home_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -13,9 +16,12 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
+  FirebaseServices fbServices = FirebaseServices();
   late AnimationController _controller;
   late Animation<Offset> _animation;
   String selectedOption = 'Services';
+  String _service = "";
+  bool _showInitialView = true;
 
   @override
   void initState() {
@@ -68,15 +74,15 @@ class _SearchScreenState extends State<SearchScreen>
     );
   }
 
-  Widget buildContent() {
-    if (selectedOption == 'Services') {
-      return RecentOrderSearchView(
-        showText: true,
-      );
-    } else {
-      return RecentCollabSearchView();
-    }
-  }
+  // Widget buildContent() {
+  //   if (selectedOption == 'Services') {
+  //     return RecentOrderSearchView(
+  //       showText: true,
+  //     );
+  //   } else {
+  //     return RecentCollabSearchView();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +119,12 @@ class _SearchScreenState extends State<SearchScreen>
                               fontWeight: FontWeight.w500,
                               color: Colors.grey.shade400,
                             )),
+                        onChanged: (value) {
+                          setState(() {
+                            _service = value;
+                            _showInitialView = false;
+                          });
+                        },
                       ),
                     ),
                   ),
@@ -153,7 +165,170 @@ class _SearchScreenState extends State<SearchScreen>
                 ],
               ),
               buildDivider(),
-              buildContent(),
+              // buildContent(),
+              (selectedOption == 'Services')
+                  ? StreamBuilder<QuerySnapshot>(
+                      stream: fbServices.services.snapshots(),
+                      builder: (context, snapshot) {
+                        if (_service.isEmpty) {
+                          return RecentOrderSearchView(
+                            showText: true,
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Something went wrong : ${snapshot.error}');
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(),
+                          );
+                          // } else if (!snapshot.hasData) {
+                          //   return RecentOrderSearchView(
+                          //     showText: true,
+                          //   );
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data!.docs[index];
+                              if (data['title']
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(_service)) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 5),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  ResultSearchView(
+                                                      serviceType: data['type']
+                                                          .toString()))));
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.search_outlined,
+                                                    size: 20,
+                                                    color: Colors.grey.shade400,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  Text(data['title']),
+                                                ],
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.call_made_outlined,
+                                              size: 20,
+                                              color: Colors.grey.shade400,
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Divider(
+                                          color: Colors.grey.shade300,
+                                          indent: 10,
+                                          endIndent: 10,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container();
+                            },
+                          );
+                        }
+                      },
+                    )
+                  : StreamBuilder<QuerySnapshot>(
+                      stream: fbServices.users
+                          .where('isSeller', isEqualTo: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (_service.isEmpty) {
+                          return RecentCollabSearchView();
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Something went wrong : ${snapshot.error}');
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(),
+                          );
+                          // } else if (!snapshot.hasData) {
+                          //   return RecentOrderSearchView(
+                          //     showText: true,
+                          //   );
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data!.docs[index];
+                              if (data['company name']
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(_service)) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 5,
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {},
+                                    child: Column(
+                                      children: [
+                                        ListTile(
+                                          title: Text(data['company name'],
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18)),
+                                          leading: CircleAvatar(
+                                            backgroundImage:
+                                                NetworkImage(data['logoLink']),
+                                          ),
+                                        ),
+                                        // const SizedBox(
+                                        //   height: 5,
+                                        // ),
+                                        Divider(
+                                          color: Colors.grey.shade300,
+                                          indent: 10,
+                                          endIndent: 10,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Container();
+                            },
+                          );
+                        }
+                      },
+                    )
+              // RecentCollabSearchView(),
             ],
           ),
         ),

@@ -35,6 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ApplicationState appState = Provider.of(context, listen: false);
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     bool isClient = userData != null;
     String? logoUrl = userData?.logo;
@@ -284,6 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       MaterialPageRoute(
                                           builder: ((context) =>
                                               LanguageScreen())));
+                                  print(appState.currentIndex);
                                 },
                                 child: Row(
                                   children: [

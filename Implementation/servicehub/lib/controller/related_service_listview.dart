@@ -204,67 +204,37 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (widget.showText)
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 15,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Recently ordered services',
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
-                ),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Edit',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFFC84457)),
-                    ))
-              ],
-            ),
-          ),
-        Container(
-          height: 215,
-          color: Colors.white,
-          child: FutureBuilder<List<DocumentSnapshot>>(
-              future: services.getResultServicesExcludingCurrentService(
-                  widget.serviceType, widget.serviceId),
-              builder: (context, snapshot) {
-                List<DocumentSnapshot> related_services = snapshot.data!;
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Text(
-                      'Error while retrieving data : ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No related service exists'));
-                } else {
-                  return ListView.builder(
-                      // shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: related_services.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DocumentSnapshot related_service =
-                            related_services[index];
-                        String name = related_service['title'];
-                        String image = related_service['poster'];
-                        int price = related_service['price'];
-                        String type = related_service['type'];
-                        String newId = related_service.id;
-                        return serviceWidget(
-                            index, name, image, price, type, newId);
-                      });
-                }
-              }),
-        ),
-      ],
+    return Container(
+      height: 215,
+      color: Colors.white,
+      child: FutureBuilder<List<DocumentSnapshot>>(
+          future: services.getResultServicesExcludingCurrentService(
+              widget.serviceType, widget.serviceId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error while retrieving data : ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No related service exists'));
+            } else {
+              List<DocumentSnapshot> related_services = snapshot.data!;
+              return ListView.builder(
+                  // shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: related_services.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot related_service = related_services[index];
+                    String name = related_service['title'];
+                    String image = related_service['poster'];
+                    int price = related_service['price'];
+                    String type = related_service['type'];
+                    String newId = related_service.id;
+                    return serviceWidget(
+                        index, name, image, price, type, newId);
+                  });
+            }
+          }),
     );
   }
 }

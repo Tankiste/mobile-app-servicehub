@@ -20,6 +20,17 @@ class HomeSupplier extends StatefulWidget {
 
 class _HomeSupplierState extends State<HomeSupplier> {
   @override
+  void initState() {
+    updateData();
+    super.initState();
+  }
+
+  updateData() async {
+    ApplicationState appState = Provider.of(context, listen: false);
+    await appState.refreshUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final _appState = Provider.of<ApplicationState>(context);
     return Scaffold(

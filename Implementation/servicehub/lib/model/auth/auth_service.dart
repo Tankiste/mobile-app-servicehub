@@ -200,6 +200,7 @@ class AuthService {
     auth.User currentUser = _auth.currentUser!;
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
+    print("New id: ${currentUser.uid}");
     return UserData.fromSnap(snap);
   }
 
@@ -285,32 +286,36 @@ class AuthService {
 
   Future<bool> getCurrentUserStatus() async {
     try {
-      if (_services.user != null) {
+      auth.User currentUser = _auth.currentUser!;
+      if (currentUser != null) {
         QuerySnapshot query = await _firestore
             .collection('users')
-            .where('uid', isEqualTo: _services.user!.uid.toString())
+            .where('uid', isEqualTo: currentUser.uid.toString())
             .get();
 
         if (query.docs.isNotEmpty) {
           var userDoc = query.docs.first;
           bool isSeller = userDoc['isSeller'];
-          print('The seller status is : ${isSeller.toString()}');
+          print(
+              'The seller ${currentUser.toString()} status is : ${isSeller.toString()}');
           return isSeller;
         }
       }
       return false;
     } catch (err) {
-      print('Erreor getting current user status: $err');
+      print('Error getting current user status: $err');
       return false;
     }
   }
 
   Future<bool> getCurrentSellerMode() async {
     try {
-      if (_services.user != null) {
+      auth.User currentUser = _auth.currentUser!;
+
+      if (currentUser != null) {
         QuerySnapshot query = await _firestore
             .collection('users')
-            .where('uid', isEqualTo: _services.user!.uid.toString())
+            .where('uid', isEqualTo: currentUser.uid.toString())
             .get();
 
         if (query.docs.isNotEmpty) {
@@ -322,7 +327,7 @@ class AuthService {
       }
       return false;
     } catch (err) {
-      print('Erreor getting current user status: $err');
+      print('Error getting current user status: $err');
       return false;
     }
   }

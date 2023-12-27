@@ -35,9 +35,16 @@ Widget buildUserInterfaces() {
       } else {
         if (snapshot.data == true) {
           return HomeSupplier();
-        } else {
+        } else if (snapshot.data == false) {
           return HomeClient();
-        }
+        } else
+          return Center(
+            child: Container(
+              width: 50,
+              height: 50,
+              child: CircularProgressIndicator(),
+            ),
+          );
       }
     },
   );

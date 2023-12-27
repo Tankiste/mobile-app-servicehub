@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 
 class SellerService extends StatefulWidget {
   const SellerService({super.key});
@@ -8,21 +12,37 @@ class SellerService extends StatefulWidget {
 }
 
 class _SellerServiceState extends State<SellerService> {
-  int selectedIndex = -1;
-  List<bool> isFavoriteList = List.generate(1, (index) => false);
+  Services services = Services();
+  // int selectedIndex = -1;
+  late List<bool> isFavoriteList;
 
-  Widget serviceWidget(int index) {
+  @override
+  void initState() {
+    // isFavoriteList = List.filled(0, false);
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    List<DocumentSnapshot> documents =
+        await services.getResultServicesBySupplier();
+    setState(() {
+      isFavoriteList = List.generate(documents.length, (index) => false);
+    });
+  }
+
+  Widget serviceWidget(int index, DocumentSnapshot document) {
+    String? posterUrl = document['poster'];
     return Padding(
       padding: const EdgeInsets.only(left: 7, right: 20, bottom: 20),
       child: InkWell(
         onTap: () {
-          setState(() {
-            selectedIndex = index;
-            // Navigator.push(
-            // context,
-            // CupertinoPageRoute(
-            //     builder: ((context) => ServiceDetailView())));
-          });
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: ((context) => NewServiceView(
+                      newServiceId: document.id,
+                      serviceType: document['type']))));
         },
         child: Container(
           height: 160,
@@ -49,10 +69,26 @@ class _SellerServiceState extends State<SellerService> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15)),
-                  child: Image.asset(
-                    'assets/digital_marketing.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child: posterUrl != null
+                      ? Image.network(posterUrl, fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                              child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ));
+                        }, errorBuilder: (BuildContext context,
+                              Object exception, StackTrace? stackTrace) {
+                          return Icon(Icons.error);
+                        })
+                      : Image.asset(
+                          'assets/digital_marketing.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Padding(
@@ -76,14 +112,15 @@ class _SellerServiceState extends State<SellerService> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 80),
-                        IconButton(
-                            onPressed: () {
+                        const SizedBox(width: 90),
+                        GestureDetector(
+                            onTap: () {
+                              // likeService(index);
                               setState(() {
                                 isFavoriteList[index] = !isFavoriteList[index];
                               });
                             },
-                            icon: Icon(
+                            child: Icon(
                               Icons.favorite,
                               color: isFavoriteList[index]
                                   ? Colors.red
@@ -91,21 +128,24 @@ class _SellerServiceState extends State<SellerService> {
                             ))
                       ],
                     ),
-                    Text(
-                      'Lorem Ipsum dolor',
-                      maxLines: 2,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        overflow: TextOverflow.clip,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: 150,
+                      child: Text(
+                        document['title'],
+                        maxLines: 2,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          overflow: TextOverflow.clip,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     const SizedBox(
                       height: 60,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 80),
+                    Align(
+                      alignment: Alignment.bottomRight,
                       child: Row(
                         children: [
                           Text(
@@ -117,7 +157,7 @@ class _SellerServiceState extends State<SellerService> {
                             ),
                           ),
                           Text(
-                            '€37.52',
+                            'XAF${document['price']}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -141,11 +181,35 @@ class _SellerServiceState extends State<SellerService> {
     return Container(
       color: Colors.white,
       child: SingleChildScrollView(
-        child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: 1,
-            itemBuilder: (BuildContext context, int index) {
-              return serviceWidget(index);
+        child: FutureBuilder<List<DocumentSnapshot>>(
+            future: services.getResultServicesBySupplier(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: Container(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator()),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                    child: Text('Error retrieving data: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text('No Service yet'),
+                );
+              } else {
+                List<DocumentSnapshot> myservices = snapshot.data!;
+                return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: myservices.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot myservice = myservices[index];
+
+                      return serviceWidget(index, myservice);
+                    });
+              }
             }),
       ),
     );

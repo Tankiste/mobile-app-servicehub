@@ -22,6 +22,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
   updateData() async {
     ApplicationState appState = Provider.of(context, listen: false);
     await appState.refreshUser();
+    print(appState.currentIndex);
   }
 
   void setSelectedOption(String option) {
@@ -101,7 +102,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ApplicationState _appState = Provider.of(context, listen: true);
+    // ApplicationState _appState = Provider.of(context, listen: true);
     final appBar = CustomAppbar(
         text: 'Language',
         showFilter: false,
