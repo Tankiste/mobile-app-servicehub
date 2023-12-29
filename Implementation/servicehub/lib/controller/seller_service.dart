@@ -1,59 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/services/services.dart';
-import 'package:servicehub/view/service_detail_view.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 
-class ResultSearchListView extends StatefulWidget {
-  final String serviceType;
-  const ResultSearchListView({super.key, required this.serviceType});
+class SellerService extends StatefulWidget {
+  const SellerService({super.key});
 
   @override
-  State<ResultSearchListView> createState() => _ResultSearchListViewState();
+  State<SellerService> createState() => _SellerServiceState();
 }
 
-class _ResultSearchListViewState extends State<ResultSearchListView> {
-  // int selectedIndex = -1;
-  // bool isFavorite = false;
+class _SellerServiceState extends State<SellerService> {
   Services services = Services();
-  // late List<bool> isFavoriteList;
-  late List<DocumentSnapshot> documents;
-  late List<bool> isLikedList;
+  // int selectedIndex = -1;
+  late List<bool> isFavoriteList;
   ApplicationState appState = ApplicationState();
 
   @override
   void initState() {
+    // isFavoriteList = List.filled(0, false);
     super.initState();
     _fetchData();
   }
 
   Future<void> _fetchData() async {
-    documents = await services.getResultServices(widget.serviceType);
-    isLikedList = List.generate(documents.length, (index) => false);
-
-    for (int i = 0; i < documents.length; i++) {
-      bool isLiked = await appState.checkLikeStatus(documents[i].id);
-      setState(() {
-        isLikedList[i] = isLiked;
-      });
-    }
+    List<DocumentSnapshot> documents =
+        await services.getResultServicesBySupplier();
+    setState(() {
+      isFavoriteList = List.generate(documents.length, (index) => false);
+    });
   }
 
   Widget serviceWidget(
-      DocumentSnapshot document, int index, double averageRating) {
+      int index, DocumentSnapshot document, double averageRating) {
     String? posterUrl = document['poster'];
     return Padding(
-      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
+      padding: const EdgeInsets.only(left: 7, right: 20, bottom: 20),
       child: InkWell(
         onTap: () {
           Navigator.push(
               context,
               CupertinoPageRoute(
-                  builder: ((context) => ServiceDetailView(
-                      serviceId: document.id,
-                      serviceType: widget.serviceType))));
+                  builder: ((context) => NewServiceView(
+                      newServiceId: document.id,
+                      serviceType: document['type']))));
         },
         child: Container(
           height: 160,
@@ -124,35 +116,19 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                           ),
                         ),
                         const SizedBox(width: 90),
-                        // IconButton(
-                        //     onPressed: () {
-                        //       likeService();
+                        // GestureDetector(
+                        //     onTap: () {
+                        //       // likeService(index);
+                        //       setState(() {
+                        //         isFavoriteList[index] = !isFavoriteList[index];
+                        //       });
                         //     },
-                        //     icon: Icon(
+                        //     child: Icon(
                         //       Icons.favorite,
-                        //       color: isFavorite
+                        //       color: isFavoriteList[index]
                         //           ? Colors.red
                         //           : Colors.grey.shade300,
-                        //     )),
-                        // GestureDetector(
-                        //   onTap: () async {
-                        //     setState(() {
-                        //       isLikedList[index] = !isLikedList[index];
-                        //     });
-
-                        //     await services.toggleLike(document.id);
-                        //     await appState.checkLikeStatus(document.id);
-                        //   },
-                        //   child: Icon(
-                        //     isLikedList[index]
-                        //         ? Icons.favorite
-                        //         : Icons.favorite_border_outlined,
-                        //     color: isLikedList[index]
-                        //         ? Colors.red
-                        //         : Colors.grey.shade500,
-                        //   ),
-                        // ),
-                        Like(serviceId: document.id)
+                        //     ))
                       ],
                     ),
                     SizedBox(
@@ -162,14 +138,14 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                         maxLines: 2,
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                          overflow: TextOverflow.ellipsis,
+                          overflow: TextOverflow.clip,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
                     const SizedBox(
-                      height: 50,
+                      height: 60,
                     ),
                     Align(
                       alignment: Alignment.bottomRight,
@@ -205,52 +181,57 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      // color: Colors.white,
-      child: FutureBuilder<List<DocumentSnapshot>>(
-          future: services.getResultServices(widget.serviceType),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+    return Container(
+      color: Colors.white,
+      child: SingleChildScrollView(
+        child: FutureBuilder<List<DocumentSnapshot>>(
+            future: services.getResultServicesBySupplier(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
                   child: Container(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator()));
-            } else if (snapshot.hasError) {
-              return Text('Error while loading data : ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No data found'));
-            } else {
-              List<DocumentSnapshot> documents = snapshot.data!;
-              // isFavoriteList = List.filled(documents.length, false);
-
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: documents.length,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    DocumentSnapshot document = documents[index];
-                    return FutureBuilder<double>(
-                      future: appState.calculateAverageRating(document.id),
-                      builder: (context, ratingSnapshot) {
-                        if (ratingSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                              child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  child: CircularProgressIndicator()));
-                        } else if (ratingSnapshot.hasError) {
-                          return Text('Error calculating average rating');
-                        } else {
-                          double averageRating = ratingSnapshot.data ?? 0;
-                          return serviceWidget(document, index, averageRating);
-                        }
-                      },
-                    );
-                  });
-            }
-          }),
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator()),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                    child: Text('Error retrieving data: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text('No Service yet'),
+                );
+              } else {
+                List<DocumentSnapshot> myservices = snapshot.data!;
+                return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: myservices.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot document = myservices[index];
+                      return FutureBuilder<double>(
+                        future: appState.calculateAverageRating(document.id),
+                        builder: (context, ratingSnapshot) {
+                          if (ratingSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: CircularProgressIndicator()));
+                          } else if (ratingSnapshot.hasError) {
+                            return Text('Error calculating average rating');
+                          } else {
+                            double averageRating = ratingSnapshot.data ?? 0;
+                            return serviceWidget(
+                                index, document, averageRating);
+                          }
+                        },
+                      );
+                    });
+              }
+            }),
+      ),
     );
   }
 }

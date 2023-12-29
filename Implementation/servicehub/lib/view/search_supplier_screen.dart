@@ -1,21 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:servicehub/controller/about_supplier.dart';
 import 'package:servicehub/controller/about_view.dart';
 import 'package:servicehub/controller/seller_reviews.dart';
 import 'package:servicehub/controller/seller_service.dart';
+import 'package:servicehub/controller/supplier_reviews.dart';
+import 'package:servicehub/controller/supplier_service.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/view/seller/supplier_profile.dart';
 
-class MyProfileScreen extends StatefulWidget {
-  const MyProfileScreen({super.key});
+class SearchSupplierScreen extends StatefulWidget {
+  final DocumentSnapshot data;
+  const SearchSupplierScreen({super.key, required this.data});
 
   @override
-  State<MyProfileScreen> createState() => _MyProfileScreenState();
+  State<SearchSupplierScreen> createState() => _SearchSupplierScreenState();
 }
 
-class _MyProfileScreenState extends State<MyProfileScreen>
+class _SearchSupplierScreenState extends State<SearchSupplierScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animation;
@@ -83,19 +88,19 @@ class _MyProfileScreenState extends State<MyProfileScreen>
 
   Widget buildContent() {
     if (selectedOption == 'About') {
-      return AboutView();
+      return AboutSupplier(data: widget.data);
     } else if (selectedOption == 'Services') {
-      return SellerService();
+      return SupplierService(data: widget.data);
     } else if (selectedOption == 'Reviews') {
-      return SellerReviews();
+      return SupplierReviews(data: widget.data);
     }
     return Container();
   }
 
   @override
   Widget build(BuildContext context) {
-    UserData? userData = Provider.of<ApplicationState>(context).getUser;
-    String? logoUrl = userData?.logo;
+    // UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    String? logoUrl = widget.data['logoLink'];
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -152,7 +157,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text(userData!.username,
+                        Text(widget.data['company name'],
                             style: GoogleFonts.roboto(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,

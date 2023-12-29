@@ -5,6 +5,7 @@ import 'package:servicehub/controller/recent_order_search.dart';
 import 'package:servicehub/firebase_services.dart';
 import 'package:servicehub/view/explore_screen.dart';
 import 'package:servicehub/view/result_search_view.dart';
+import 'package:servicehub/view/search_supplier_screen.dart';
 // import 'package:servicehub/view/home_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -294,7 +295,15 @@ class _SearchScreenState extends State<SearchScreen>
                                     horizontal: 5,
                                   ),
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: ((context) =>
+                                                  SearchSupplierScreen(
+                                                    data: data,
+                                                  ))));
+                                    },
                                     child: Column(
                                       children: [
                                         ListTile(

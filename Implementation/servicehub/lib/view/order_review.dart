@@ -186,12 +186,14 @@ class _OrderReviewState extends State<OrderReview> {
   @override
   Widget build(BuildContext context) {
     String? posterUrl = serviceData?.poster;
-    int subtotal = serviceData!.price;
-    int service_fee = (serviceData!.price * 0.1).toInt();
+    int subtotal = serviceData?.price ?? 0;
+    int service_fee = ((serviceData?.price ?? 0) * 0.1).toInt();
     int total_price = subtotal + service_fee;
     DateTime currentDate = DateTime.now();
-    DateTime newDate = addDuration(serviceData!.delivaryTime, currentDate);
-    String formattedDate = formatDate(newDate);
+    DateTime? newDate = serviceData != null
+        ? addDuration(serviceData!.delivaryTime, currentDate)
+        : null;
+    String formattedDate = formatDate(newDate ?? DateTime.now());
 
     return Scaffold(
       appBar: CustomAppbar(

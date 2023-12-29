@@ -1,18 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/model/services/services.dart';
 
-class SupplierReviews extends StatefulWidget {
-  final DocumentSnapshot data;
-  const SupplierReviews({super.key, required this.data});
+class SellerReviews extends StatefulWidget {
+  const SellerReviews({super.key});
 
   @override
-  State<SupplierReviews> createState() => _SupplierReviewsState();
+  State<SellerReviews> createState() => _SellerReviewsState();
 }
 
-class _SupplierReviewsState extends State<SupplierReviews> {
+class _SellerReviewsState extends State<SellerReviews> {
   Services services = Services();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+
   int? totalReviews;
 
   @override
@@ -22,7 +23,8 @@ class _SupplierReviewsState extends State<SupplierReviews> {
   }
 
   Future<void> getSellerReviews() async {
-    int total = await services.getReviewsBySellers(widget.data.id);
+    auth.User currentUser = _auth.currentUser!;
+    int total = await services.getReviewsBySellers(currentUser.uid);
     setState(() {
       totalReviews = total;
     });

@@ -235,13 +235,13 @@ class _NewServiceViewState extends State<NewServiceView> {
                               // const SizedBox(
                               //   width: 60,
                               // ),
-                              LikeButton(
-                                // onTap: (isLiked) {
+                              // LikeButton(
+                              //   // onTap: (isLiked) {
 
-                                // },
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                              )
+                              //   // },
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   mainAxisAlignment: MainAxisAlignment.start,
+                              // )
                             ],
                           ),
                           const SizedBox(

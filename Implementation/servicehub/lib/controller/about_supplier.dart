@@ -6,52 +6,22 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 
-class AboutView extends StatefulWidget {
-  const AboutView({super.key});
+class AboutSupplier extends StatefulWidget {
+  final DocumentSnapshot data;
+  const AboutSupplier({super.key, required this.data});
 
   @override
-  State<AboutView> createState() => _AboutViewState();
+  State<AboutSupplier> createState() => _AboutSupplierState();
 }
 
-class _AboutViewState extends State<AboutView> {
-  // Widget certifications() {
-  //   return ListView.builder(
-  //       shrinkWrap: true,
-  //       padding: EdgeInsets.zero,
-  //       itemCount: 2,
-  //       scrollDirection: Axis.vertical,
-  //       itemBuilder: (BuildContext context, int index) {
-  //         return Row(
-  //           children: [
-  //             Container(
-  //               width: 8,
-  //               height: 8,
-  //               decoration: BoxDecoration(
-  //                   shape: BoxShape.circle,
-  //                   border: Border.all(color: Colors.grey.shade400)),
-  //             ),
-  //             const SizedBox(
-  //               width: 10,
-  //             ),
-  //             Text(
-  //               'Certification No ${index + 1}',
-  //               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-  //             ),
-  //             const SizedBox(
-  //               height: 5,
-  //             )
-  //           ],
-  //         );
-  //       });
-  // }
-
+class _AboutSupplierState extends State<AboutSupplier> {
   @override
   Widget build(BuildContext context) {
-    UserData? userData = Provider.of<ApplicationState>(context).getUser;
-    Timestamp timestamp = userData!.date!;
+    // UserData? userData = Provider.of<ApplicationState>(context).getUser;
+    Timestamp timestamp = widget.data['register date'];
     DateTime dateTime = timestamp.toDate();
     String registerDate = DateFormat('MMM yyyy').format(dateTime);
-    return userData == null
+    return widget.data == null
         ? Center(
             child: CircularProgressIndicator(),
           )
@@ -85,7 +55,7 @@ class _AboutViewState extends State<AboutView> {
                         height: 7,
                       ),
                       Text(
-                        userData.description ?? '',
+                        widget.data['description'] ?? '',
                         textAlign: TextAlign.justify,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
@@ -184,7 +154,7 @@ class _AboutViewState extends State<AboutView> {
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                userData.sector ?? 'none',
+                                widget.data['sector'] ?? 'none',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -219,7 +189,7 @@ class _AboutViewState extends State<AboutView> {
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                userData.phonenumber.toString(),
+                                widget.data['phonenumber'].toString(),
                                 style: TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.bold),
                               )
@@ -261,7 +231,7 @@ class _AboutViewState extends State<AboutView> {
                         height: 10,
                       ),
                       Text(
-                        userData.certification ?? 'none',
+                        widget.data['certification'] ?? 'none',
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w400),
                       ),

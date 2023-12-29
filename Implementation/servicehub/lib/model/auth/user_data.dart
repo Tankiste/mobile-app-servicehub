@@ -14,11 +14,12 @@ class UserData {
   String? website;
   String? certification;
   int? phonenumber;
-  String? email;
+  String email;
   String? password;
   String? confirmpassword;
   bool isSeller = false;
   bool sellerMode = false;
+  Timestamp? date = Timestamp.now();
 
   UserData(
       {required this.uid,
@@ -32,6 +33,7 @@ class UserData {
       this.certification,
       this.phonenumber,
       required this.email,
+      this.date,
       this.password,
       this.confirmpassword});
 
@@ -41,6 +43,9 @@ class UserData {
       'username': username,
       'email': email,
       'isSeller': isSeller,
+      'sellerMode': sellerMode,
+      'picture': logo,
+      'register date': date,
     };
   }
 
@@ -59,6 +64,7 @@ class UserData {
       'logoLink': logo,
       'isSeller': isSeller,
       'sellerMode': sellerMode,
+      'register date': date,
     };
   }
 
@@ -71,6 +77,11 @@ class UserData {
       username: username,
       email: snapshot['email'],
       logo: snapshot['logoLink'],
+      description: snapshot['description'],
+      sector: snapshot['sector'],
+      phonenumber: snapshot['phonenumber'],
+      certification: snapshot['certification'],
+      date: snapshot['register date'],
     );
   }
 

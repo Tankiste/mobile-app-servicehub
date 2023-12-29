@@ -3,7 +3,8 @@ import 'package:servicehub/controller/review_screen_listview.dart';
 import 'package:servicehub/view/service_detail_view.dart';
 
 class ReviewsScreen extends StatefulWidget {
-  const ReviewsScreen({super.key});
+  final String serviceId;
+  const ReviewsScreen({super.key, required this.serviceId});
 
   @override
   State<ReviewsScreen> createState() => _ReviewsScreenState();
@@ -35,7 +36,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
                 ),
-                ReviewScreenListView(),
+                ReviewScreenListView(serviceId: widget.serviceId),
               ],
             ),
           ),

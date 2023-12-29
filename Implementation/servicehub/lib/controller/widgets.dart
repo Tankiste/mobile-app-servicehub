@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/explore_screen.dart';
 import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/home_screen.dart';
@@ -169,6 +170,58 @@ class Message {
 
   const Message(
       {required this.text, required this.date, required this.isSentByMe});
+}
+
+class Like extends StatefulWidget {
+  final String serviceId;
+
+  const Like({Key? key, required this.serviceId}) : super(key: key);
+
+  @override
+  _LikeState createState() => _LikeState();
+}
+
+class _LikeState extends State<Like> {
+  ApplicationState appState = ApplicationState();
+  Services services = Services();
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initLikeStatus();
+  }
+
+  Future<void> _initLikeStatus() async {
+    bool liked = await appState.checkLikeStatus(widget.serviceId);
+    setState(() {
+      isLiked = liked;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ApplicationState>(builder: (context, appState, _) {
+      // bool isLiked = appState.isLiked;
+      int totalLikes = appState.totalLike;
+
+      return GestureDetector(
+        onTap: () async {
+          setState(() {
+            isLiked = !isLiked;
+          });
+          await services.toggleLike(widget.serviceId);
+          await appState.checkLikeStatus(widget.serviceId);
+          await appState.totalLikes(widget.serviceId);
+        },
+        child: Icon(
+          isLiked ? Icons.favorite : Icons.favorite_border_outlined,
+          color: isLiked ? Colors.red : Colors.grey.shade500,
+          size: 30,
+        ),
+      );
+    });
+  }
 }
 
 class BottomBar extends StatefulWidget {

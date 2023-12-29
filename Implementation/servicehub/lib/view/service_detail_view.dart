@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/controller/recent_order_search.dart';
 import 'package:servicehub/controller/related_service_listview.dart';
 import 'package:servicehub/controller/review_listview.dart';
+import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/model/services/services.dart';
@@ -26,17 +28,29 @@ class ServiceDetailView extends StatefulWidget {
 
 class _ServiceDetailViewState extends State<ServiceDetailView> {
   // bool _isFavorite = false;
+  TextEditingController reviewController = TextEditingController();
   int _rating = 0;
   ServiceData? serviceData;
   UserData? supplierData;
   Services _services = Services();
+  late List<DocumentSnapshot> reviews;
+  late int totalLike;
+  // ApplicationState _appState = ApplicationState();
 
   @override
   void initState() {
     fetchServiceDetails();
     // updateData();
+    loadReviews();
+    Provider.of<ApplicationState>(context, listen: false)
+        .totalLikes(widget.serviceId);
+    // totalLikes();
     super.initState();
   }
+
+  // Future<void> totalLikes() async {
+  //   totalLike = await _appState.totalLikes(widget.serviceId);
+  // }
 
   // updateData() async {
   //   ApplicationState appState = Provider.of(context, listen: false);
@@ -144,6 +158,7 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                         color: Colors.grey.shade300,
                       )),
                   child: TextFormField(
+                    controller: reviewController,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
@@ -162,7 +177,19 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                 height: 100,
               ),
               ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    String result = await _services.addReview(
+                        widget.serviceId, reviewController.text, _rating);
+                    if (result == 'success') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Review created successfully')),
+                      );
+                    } else if (result == 'exists') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Review updated successfully')),
+                      );
+                    }
+                    Navigator.pop(context);
                     // Navigator.push(
                     //     context,
                     //     MaterialPageRoute(
@@ -194,6 +221,18 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
         ),
       );
     });
+  }
+
+  Future<void> loadReviews() async {
+    try {
+      List<DocumentSnapshot> fetchedReviews =
+          await _services.getReviewsByServices(widget.serviceId);
+      setState(() {
+        reviews = fetchedReviews;
+      });
+    } catch (err) {
+      print('Error fetching reviews: $err');
+    }
   }
 
   @override
@@ -395,14 +434,23 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                   // const SizedBox(
                                   //   width: 60,
                                   // ),
-                                  LikeButton(
-                                    // onTap: (isLiked) {
+                                  Consumer<ApplicationState>(
+                                      builder: (context, appState, _) {
+                                    return Row(
+                                      children: [
+                                        Text(appState.totalLike.toString()),
+                                        Like(serviceId: widget.serviceId),
+                                      ],
+                                    );
+                                  }),
+                                  // LikeButton(
+                                  //   // onTap: (isLiked) {
 
-                                    // },
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                  )
+                                  //   // },
+                                  //   crossAxisAlignment:
+                                  //       CrossAxisAlignment.start,
+                                  //   mainAxisAlignment: MainAxisAlignment.start,
+                                  // )
                                   // IconButton(
                                   //     onPressed: () {
                                   //       setState(() {
@@ -450,41 +498,75 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    // width: 50,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(5, (index) {
-                                        if (index < 3) {
-                                          return Icon(Icons.star_rounded,
-                                              size: 23,
-                                              color: Colors.yellow.shade700);
-                                        } else if (index == 3) {
-                                          return Icon(Icons.star_half_rounded,
-                                              size: 23,
-                                              color: Colors.yellow.shade700);
-                                        } else {
-                                          return Icon(
-                                              Icons.star_outline_rounded,
-                                              size: 23,
-                                              color: Colors.yellow.shade700);
-                                        }
-                                      }),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    '3.6',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  )
-                                ],
-                              ),
+                              StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('reviews')
+                                      .where('service Id',
+                                          isEqualTo: widget.serviceId)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      return Center(
+                                          child:
+                                              Text('Error: ${snapshot.error}'));
+                                    }
+                                    if (!snapshot.hasData ||
+                                        snapshot.data!.docs.isEmpty) {
+                                      return Center(
+                                          child: Text('Not yet rated'));
+                                    }
+                                    if (snapshot.hasData) {
+                                      double totalRating = 0;
+                                      for (var doc in snapshot.data!.docs) {
+                                        totalRating +=
+                                            (doc['rating'] as int).toDouble();
+                                      }
+                                      double averageRating = totalRating /
+                                          snapshot.data!.docs.length;
+                                      return Row(
+                                        children: [
+                                          SizedBox(
+                                            // width: 50,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: List.generate(
+                                                  5,
+                                                  (index) => Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(right: 3),
+                                                        child: SizedBox(
+                                                          width: 17,
+                                                          child: Icon(
+                                                            index <
+                                                                    averageRating
+                                                                        .roundToDouble()
+                                                                ? Icons.star
+                                                                : Icons
+                                                                    .star_border,
+                                                            color: Colors.yellow
+                                                                .shade700,
+                                                            size: 20,
+                                                          ),
+                                                        ),
+                                                      )),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            averageRating.toStringAsFixed(1),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  }),
                               const SizedBox(
                                 height: 3,
                               ),
@@ -494,7 +576,7 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '32 Reviews',
+                                    '${reviews.length} Reviews',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500),
@@ -505,7 +587,9 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                             context,
                                             CupertinoPageRoute(
                                                 builder: ((context) =>
-                                                    ReviewsScreen())));
+                                                    ReviewsScreen(
+                                                        serviceId: widget
+                                                            .serviceId))));
                                       },
                                       child: Text(
                                         'See All',
@@ -516,7 +600,9 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                       ))
                                 ],
                               ),
-                              ReviewListView(),
+                              ReviewListView(
+                                serviceId: widget.serviceId,
+                              ),
                               const SizedBox(
                                 height: 15,
                               ),

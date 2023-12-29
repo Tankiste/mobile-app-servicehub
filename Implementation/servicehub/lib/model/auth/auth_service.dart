@@ -55,6 +55,8 @@ class AuthService {
             confirmpassword: confirmpassword);
 
         userData.isSeller = false;
+        userData.sellerMode = false;
+        userData.date = Timestamp.now();
 
         await _firestore
             .collection('users')
@@ -114,6 +116,7 @@ class AuthService {
 
         userData.isSeller = false;
         userData.sellerMode = false;
+        userData.date = Timestamp.now();
 
         await _firestore
             .collection('users')
@@ -296,8 +299,8 @@ class AuthService {
         if (query.docs.isNotEmpty) {
           var userDoc = query.docs.first;
           bool isSeller = userDoc['isSeller'];
-          print(
-              'The seller ${currentUser.toString()} status is : ${isSeller.toString()}');
+          // print(
+          //     'The seller ${currentUser.toString()} status is : ${isSeller.toString()}');
           return isSeller;
         }
       }

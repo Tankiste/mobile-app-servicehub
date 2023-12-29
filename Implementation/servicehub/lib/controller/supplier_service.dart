@@ -1,20 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/seller/new_service_view.dart';
 
-class SellerService extends StatefulWidget {
-  const SellerService({super.key});
+class SupplierService extends StatefulWidget {
+  final DocumentSnapshot data;
+  const SupplierService({super.key, required this.data});
 
   @override
-  State<SellerService> createState() => _SellerServiceState();
+  State<SupplierService> createState() => _SupplierServiceState();
 }
 
-class _SellerServiceState extends State<SellerService> {
+class _SupplierServiceState extends State<SupplierService> {
   Services services = Services();
   // int selectedIndex = -1;
   late List<bool> isFavoriteList;
+  ApplicationState appState = ApplicationState();
 
   @override
   void initState() {
@@ -31,7 +34,8 @@ class _SellerServiceState extends State<SellerService> {
     });
   }
 
-  Widget serviceWidget(int index, DocumentSnapshot document) {
+  Widget serviceWidget(
+      int index, DocumentSnapshot document, double averageRating) {
     String? posterUrl = document['poster'];
     return Padding(
       padding: const EdgeInsets.only(left: 7, right: 20, bottom: 20),
@@ -105,7 +109,7 @@ class _SellerServiceState extends State<SellerService> {
                           size: 20,
                         ),
                         Text(
-                          '5.0',
+                          averageRating.toStringAsFixed(1),
                           style: TextStyle(
                             fontSize: 15,
                             color: Colors.yellow.shade700,
@@ -113,19 +117,19 @@ class _SellerServiceState extends State<SellerService> {
                           ),
                         ),
                         const SizedBox(width: 90),
-                        GestureDetector(
-                            onTap: () {
-                              // likeService(index);
-                              setState(() {
-                                isFavoriteList[index] = !isFavoriteList[index];
-                              });
-                            },
-                            child: Icon(
-                              Icons.favorite,
-                              color: isFavoriteList[index]
-                                  ? Colors.red
-                                  : Colors.grey.shade300,
-                            ))
+                        // GestureDetector(
+                        //     onTap: () {
+                        //       // likeService(index);
+                        //       setState(() {
+                        //         isFavoriteList[index] = !isFavoriteList[index];
+                        //       });
+                        //     },
+                        //     child: Icon(
+                        //       Icons.favorite,
+                        //       color: isFavoriteList[index]
+                        //           ? Colors.red
+                        //           : Colors.grey.shade300,
+                        //     ))
                       ],
                     ),
                     SizedBox(
@@ -182,7 +186,7 @@ class _SellerServiceState extends State<SellerService> {
       color: Colors.white,
       child: SingleChildScrollView(
         child: FutureBuilder<List<DocumentSnapshot>>(
-            future: services.getResultServicesBySupplier(),
+            future: services.getResultServicesBySupplierId(widget.data.id),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -205,9 +209,26 @@ class _SellerServiceState extends State<SellerService> {
                     itemCount: myservices.length,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot myservice = myservices[index];
-
-                      return serviceWidget(index, myservice);
+                      DocumentSnapshot document = myservices[index];
+                      return FutureBuilder<double>(
+                        future: appState.calculateAverageRating(document.id),
+                        builder: (context, ratingSnapshot) {
+                          if (ratingSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: CircularProgressIndicator()));
+                          } else if (ratingSnapshot.hasError) {
+                            return Text('Error calculating average rating');
+                          } else {
+                            double averageRating = ratingSnapshot.data ?? 0;
+                            return serviceWidget(
+                                index, document, averageRating);
+                          }
+                        },
+                      );
                     });
               }
             }),

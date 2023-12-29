@@ -215,7 +215,7 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                       ],
                     ),
                     const SizedBox(
-                      height: 230,
+                      height: 160,
                     ),
                     ElevatedButton(
                         onPressed: signoutUser,
