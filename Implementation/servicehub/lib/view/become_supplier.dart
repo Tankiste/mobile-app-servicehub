@@ -1,38 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
-import 'package:servicehub/view/login.dart';
-import 'package:servicehub/view/request_send.dart';
+import 'package:servicehub/view/home_client.dart';
+// import 'package:servicehub/view/login.dart';
+// import 'package:servicehub/view/request_send.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:servicehub/view/seller/become_seller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
-class SellerSignUp extends StatefulWidget {
-  const SellerSignUp({super.key});
+class BecomeSupplier extends StatefulWidget {
+  const BecomeSupplier({super.key});
 
   @override
-  State<SellerSignUp> createState() => _SellerSignUpState();
+  State<BecomeSupplier> createState() => _BecomeSupplierState();
 }
 
-class _SellerSignUpState extends State<SellerSignUp> {
+class _BecomeSupplierState extends State<BecomeSupplier> {
   TextEditingController _companynameController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _sectorController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _websiteController = TextEditingController();
   TextEditingController _certificationController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmpassController = TextEditingController();
+
+  // TextEditingController _passwordController = TextEditingController();
+  // TextEditingController _emailController = TextEditingController();
+  // TextEditingController _confirmpassController = TextEditingController();
+
   bool _isChecked = false;
-  bool _obscurePassword = true;
-  bool _obscurePassword2 = true;
+  // bool _obscurePassword = true;
+  // bool _obscurePassword2 = true;
   bool _isButtonPressed = false;
   bool isLoading = false;
   File? image;
-  GlobalKey<FormState> _registerSupplierKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _upgradeAccountKey = GlobalKey<FormState>();
 
   String? fileName;
 
@@ -71,43 +75,54 @@ class _SellerSignUpState extends State<SellerSignUp> {
     }
   }
 
-  void _togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-    });
-  }
+  // void _togglePasswordVisibility() {
+  //   setState(() {
+  //     _obscurePassword = !_obscurePassword;
+  //   });
+  // }
 
-  void _togglePasswordVisibility2() {
-    setState(() {
-      _obscurePassword2 = !_obscurePassword2;
-    });
-  }
+  // void _togglePasswordVisibility2() {
+  //   setState(() {
+  //     _obscurePassword2 = !_obscurePassword2;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    void registerSupplier() async {
-      if (_registerSupplierKey.currentState!.validate()) {
+    void upgradeAccount() async {
+      if (_upgradeAccountKey.currentState!.validate()) {
         if (image != null) {
           setState(() {
             isLoading = true;
           });
-          String resp = await AuthService().registerSeller(
-              name: _nameController.text,
-              email: _emailController.text,
-              username: _companynameController.text,
-              logo: image!,
-              description: _descriptionController.text,
-              sector: _sectorController.text,
-              address: _addressController.text,
-              certification: _certificationController.text,
-              website: _websiteController.text,
-              phonenumber: int.parse(_phoneNumberController.text),
-              password: _passwordController.text,
-              confirmpassword: _confirmpassController.text);
+          String resp = await AuthService().upgradeToSeller(
+            name: _nameController.text,
+            username: _companynameController.text,
+            logo: image!,
+            description: _descriptionController.text,
+            sector: _sectorController.text,
+            address: _addressController.text,
+            website: _websiteController.text,
+            certification: _certificationController.text,
+            phonenumber: int.parse(_phoneNumberController.text),
+            // password: _passwordController.text,
+            // confirmpassword: _confirmpassController.text
+            // email: _emailController.text,
+          );
 
           if (resp == 'success') {
+            Fluttertoast.showToast(
+              msg: "Votre requête a été envoyée avec succès !",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+
             Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const RequestSend()),
+                MaterialPageRoute(builder: (context) => const HomeClient()),
                 (Route<dynamic> route) => false);
           }
           setState(() {
@@ -151,7 +166,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
         height: double.infinity,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(right: 15, top: 40),
+            padding: const EdgeInsets.only(right: 15, top: 40, bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -176,12 +191,12 @@ class _SellerSignUpState extends State<SellerSignUp> {
                   child: Column(
                     children: [
                       Form(
-                          key: _registerSupplierKey,
+                          key: _upgradeAccountKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Sign Up',
+                                'Become a Supplier',
                                 style: TextStyle(
                                   fontFamily: 'Gilroy',
                                   fontSize: 20,
@@ -189,7 +204,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                 ),
                               ),
                               const SizedBox(height: 7),
-                              Text('Create a new account',
+                              Text('Upgrade your account',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: 'Gilroy',
@@ -236,29 +251,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                   ),
                                 ),
                               ),
-                              // const SizedBox(height: 10),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(right: 5),
-                              //   child: Container(
-                              //     decoration: BoxDecoration(
-                              //         shape: BoxShape.rectangle,
-                              //         borderRadius: BorderRadius.circular(6),
-                              //         border: Border.all(
-                              //           color: Colors.grey.shade300,
-                              //         )),
-                              //     child: TextFormField(
-                              //       keyboardType: TextInputType.name,
-                              //       decoration: InputDecoration(
-                              //           hintText: 'Lastname',
-                              //           contentPadding: EdgeInsets.only(left: 10),
-                              //           hintStyle: TextStyle(
-                              //               color: Colors.grey.shade400,
-                              //               fontWeight: FontWeight.w300,
-                              //               fontSize: 15),
-                              //           border: InputBorder.none),
-                              //     ),
-                              //   ),
-                              // ),
+
                               const SizedBox(height: 25),
                               const Text("Company's Name",
                                   textAlign: TextAlign.center,
@@ -612,150 +605,150 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 25,
-                              ),
-                              const Text('Email',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Gilroy',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              const SizedBox(height: 5),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 5),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
-                                      )),
-                                  child: TextFormField(
-                                    controller: _emailController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: InputDecoration(
-                                        hintText: 'Enter your mail',
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10),
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 15),
-                                        border: InputBorder.none),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
-                                      }
-                                      if (!value.contains('@')) {
-                                        return 'Please enter a valid email address';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 25,
-                              ),
-                              const Text('Password',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Gilroy',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              const SizedBox(height: 5),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 5),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
-                                      )),
-                                  child: TextFormField(
-                                    controller: _passwordController,
-                                    obscureText: _obscurePassword,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    decoration: InputDecoration(
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10, top: 10),
-                                        hintText: 'Password',
-                                        border: InputBorder.none,
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 15),
-                                        suffixIcon: IconButton(
-                                            icon: Icon(_obscurePassword
-                                                ? Icons.visibility_off
-                                                : Icons.visibility),
-                                            onPressed:
-                                                _togglePasswordVisibility)),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your password';
-                                      }
-                                      if (value.length < 6) {
-                                        return 'Password must be at least 6 characters';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 25),
-                              const Text('Confirm Password',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Gilroy',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                              const SizedBox(height: 5),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 5),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: Colors.grey.shade300,
-                                      )),
-                                  child: TextFormField(
-                                    controller: _confirmpassController,
-                                    obscureText: _obscurePassword,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    decoration: InputDecoration(
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10, top: 10),
-                                        hintText: 'Password',
-                                        border: InputBorder.none,
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 15),
-                                        suffixIcon: IconButton(
-                                            icon: Icon(_obscurePassword2
-                                                ? Icons.visibility_off
-                                                : Icons.visibility),
-                                            onPressed:
-                                                _togglePasswordVisibility2)),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please confirm your password';
-                                      }
-                                      if (value != _passwordController.text) {
-                                        return 'Passwords do not match';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ),
+                              // const SizedBox(
+                              //   height: 25,
+                              // ),
+                              // const Text('Email',
+                              //     textAlign: TextAlign.center,
+                              //     style: TextStyle(
+                              //       fontFamily: 'Gilroy',
+                              //       fontSize: 17,
+                              //       fontWeight: FontWeight.bold,
+                              //     )),
+                              // const SizedBox(height: 5),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(right: 5),
+                              //   child: Container(
+                              //     decoration: BoxDecoration(
+                              //         shape: BoxShape.rectangle,
+                              //         borderRadius: BorderRadius.circular(6),
+                              //         border: Border.all(
+                              //           color: Colors.grey.shade300,
+                              //         )),
+                              //     child: TextFormField(
+                              //       controller: _emailController,
+                              //       keyboardType: TextInputType.emailAddress,
+                              //       decoration: InputDecoration(
+                              //           hintText: 'Enter your mail',
+                              //           contentPadding:
+                              //               EdgeInsets.only(left: 10),
+                              //           hintStyle: TextStyle(
+                              //               color: Colors.grey.shade400,
+                              //               fontWeight: FontWeight.w300,
+                              //               fontSize: 15),
+                              //           border: InputBorder.none),
+                              //       validator: (value) {
+                              //         if (value == null || value.isEmpty) {
+                              //           return 'Please enter your email';
+                              //         }
+                              //         if (!value.contains('@')) {
+                              //           return 'Please enter a valid email address';
+                              //         }
+                              //         return null;
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
+                              // const SizedBox(
+                              //   height: 25,
+                              // ),
+                              // const Text('Password',
+                              //     textAlign: TextAlign.center,
+                              //     style: TextStyle(
+                              //       fontFamily: 'Gilroy',
+                              //       fontSize: 17,
+                              //       fontWeight: FontWeight.bold,
+                              //     )),
+                              // const SizedBox(height: 5),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(right: 5),
+                              //   child: Container(
+                              //     decoration: BoxDecoration(
+                              //         shape: BoxShape.rectangle,
+                              //         borderRadius: BorderRadius.circular(6),
+                              //         border: Border.all(
+                              //           color: Colors.grey.shade300,
+                              //         )),
+                              //     child: TextFormField(
+                              //       controller: _passwordController,
+                              //       obscureText: _obscurePassword,
+                              //       keyboardType: TextInputType.visiblePassword,
+                              //       decoration: InputDecoration(
+                              //           contentPadding:
+                              //               EdgeInsets.only(left: 10, top: 10),
+                              //           hintText: 'Password',
+                              //           border: InputBorder.none,
+                              //           hintStyle: TextStyle(
+                              //               color: Colors.grey.shade400,
+                              //               fontWeight: FontWeight.w300,
+                              //               fontSize: 15),
+                              //           suffixIcon: IconButton(
+                              //               icon: Icon(_obscurePassword
+                              //                   ? Icons.visibility_off
+                              //                   : Icons.visibility),
+                              //               onPressed:
+                              //                   _togglePasswordVisibility)),
+                              //       validator: (value) {
+                              //         if (value == null || value.isEmpty) {
+                              //           return 'Please enter your password';
+                              //         }
+                              //         if (value.length < 6) {
+                              //           return 'Password must be at least 6 characters';
+                              //         }
+                              //         return null;
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
+                              // const SizedBox(height: 25),
+                              // const Text('Confirm Password',
+                              //     textAlign: TextAlign.center,
+                              //     style: TextStyle(
+                              //       fontFamily: 'Gilroy',
+                              //       fontSize: 17,
+                              //       fontWeight: FontWeight.bold,
+                              //     )),
+                              // const SizedBox(height: 5),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(right: 5),
+                              //   child: Container(
+                              //     decoration: BoxDecoration(
+                              //         shape: BoxShape.rectangle,
+                              //         borderRadius: BorderRadius.circular(6),
+                              //         border: Border.all(
+                              //           color: Colors.grey.shade300,
+                              //         )),
+                              //     child: TextFormField(
+                              //       controller: _confirmpassController,
+                              //       obscureText: _obscurePassword,
+                              //       keyboardType: TextInputType.visiblePassword,
+                              //       decoration: InputDecoration(
+                              //           contentPadding:
+                              //               EdgeInsets.only(left: 10, top: 10),
+                              //           hintText: 'Password',
+                              //           border: InputBorder.none,
+                              //           hintStyle: TextStyle(
+                              //               color: Colors.grey.shade400,
+                              //               fontWeight: FontWeight.w300,
+                              //               fontSize: 15),
+                              //           suffixIcon: IconButton(
+                              //               icon: Icon(_obscurePassword2
+                              //                   ? Icons.visibility_off
+                              //                   : Icons.visibility),
+                              //               onPressed:
+                              //                   _togglePasswordVisibility2)),
+                              //       validator: (value) {
+                              //         if (value == null || value.isEmpty) {
+                              //           return 'Please confirm your password';
+                              //         }
+                              //         if (value != _passwordController.text) {
+                              //           return 'Passwords do not match';
+                              //         }
+                              //         return null;
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -815,7 +808,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                       setState(() {
                                         _isButtonPressed = true;
                                       });
-                                      isLoading ? null : registerSupplier();
+                                      isLoading ? null : upgradeAccount();
                                     },
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -826,8 +819,8 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                         )),
                                     child: Padding(
                                       padding: EdgeInsets.only(
-                                          left: 110,
-                                          right: 110,
+                                          left: 77,
+                                          right: 77,
                                           top: 15,
                                           bottom: 15),
                                       child: isLoading
@@ -837,7 +830,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                                       Colors.white),
                                             )
                                           : Text(
-                                              'Sign Up',
+                                              'Upgrade Account',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 17,
@@ -846,30 +839,30 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                             ),
                                     )),
                               ),
-                              const SizedBox(
-                                height: 7,
-                              ),
-                              const SizedBox(height: 10),
+                              // const SizedBox(
+                              //   height: 7,
+                              // ),
+                              // const SizedBox(height: 10),
                             ],
                           )),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 300),
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: ((context) => LoginPage())));
-                      },
-                      child: const Text(
-                        'Sign In',
-                        style:
-                            TextStyle(fontSize: 17, color: Color(0xFF7D2231)),
-                      )),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 300),
+                //   child: TextButton(
+                //       onPressed: () {
+                //         Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: ((context) => LoginPage())));
+                //       },
+                //       child: const Text(
+                //         'Sign In',
+                //         style:
+                //             TextStyle(fontSize: 17, color: Color(0xFF7D2231)),
+                //       )),
+                // ),
               ],
             ),
           ),

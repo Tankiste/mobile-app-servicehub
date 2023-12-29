@@ -4,6 +4,8 @@ import 'package:servicehub/controller/messages_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/view/login.dart';
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});
@@ -35,6 +37,30 @@ class _InboxScreenState extends State<InboxScreen> {
         showText: false,
         actionText: '');
 
+    return Consumer<ApplicationState>(
+      builder: (context, appState, _) {
+        if (appState.getUser != null) {
+          return buildChatPage(appBar: appBar, noMessage: noMessage);
+        } else {
+          return LoginPage();
+        }
+      },
+    );
+  }
+}
+
+class buildChatPage extends StatelessWidget {
+  const buildChatPage({
+    super.key,
+    required this.appBar,
+    required this.noMessage,
+  });
+
+  final CustomAppbar appBar;
+  final bool noMessage;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: Stack(

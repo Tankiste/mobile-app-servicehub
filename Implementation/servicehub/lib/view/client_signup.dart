@@ -18,6 +18,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
   bool _obscurePassword = true;
   bool _obscurePassword2 = true;
   bool _isButtonPressed = false;
+  bool isLoading = false;
   GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
 
   void _togglePasswordVisibility() {
@@ -45,6 +46,9 @@ class _ClientSignUpState extends State<ClientSignUp> {
   Widget build(BuildContext context) {
     void registerUser() async {
       if (_registerFormKey.currentState!.validate()) {
+        setState(() {
+          isLoading = true;
+        });
         String resp = await AuthService().registerUser(
             email: _emailController.text,
             username: _usernameController.text,
@@ -56,6 +60,9 @@ class _ClientSignUpState extends State<ClientSignUp> {
               MaterialPageRoute(builder: (context) => const LoginPage()),
               (Route<dynamic> route) => false);
         }
+        setState(() {
+          isLoading = false;
+        });
       }
     }
 
@@ -351,7 +358,7 @@ class _ClientSignUpState extends State<ClientSignUp> {
                                       setState(() {
                                         _isButtonPressed = true;
                                       });
-                                      registerUser();
+                                      isLoading ? null : registerUser();
                                     },
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor:
@@ -360,20 +367,25 @@ class _ClientSignUpState extends State<ClientSignUp> {
                                           borderRadius:
                                               BorderRadius.circular(30),
                                         )),
-                                    child: const Padding(
+                                    child: Padding(
                                       padding: EdgeInsets.only(
                                           left: 110,
                                           right: 110,
                                           top: 15,
                                           bottom: 15),
-                                      child: Text(
-                                        'Sign Up',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w600,
-                                            fontFamily: 'Gilroy'),
-                                      ),
+                                      child: isLoading
+                                          ? CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white))
+                                          : Text(
+                                              'Sign Up',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: 'Gilroy'),
+                                            ),
                                     )),
                               ),
                               const SizedBox(

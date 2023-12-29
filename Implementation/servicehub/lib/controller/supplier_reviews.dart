@@ -68,7 +68,7 @@ class _SupplierReviewsState extends State<SupplierReviews> {
                   width: 15,
                 ),
                 Text(
-                  'You got ${totalReviews ?? 'loading...'} reviews',
+                  'Has ${totalReviews ?? 'loading...'} reviews',
                   style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 14,

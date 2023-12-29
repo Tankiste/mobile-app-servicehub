@@ -354,6 +354,22 @@ class Services {
       print('Error toggling like/dislike: $err');
     }
   }
+
+  Future<List<DocumentSnapshot>> getLikedServices() async {
+    try {
+      auth.User currentUser = _auth.currentUser!;
+      QuerySnapshot likedServicesSnapshot = await _firestore
+          .collection('services')
+          .where('likes', arrayContains: currentUser.uid)
+          .get();
+
+      List<DocumentSnapshot> likedServices = likedServicesSnapshot.docs;
+      return likedServices;
+    } catch (error) {
+      print('Error getting liked services: $error');
+      return [];
+    }
+  }
 }
 
 // Future<String> addCategory() async {

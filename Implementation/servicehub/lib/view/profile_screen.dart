@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 // import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/view/become_supplier.dart';
 import 'package:servicehub/view/client_signup.dart';
 import 'package:servicehub/view/favorite_screen.dart';
 import 'package:servicehub/view/language_screen.dart';
@@ -108,32 +109,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
                                     child: logoUrl != null
-                                        ? Image.network(logoUrl,
-                                            fit: BoxFit.cover, loadingBuilder:
-                                                (BuildContext context,
-                                                    Widget child,
-                                                    ImageChunkEvent?
-                                                        loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                              value: loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                          .cumulativeBytesLoaded /
-                                                      loadingProgress
-                                                          .expectedTotalBytes!
-                                                  : null,
-                                            ));
-                                          }, errorBuilder:
-                                                (BuildContext context,
+                                        ? logoUrl == ""
+                                            ? Image.asset(
+                                                "assets/avatar.png",
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.network(logoUrl,
+                                                fit: BoxFit.cover,
+                                                loadingBuilder:
+                                                    (BuildContext context,
+                                                        Widget child,
+                                                        ImageChunkEvent?
+                                                            loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                                ));
+                                              }, errorBuilder: (BuildContext
+                                                        context,
                                                     Object exception,
                                                     StackTrace? stackTrace) {
-                                            return Icon(Icons.error);
-                                          })
+                                                return Icon(Icons.error);
+                                              })
                                         : Image.asset(
                                             "assets/avatar.png",
                                             fit: BoxFit.cover,
@@ -511,7 +518,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: ((context) => SellerSignUp())));
+                                    builder: ((context) => BecomeSupplier())));
                           },
                           child: Row(
                             children: [

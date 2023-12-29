@@ -44,7 +44,7 @@ class UserData {
       'email': email,
       'isSeller': isSeller,
       'sellerMode': sellerMode,
-      'picture': logo,
+      'logoLink': logo,
       'register date': date,
     };
   }

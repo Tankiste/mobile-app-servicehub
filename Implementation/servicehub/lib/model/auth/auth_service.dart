@@ -54,6 +54,7 @@ class AuthService {
             password: password,
             confirmpassword: confirmpassword);
 
+        userData.logo = "";
         userData.isSeller = false;
         userData.sellerMode = false;
         userData.date = Timestamp.now();
@@ -129,6 +130,50 @@ class AuthService {
       }
     } catch (err) {
       resp = err.toString();
+    }
+    return resp;
+  }
+
+  Future<String> upgradeToSeller({
+    required String name,
+    required String username,
+    required File logo,
+    required String description,
+    required String sector,
+    required String address,
+    String? website,
+    String? certification,
+    required int phonenumber,
+  }) async {
+    String resp = 'Some Error occured';
+    auth.User currentUser = _auth.currentUser!;
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+    String imageUrl = await uploadImageToStorage('Logo', logo);
+
+    Map<String, dynamic> sellerData = {
+      'CEO name': name,
+      'username': username,
+      'logoLink': imageUrl,
+      'description': description,
+      'sector': sector,
+      'address': address,
+      'website': website,
+      'certification': certification,
+      'phonenumber': phonenumber,
+    };
+
+    try {
+      await userDocRef.update(sellerData);
+
+      await createRequestDocument(username, currentUser.uid);
+
+      resp = 'success';
+
+      print('Champs ajoutés avec succès pour le vendeur !');
+    } catch (e) {
+      resp = e.toString();
+      print('Erreur lors de la mise à jour : $e');
     }
     return resp;
   }

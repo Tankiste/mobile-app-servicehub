@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscurePassword = true;
   String errorMessage = '';
+  bool isLoading = false;
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -67,6 +68,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void loginUser() async {
     if (_loginFormKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
       String res = await AuthService().loginUser(
         usernameOrEmail: _emailController.text,
         password: _passwordController.text,
@@ -90,6 +94,9 @@ class _LoginPageState extends State<LoginPage> {
           errorMessage = res;
         });
       }
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -249,7 +256,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5),
                                   child: ElevatedButton(
-                                      onPressed: loginUser,
+                                      onPressed: isLoading ? null : loginUser,
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor:
                                               const Color(0xFFC84457),
@@ -257,20 +264,26 @@ class _LoginPageState extends State<LoginPage> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                           )),
-                                      child: const Padding(
+                                      child: Padding(
                                         padding: EdgeInsets.only(
                                             left: 120,
                                             right: 120,
                                             top: 15,
                                             bottom: 15),
-                                        child: Text(
-                                          'Login',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Gilroy'),
-                                        ),
+                                        child: isLoading
+                                            ? CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(Colors.white),
+                                              )
+                                            : Text(
+                                                'Login',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'Gilroy'),
+                                              ),
                                       )),
                                 ),
                                 const SizedBox(
