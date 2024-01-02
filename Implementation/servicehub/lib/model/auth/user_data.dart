@@ -17,7 +17,7 @@ class UserData {
   String email;
   String? password;
   String? confirmpassword;
-  bool isSeller = false;
+  bool? isSeller = false;
   bool sellerMode = false;
   Timestamp? date = Timestamp.now();
 
@@ -35,6 +35,7 @@ class UserData {
       required this.email,
       this.date,
       this.password,
+      this.isSeller,
       this.confirmpassword});
 
   Map<String, dynamic> toMap() {
@@ -82,6 +83,7 @@ class UserData {
       phonenumber: snapshot['phonenumber'],
       certification: snapshot['certification'],
       date: snapshot['register date'],
+      isSeller: snapshot['isSeller'],
     );
   }
 

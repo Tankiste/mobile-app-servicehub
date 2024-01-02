@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class RelatedServiceListView extends StatefulWidget {
   final serviceType;
@@ -22,6 +25,7 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
   Services services = Services();
   int selectedIndex = -1;
   late List<bool> isFavoriteList;
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -39,8 +43,9 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
     });
   }
 
-  Widget serviceWidget(int index, String name, String image, int price,
-      String type, String newId) {
+  Widget serviceWidget(int index, String sellerUid, String name, String image,
+      int price, String type, String newId) {
+    auth.User currentUser = _auth.currentUser!;
     return Padding(
       padding: const EdgeInsets.only(right: 20),
       child: InkWell(
@@ -48,13 +53,21 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
           // setState(() {
           //   selectedIndex = index;
           // });
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: ((context) => ServiceDetailView(
-                        serviceId: newId,
-                        serviceType: type,
-                      ))));
+          if (currentUser.uid == sellerUid) {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: ((context) => NewServiceView(
+                        newServiceId: newId, serviceType: type))));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => ServiceDetailView(
+                          serviceId: newId,
+                          serviceType: type,
+                        ))));
+          }
         },
         child: Container(
           height: 195,
@@ -229,9 +242,10 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                     String image = related_service['poster'];
                     int price = related_service['price'];
                     String type = related_service['type'];
+                    String sellerUid = related_service['seller id'];
                     String newId = related_service.id;
                     return serviceWidget(
-                        index, name, image, price, type, newId);
+                        index, sellerUid, name, image, price, type, newId);
                   });
             }
           }),

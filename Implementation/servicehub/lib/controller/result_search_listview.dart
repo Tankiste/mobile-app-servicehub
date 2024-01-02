@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class ResultSearchListView extends StatefulWidget {
   final String serviceType;
@@ -22,6 +24,7 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
   late List<DocumentSnapshot> documents;
   late List<bool> isLikedList;
   ApplicationState appState = ApplicationState();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -44,16 +47,27 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
   Widget serviceWidget(
       DocumentSnapshot document, int index, double averageRating) {
     String? posterUrl = document['poster'];
+    String sellerUid = document['seller id'];
+    auth.User currentUser = _auth.currentUser!;
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: ((context) => ServiceDetailView(
-                      serviceId: document.id,
-                      serviceType: widget.serviceType))));
+          if (currentUser.uid == sellerUid) {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: ((context) => NewServiceView(
+                        newServiceId: document.id,
+                        serviceType: document['type']))));
+          } else {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: ((context) => ServiceDetailView(
+                        serviceId: document.id,
+                        serviceType: widget.serviceType))));
+          }
         },
         child: Container(
           height: 160,

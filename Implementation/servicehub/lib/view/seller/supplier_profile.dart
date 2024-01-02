@@ -122,38 +122,45 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                               borderRadius: BorderRadius.circular(12),
                               color: Colors.grey.shade300),
                           child: _isAuth
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: logoUrl != null
-                                      ? Image.network(logoUrl,
-                                          fit: BoxFit.cover, loadingBuilder:
-                                              (BuildContext context,
-                                                  Widget child,
-                                                  ImageChunkEvent?
-                                                      loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return child;
-                                          return Center(
-                                              child: CircularProgressIndicator(
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ));
-                                        }, errorBuilder: (BuildContext context,
-                                              Object exception,
-                                              StackTrace? stackTrace) {
-                                          return Icon(Icons.error);
-                                        })
-                                      : Image.asset(
-                                          "assets/avatar.png",
-                                          fit: BoxFit.cover,
-                                        ),
-                                )
+                              ? logoUrl == ""
+                                  ? Image.asset(
+                                      "assets/avatar.png",
+                                      fit: BoxFit.cover,
+                                    )
+                                  : ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: logoUrl != null
+                                          ? Image.network(logoUrl,
+                                              fit: BoxFit.cover, loadingBuilder:
+                                                  (BuildContext context,
+                                                      Widget child,
+                                                      ImageChunkEvent?
+                                                          loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ));
+                                            }, errorBuilder:
+                                                  (BuildContext context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                              return Icon(Icons.error);
+                                            })
+                                          : Image.asset(
+                                              "assets/avatar.png",
+                                              fit: BoxFit.cover,
+                                            ),
+                                    )
                               : Icon(
                                   Icons.person,
                                   size: 60,
@@ -164,14 +171,18 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                           width: 20,
                         ),
                         _isAuth
-                            ? Text(
-                                userData!.username,
-                                style: TextStyle(
-                                    color: appState.isSellerMode
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800),
+                            ? SizedBox(
+                                width: 120,
+                                child: Text(
+                                  userData!.username,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: appState.isSellerMode
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w800),
+                                ),
                               )
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +203,7 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                                 ],
                               ),
                         const SizedBox(
-                          width: 70,
+                          width: 10,
                         ),
                         Align(
                             alignment: Alignment.centerRight,

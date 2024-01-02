@@ -56,6 +56,8 @@ class _ClientSignUpState extends State<ClientSignUp> {
             confirmpassword: _confirmpassController.text);
 
         if (resp == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Account created successfully !')));
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const LoginPage()),
               (Route<dynamic> route) => false);

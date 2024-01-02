@@ -170,10 +170,10 @@ class AuthService {
 
       resp = 'success';
 
-      print('Champs ajoutés avec succès pour le vendeur !');
+      print('Fields successfully added for supplier !');
     } catch (e) {
       resp = e.toString();
-      print('Erreur lors de la mise à jour : $e');
+      print('Error during update : $e');
     }
     return resp;
   }
@@ -415,7 +415,97 @@ class AuthService {
     }
   }
 
+  Future<String> updateAccount({
+    String? username,
+    File? logo,
+  }) async {
+    String resp = 'Some Error occured';
+    auth.User currentUser = _auth.currentUser!;
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(currentUser.uid);
+
+    DocumentSnapshot userSnapshot = await userDocRef.get();
+    bool isSeller = userSnapshot.get('isSeller');
+
+    // String? currentUsername = userSnapshot.get('username');
+    // String? currentCompanyName = userSnapshot.get('company name');
+    String? currentLogo = userSnapshot.get('logoLink');
+
+    String? updatedUsername;
+    if (username != null && username.isNotEmpty) {
+      updatedUsername = username;
+    } else {
+      updatedUsername = isSeller
+          ? userSnapshot.get('company name')
+          : userSnapshot.get('username');
+    }
+
+    String? updatedLogo =
+        logo != null ? await uploadImageToStorage('Logo', logo!) : currentLogo;
+
+    Map<String, dynamic> updateData = {
+      'username': updatedUsername,
+      'logoLink': updatedLogo,
+    };
+
+    try {
+      await userDocRef.update(updateData);
+      resp = 'success';
+      print('Fields successfully updated !');
+    } catch (e) {
+      resp = e.toString();
+      print('Error during update : $e');
+    }
+
+    return resp;
+  }
+
+  Future<String> resetPassword(String email) async {
+    String resp = 'Some Error occured';
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      resp = 'success';
+      print('Password reset email sent to $email');
+    } catch (e) {
+      resp = e.toString();
+      print('Failed to send password reset email: $e');
+      // Gérer les erreurs ici
+    }
+    return resp;
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
   }
 }
+// Map<String, dynamic> updateData = {};
+
+    // if (username != null) {
+    //   if (isSeller) {
+    //     updateData['username'] = username;
+    //   } else {
+    //     updateData['company name'] = username;
+    //   }
+    // } else if (userData.username != null) {
+    //   if (isSeller) {
+    //     updateData['username'] = userData.username;
+    //   } else {
+    //     updateData['company name'] = userData.username;
+    //   }
+    // }
+
+    // if (logo != null) {
+    //   String imageUrl = await uploadImageToStorage('Logo', logo);
+    //   updateData['logoLink'] = imageUrl;
+    // } else if (userData.logo != null) {
+    //   updateData['logoLink'] = userData.logo;
+    // }
+
+    // try {
+    //   await userDocRef.update(updateData);
+    //   resp = 'success';
+    //   print('Fields successfully updated !');
+    // } catch (e) {
+    //   resp = e.toString();
+    //   print('Error during update : $e');
+    // }

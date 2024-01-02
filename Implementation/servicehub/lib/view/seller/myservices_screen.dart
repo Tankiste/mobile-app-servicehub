@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:servicehub/controller/seller_service.dart';
+import 'package:servicehub/controller/my_services.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/view/seller/service_screen.dart';
 

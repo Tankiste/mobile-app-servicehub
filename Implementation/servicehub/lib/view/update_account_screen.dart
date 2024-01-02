@@ -1,11 +1,18 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/auth_service.dart';
 import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/view/home_client.dart';
+import 'package:servicehub/view/home_supplier.dart';
 // import 'package:servicehub/view/client_signup.dart';
 // import 'package:servicehub/view/home_screen.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +26,12 @@ class UpdateAccountScreen extends StatefulWidget {
 }
 
 class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
   final AuthService _authService = AuthService();
+  bool isLoading = false;
+  File? image;
+  String? fileName;
 
   @override
   void initState() {
@@ -42,18 +54,93 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
     await appState.refreshUser();
   }
 
+  Future<bool> requestGalleryPermission() async {
+    final status = await Permission.storage.status;
+    debugPrint("storage permission $status");
+    if (status.isDenied) {
+      debugPrint("storage permission === $status");
+      final granted = await Permission.storage.request();
+      return granted.isGranted;
+    } else if (status.isPermanentlyDenied) {
+      await openAppSettings();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future pickImage() async {
+    final hasPermission = await requestGalleryPermission();
+    if (!hasPermission) {
+      return null;
+    }
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+
+    if (result != null) {
+      setState(() {
+        image = File(result.files.single.path!);
+        fileName = result.files.first.name;
+      });
+    } else {
+      print('No Image Selected');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    ApplicationState _appState = Provider.of(context, listen: true);
+    // ApplicationState _appState = Provider.of(context, listen: true);
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
-    bool showUser = userData != null;
+    // bool showUser = userData != null;
     String? logoUrl = userData?.logo;
+    bool isSeller = userData!.isSeller!;
     final appBar = CustomAppbar(
         text: 'Account',
         showFilter: false,
         returnButton: true,
         showText: false,
         actionText: '');
+
+    void updateAccount() async {
+      setState(() {
+        isLoading = true;
+      });
+      String resp = await AuthService().updateAccount(
+        username: _nameController.text,
+        logo: image,
+      );
+
+      if (resp == 'success') {
+        await Fluttertoast.showToast(
+          msg: "Your informations have been updated successfully !",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color(0xFFC84457),
+          // textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
+        if (isSeller) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const HomeSupplier()),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const HomeClient()),
+              (Route<dynamic> route) => false);
+        }
+        // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        //     content:
+        //         Text('Your informations have been updated successfully !')));
+      }
+      setState(() {
+        isLoading = false;
+      });
+      print(resp);
+    }
 
     return Scaffold(
       appBar: appBar,
@@ -82,41 +169,49 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: logoUrl != null
-                                        ? logoUrl == ""
-                                            ? Image.asset(
-                                                "assets/avatar.png",
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.network(logoUrl,
-                                                fit: BoxFit.cover,
-                                                loadingBuilder:
-                                                    (BuildContext context,
+                                    child: image == null
+                                        ? logoUrl != null
+                                            ? logoUrl == ""
+                                                ? Image.asset(
+                                                    "assets/avatar.png",
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.network(logoUrl,
+                                                    fit: BoxFit.cover,
+                                                    loadingBuilder: (BuildContext
+                                                            context,
                                                         Widget child,
                                                         ImageChunkEvent?
                                                             loadingProgress) {
-                                                if (loadingProgress == null)
-                                                  return child;
-                                                return Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  value: loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                      : null,
-                                                ));
-                                              }, errorBuilder: (BuildContext
-                                                        context,
-                                                    Object exception,
-                                                    StackTrace? stackTrace) {
-                                                return Icon(Icons.error);
-                                              })
-                                        : Image.asset(
-                                            "assets/avatar.png",
+                                                    if (loadingProgress == null)
+                                                      return child;
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                      value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded /
+                                                              loadingProgress
+                                                                  .expectedTotalBytes!
+                                                          : null,
+                                                    ));
+                                                  }, errorBuilder:
+                                                        (BuildContext context,
+                                                            Object exception,
+                                                            StackTrace?
+                                                                stackTrace) {
+                                                    return Icon(Icons.error);
+                                                  })
+                                            : Image.asset(
+                                                "assets/avatar.png",
+                                                fit: BoxFit.cover,
+                                              )
+                                        : Image.file(
+                                            image!,
+                                            width: 105,
+                                            height: 120,
                                             fit: BoxFit.cover,
                                           ),
                                   )),
@@ -135,7 +230,9 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                                               offset: Offset(1, 3))
                                         ]),
                                     child: InkWell(
-                                      onTap: () {},
+                                      onTap: () {
+                                        pickImage();
+                                      },
                                       child: Icon(
                                         FontAwesomeIcons.pen,
                                         size: 20,
@@ -178,14 +275,14 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                               const SizedBox(
                                 height: 50,
                               ),
-                              Text(
-                                'Email',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade400,
-                                ),
-                              ),
+                              // Text(
+                              //   'Email',
+                              //   style: TextStyle(
+                              //     fontSize: 18,
+                              //     fontWeight: FontWeight.bold,
+                              //     color: Colors.grey.shade400,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -200,28 +297,58 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                               alignment: Alignment.topCenter,
                               width: 220,
                               child: TextField(
+                                controller: _nameController,
                                 keyboardType: TextInputType.name,
                               ),
                             ),
                             const SizedBox(
                               height: 32,
                             ),
-                            Container(
-                              // color: Colors.blue,
-                              padding: EdgeInsets.zero,
-                              margin: EdgeInsets.zero,
-                              alignment: Alignment.topCenter,
-                              width: 220,
-                              child: TextField(
-                                keyboardType: TextInputType.name,
-                              ),
-                            ),
+                            // Container(
+                            //   // color: Colors.blue,
+                            //   padding: EdgeInsets.zero,
+                            //   margin: EdgeInsets.zero,
+                            //   alignment: Alignment.topCenter,
+                            //   width: 220,
+                            //   child: TextField(
+                            //     controller: _emailController,
+                            //     keyboardType: TextInputType.name,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ],
                     ),
                     const SizedBox(
-                      height: 160,
+                      height: 80,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          isLoading ? null : updateAccount();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFC84457),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            )),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 82, right: 82, top: 15, bottom: 15),
+                          child: isLoading
+                              ? CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : Text(
+                                  'Update Info',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontFamily: 'Gilroy'),
+                                ),
+                        )),
+                    const SizedBox(
+                      height: 30,
                     ),
                     ElevatedButton(
                         onPressed: signoutUser,

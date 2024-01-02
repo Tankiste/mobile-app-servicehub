@@ -106,6 +106,8 @@ class _SellerSignUpState extends State<SellerSignUp> {
               confirmpassword: _confirmpassController.text);
 
           if (resp == 'success') {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Account created successfully !')));
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const RequestSend()),
                 (Route<dynamic> route) => false);

@@ -324,11 +324,12 @@ class _NewServiceViewState extends State<NewServiceView> {
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: ((context) =>
-                                        MyServicesScreen())));
+                            Navigator.pop(context);
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: ((context) =>
+                            //             MyServicesScreen())));
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFC84457),

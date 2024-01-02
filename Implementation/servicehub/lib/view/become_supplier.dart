@@ -111,13 +111,13 @@ class _BecomeSupplierState extends State<BecomeSupplier> {
           );
 
           if (resp == 'success') {
-            Fluttertoast.showToast(
-              msg: "Votre requête a été envoyée avec succès !",
+            await Fluttertoast.showToast(
+              msg: "Your request was send successfully !",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
+              backgroundColor: Color(0xFFC84457),
+              // textColor: Colors.white,
               fontSize: 16.0,
             );
 

@@ -79,21 +79,27 @@ class _LoginPageState extends State<LoginPage> {
       if (res == 'success') {
         bool isSeller = await AuthService().getCurrentUserStatus();
         if (isSeller) {
-          // appState.currentIndex = 0;
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const HomeSupplier()),
-              (Route<dynamic> route) => false);
+            MaterialPageRoute(builder: (context) => const HomeSupplier()),
+            (Route<dynamic> route) => false,
+          );
         } else {
-          // appState.currentIndex = 0;
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const HomeClient()),
-              (Route<dynamic> route) => false);
+            MaterialPageRoute(builder: (context) => const HomeClient()),
+            (Route<dynamic> route) => false,
+          );
         }
       } else if (res != 'Please Enter All The Fields!') {
         setState(() {
           errorMessage = res;
         });
+
+        // Afficher un SnackBar pour les identifiants incorrects
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Incorrect credentials!'),
+        ));
       }
+
       setState(() {
         isLoading = false;
       });
