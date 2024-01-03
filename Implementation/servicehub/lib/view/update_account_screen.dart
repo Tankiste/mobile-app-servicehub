@@ -95,7 +95,7 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     // bool showUser = userData != null;
     String? logoUrl = userData?.logo;
-    bool isSeller = userData!.isSeller!;
+    bool? isSeller = userData?.isSeller ?? false;
     final appBar = CustomAppbar(
         text: 'Account',
         showFilter: false,

@@ -441,7 +441,7 @@ class AuthService {
     }
 
     String? updatedLogo =
-        logo != null ? await uploadImageToStorage('Logo', logo!) : currentLogo;
+        logo != null ? await uploadImageToStorage('Logo', logo) : currentLogo;
 
     Map<String, dynamic> updateData = {
       'username': updatedUsername,

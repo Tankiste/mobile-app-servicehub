@@ -392,7 +392,7 @@ class _SellerSignUpState extends State<SellerSignUp> {
                                         border: InputBorder.none),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your username';
+                                        return "Please enter your company's description";
                                       }
                                       if (value.length < 150) {
                                         return 'Please enter atleast 150 words';

@@ -16,6 +16,7 @@ class FirebaseServices {
       FirebaseFirestore.instance.collection('services');
   CollectionReference reviews =
       FirebaseFirestore.instance.collection('reviews');
+  CollectionReference orders = FirebaseFirestore.instance.collection('orders');
 }
 
 

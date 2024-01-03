@@ -1,20 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/orders/orders.dart';
+import 'package:servicehub/view/home_supplier.dart';
 
 class ManageOrderView extends StatefulWidget {
-  const ManageOrderView({super.key});
+  final orderId;
+  final image;
+  final serviceName;
+  final clientName;
+  final price;
+  final delivaryDate;
+  final completion;
+  const ManageOrderView(
+      {super.key,
+      this.orderId,
+      this.image,
+      this.serviceName,
+      this.clientName,
+      this.price,
+      this.delivaryDate,
+      this.completion});
 
   @override
   State<ManageOrderView> createState() => _ManageOrderViewState();
 }
 
 class _ManageOrderViewState extends State<ManageOrderView> {
+  TextEditingController _completionController = TextEditingController();
+  bool isLoading = false;
+
   @override
   void initState() {
     updateData();
+    _completionController.text = widget.completion.toString();
     super.initState();
   }
 
@@ -25,6 +47,35 @@ class _ManageOrderViewState extends State<ManageOrderView> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> splitByComma = widget.delivaryDate.split(', ');
+    String dayAndMonth = splitByComma[1];
+    String year = splitByComma[2];
+    String date = dayAndMonth + ', ' + year;
+
+    void updateCompletion() async {
+      setState(() {
+        isLoading = true;
+      });
+      String resp = await ManageOrders().updateCompletion(
+          widget.orderId, int.parse(_completionController.text));
+
+      if (resp == 'success') {
+        await Fluttertoast.showToast(
+          msg: "Percentage completion updated successfully !",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color(0xFFC84457),
+          fontSize: 16.0,
+        );
+        Navigator.push(
+            context, MaterialPageRoute(builder: ((context) => HomeSupplier())));
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+
     return Scaffold(
       appBar: CustomAppbar(
         text: 'Manage Orders',
@@ -66,18 +117,43 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: Image.asset(
-                                    'assets/realite-virtuelle.png',
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: widget.image != null
+                                      ? Image.network(widget.image,
+                                          fit: BoxFit.cover, loadingBuilder:
+                                              (BuildContext context,
+                                                  Widget child,
+                                                  ImageChunkEvent?
+                                                      loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                              child: CircularProgressIndicator(
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                          ));
+                                        }, errorBuilder: (BuildContext context,
+                                              Object exception,
+                                              StackTrace? stackTrace) {
+                                          return Icon(Icons.error);
+                                        })
+                                      : Image.asset(
+                                          'assets/realite-virtuelle.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               SizedBox(
-                                height: 55,
+                                height: 60,
                                 width: 133,
                                 child: Text(
-                                  'Lorem ipsum',
+                                  widget.serviceName,
                                   maxLines: 2,
                                   textAlign: TextAlign.left,
                                   overflow: TextOverflow.clip,
@@ -100,7 +176,7 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
                                   )),
-                              Text('Binho',
+                              Text(widget.clientName,
                                   style: GoogleFonts.roboto(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -116,7 +192,7 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
                                   )),
-                              Text('€56.64',
+                              Text('XAF ${widget.price}',
                                   style: GoogleFonts.roboto(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -133,7 +209,7 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
                                   )),
-                              Text('Oct 19, 2023',
+                              Text(date,
                                   style: GoogleFonts.roboto(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -158,6 +234,7 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                                 width: 50,
                                 height: 20,
                                 child: TextField(
+                                  controller: _completionController,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
@@ -176,44 +253,43 @@ class _ManageOrderViewState extends State<ManageOrderView> {
                       ),
                     ),
                     const SizedBox(
-                      height: 250,
+                      height: 130,
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          // if (selectedOption == 'Credit Card') {
-                          //   Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //           builder: ((context) => PaymentScreen())));
-                          // }
+                          isLoading ? null : updateCompletion();
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFC84457),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             )),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.only(
                               left: 85, right: 85, top: 15, bottom: 15),
-                          child: Text(
-                            'Update Order',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Gilroy'),
-                          ),
+                          child: isLoading
+                              ? CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white))
+                              : Text(
+                                  'Update Order',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Gilroy'),
+                                ),
                         )),
                   ],
                 ),
               ),
             ),
             Positioned(
-            bottom: 10,
-            left: 15,
-            right: 15,
-            child: FloatingBar(),
-          )
+              bottom: 10,
+              left: 15,
+              right: 15,
+              child: FloatingBar(),
+            )
             // Positioned(
             //   bottom: 10,
             //   left: 15,

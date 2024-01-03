@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:servicehub/controller/orders_listview.dart';
+import 'package:servicehub/controller/client_orders_listview.dart';
+import 'package:servicehub/controller/seller_orders_listview.dart';
 import 'package:servicehub/controller/widgets.dart';
 
 class SellerOrderView extends StatefulWidget {
@@ -64,10 +65,7 @@ class _SellerOrderViewState extends State<SellerOrderView> {
                   //             offset: Offset(0, 4))
                   //       ]),
                   // ),
-                  OrdersListView(
-                    showSupplier: false,
-                    isSupplier: false,
-                  ),
+                  SellerOrdersListView(),
                 ],
               ),
             ),

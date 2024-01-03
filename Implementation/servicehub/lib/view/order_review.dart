@@ -49,7 +49,7 @@ class _OrderReviewState extends State<OrderReview> {
   }
 
   String formatDate(DateTime date) {
-    return DateFormat('E, MMM d, y').format(date);
+    return DateFormat('E, MMM dd, y').format(date);
   }
 
   Future<void> fetchServiceDetails() async {
@@ -456,8 +456,10 @@ class _OrderReviewState extends State<OrderReview> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: ((context) =>
-                                        PaymentScreen(price: total_price))));
+                                    builder: ((context) => PaymentScreen(
+                                        price: total_price,
+                                        serviceId: widget.serviceId,
+                                        delivaryDate: formattedDate))));
                           }
                         },
                         style: ElevatedButton.styleFrom(

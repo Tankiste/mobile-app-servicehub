@@ -490,6 +490,27 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                               const SizedBox(
                                 height: 30,
                               ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Delivary Time',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    serviceData!.delivaryTime,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
                               Text(
                                 'Review',
                                 style: TextStyle(
@@ -673,8 +694,8 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                       )),
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                        left: 60,
-                                        right: 60,
+                                        left: 58,
+                                        right: 58,
                                         top: 15,
                                         bottom: 15),
                                     child: Text(

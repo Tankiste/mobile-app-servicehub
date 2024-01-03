@@ -2,32 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:servicehub/model/orders/orders.dart';
+import 'package:servicehub/side_bar_screens/orders.dart';
+import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/order_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final price;
-  const PaymentScreen({super.key, required this.price});
+  final serviceId;
+  final delivaryDate;
+  const PaymentScreen(
+      {super.key,
+      required this.price,
+      required this.serviceId,
+      required this.delivaryDate});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  GlobalKey<FormState> _orderFormKey = GlobalKey<FormState>();
+  TextEditingController _cardnumController = TextEditingController();
+  TextEditingController _firstnameController = TextEditingController();
+  TextEditingController _lastnameController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _cvvController = TextEditingController();
+
   bool _isLoading = false;
 
-  void _payNow() {
-    setState(() {
-      _isLoading = true;
-    });
-
-    Future.delayed(const Duration(seconds: 2), () {
-      showDialog(
-          context: context, builder: ((context) => const CustomDialogWidget()));
-
+  void _payNow() async {
+    if (_orderFormKey.currentState!.validate()) {
       setState(() {
-        _isLoading = false;
+        _isLoading = true;
       });
-    });
+      String resp = await ManageOrders().createOrder(
+          serviceId: widget.serviceId, deliverDate: widget.delivaryDate);
+
+      if (resp == 'success') {
+        Future.delayed(const Duration(seconds: 2), () {
+          showDialog(
+              context: context,
+              builder: ((context) => const CustomDialogWidget()));
+
+          setState(() {
+            _isLoading = false;
+          });
+        });
+      }
+    }
   }
 
   @override
@@ -41,160 +64,211 @@ class _PaymentScreenState extends State<PaymentScreen> {
           actionText: ''),
       body: Padding(
         padding: EdgeInsets.fromLTRB(25, 25, 35, 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Choose a payment method',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 25,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey.shade300,
-                  )),
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    hintText: 'Card number',
-                    contentPadding: EdgeInsets.only(left: 15),
-                    hintStyle: TextStyle(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _orderFormKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Choose a payment method',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
                         color: Colors.grey.shade300,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17),
-                    border: InputBorder.none),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey.shade300,
-                  )),
-              child: TextField(
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                    hintText: 'First Name',
-                    contentPadding: EdgeInsets.only(left: 15),
-                    hintStyle: TextStyle(
-                        color: Colors.grey.shade300,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17),
-                    border: InputBorder.none),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey.shade300,
-                  )),
-              child: TextField(
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                    hintText: 'Last Name',
-                    contentPadding: EdgeInsets.only(left: 15),
-                    hintStyle: TextStyle(
-                        color: Colors.grey.shade300,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17),
-                    border: InputBorder.none),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey.shade300,
-                  )),
-              child: TextFormField(
-                keyboardType: TextInputType.datetime,
-                decoration: InputDecoration(
-                    hintText: 'MM / YYYY',
-                    contentPadding: EdgeInsets.only(left: 15),
-                    hintStyle: TextStyle(
-                        color: Colors.grey.shade300,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17),
-                    border: InputBorder.none),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey.shade300,
-                  )),
-              child: TextFormField(
-                keyboardType: TextInputType.datetime,
-                decoration: InputDecoration(
-                    hintText: 'CVV',
-                    contentPadding: EdgeInsets.only(left: 15),
-                    hintStyle: TextStyle(
-                        color: Colors.grey.shade300,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17),
-                    border: InputBorder.none),
-              ),
-            ),
-            Expanded(
-                child: Align(
-              alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
-                  onPressed: () {
-                    _isLoading ? null : _payNow();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFC84457),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
                       )),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 60, right: 60, top: 15, bottom: 15),
-                    child: _isLoading
-                        ? CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                          )
-                        : Text(
-                            'Pay Now (XAF${widget.price})',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Gilroy'),
-                          ),
-                  )),
-            ))
-          ],
+                  child: TextFormField(
+                    controller: _cardnumController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        hintText: 'Card number',
+                        contentPadding: EdgeInsets.only(left: 15),
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17),
+                        border: InputBorder.none),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your card number';
+                      }
+                      if (value.length < 15 || value.length > 19) {
+                        return 'Please enter a valid card number';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Colors.grey.shade300,
+                      )),
+                  child: TextFormField(
+                    controller: _firstnameController,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                        hintText: 'First Name',
+                        contentPadding: EdgeInsets.only(left: 15),
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17),
+                        border: InputBorder.none),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your first name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Colors.grey.shade300,
+                      )),
+                  child: TextFormField(
+                    controller: _lastnameController,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                        hintText: 'Last Name',
+                        contentPadding: EdgeInsets.only(left: 15),
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17),
+                        border: InputBorder.none),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your last name';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Colors.grey.shade300,
+                      )),
+                  child: TextFormField(
+                    controller: _dateController,
+                    keyboardType: TextInputType.datetime,
+                    decoration: InputDecoration(
+                        hintText: 'MM / YYYY',
+                        contentPadding: EdgeInsets.only(left: 15),
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17),
+                        border: InputBorder.none),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your card's expiry date";
+                      }
+                      if (!value.contains('/') || value.length > 7) {
+                        return "Please enter a valid expiry date";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Colors.grey.shade300,
+                      )),
+                  child: TextFormField(
+                    controller: _cvvController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        hintText: 'CVV',
+                        contentPadding: EdgeInsets.only(left: 15),
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17),
+                        border: InputBorder.none),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your CVV";
+                      }
+                      if (value.length < 3 || value.length > 4) {
+                        return "Please enter a valid CVV";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 100,
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        _isLoading ? null : _payNow();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFC84457),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 50, right: 50, top: 15, bottom: 15),
+                        child: _isLoading
+                            ? CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : Text(
+                                'Pay Now (XAF ${widget.price})',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Gilroy'),
+                              ),
+                      )),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -255,8 +329,10 @@ class CustomDialogWidget extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => OrderScreen())));
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const HomeClient()),
+                    (Route<dynamic> route) => false,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFC84457),

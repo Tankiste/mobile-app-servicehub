@@ -142,7 +142,7 @@ class Services {
   Future<ServiceData?> getServiceById(String serviceId) async {
     DocumentSnapshot snapshot =
         await _firestore.collection('services').doc(serviceId).get();
-    print(snapshot);
+    // print(snapshot);
     if (snapshot.exists) {
       return ServiceData(
         uid: snapshot['service id'],
