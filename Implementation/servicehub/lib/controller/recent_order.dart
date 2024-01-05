@@ -7,7 +7,9 @@ import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/model/orders/manage_orders.dart';
 import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class RecentOrderService extends StatefulWidget {
   const RecentOrderService({super.key});
@@ -22,6 +24,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
   late List<DocumentSnapshot> documents;
   late List<bool> isFavoriteList;
   ApplicationState appState = ApplicationState();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -47,15 +50,36 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
     String serviceType = document['type'];
     String title = document['title'];
     int price = document['price'];
+    String sellerId = document['seller id'];
+    auth.User? currentUser = _auth.currentUser;
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: ((context) => ServiceDetailView(
-                      serviceId: document.id, serviceType: serviceType))));
+          if (currentUser != null) {
+            if (currentUser.uid == sellerId) {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: ((context) => NewServiceView(
+                          newServiceId: document.id,
+                          serviceType: document['type']))));
+            } else {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: ((context) => ServiceDetailView(
+                          serviceId: document.id, serviceType: serviceType))));
+            }
+          } else {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: ((context) => ServiceDetailView(
+                        serviceId: document.id, serviceType: serviceType))));
+            // Navigator.push(context,
+            //     CupertinoPageRoute(builder: ((context) => LoginPage())));
+          }
         },
         child: Container(
           height: 180,

@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
+import 'package:servicehub/view/search_supplier_screen.dart';
 
 class RecentCollabSearchView extends StatefulWidget {
   const RecentCollabSearchView({super.key});
@@ -8,16 +13,20 @@ class RecentCollabSearchView extends StatefulWidget {
 }
 
 class _RecentCollabSearchViewState extends State<RecentCollabSearchView> {
-  int selectedIndex = -1;
+  ManageOrders orders = ManageOrders();
 
-  Widget serviceWidget(int index) {
+  Widget serviceWidget(
+      int index, DocumentSnapshot document, String name, String image) {
     return Column(
       children: [
         InkWell(
           onTap: () {
-            setState(() {
-              selectedIndex = index;
-            });
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => SearchSupplierScreen(
+                          data: document,
+                        ))));
           },
           child: Padding(
             padding: const EdgeInsets.only(left: 20),
@@ -28,14 +37,32 @@ class _RecentCollabSearchViewState extends State<RecentCollabSearchView> {
                   height: 40,
                   decoration: BoxDecoration(shape: BoxShape.circle),
                   child: ClipOval(
-                      child: Image.asset(
-                    'assets/supplier.png',
-                    fit: BoxFit.cover,
-                  )),
+                      child: image != null
+                          ? Image.network(image, fit: BoxFit.cover,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ));
+                            }, errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace? stackTrace) {
+                              return Icon(Icons.error);
+                            })
+                          : Image.asset(
+                              'assets/avatar.png',
+                              fit: BoxFit.cover,
+                            )),
                 ),
                 const SizedBox(width: 15),
                 Text(
-                  'Binho',
+                  name,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 )
               ],
@@ -76,17 +103,45 @@ class _RecentCollabSearchViewState extends State<RecentCollabSearchView> {
             ],
           ),
         ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          color: Colors.white,
-          child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: 2,
-              itemBuilder: (BuildContext context, int index) {
-                return serviceWidget(index);
-              }),
+        SingleChildScrollView(
+          // width: MediaQuery.of(context).size.width,
+          // color: Colors.white,
+          child: Consumer<ApplicationState>(builder: (context, appState, _) {
+            return appState.getUser != null
+                ? FutureBuilder<List<DocumentSnapshot>>(
+                    future: orders.getRecentCollabs(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: Container(
+                                height: 40,
+                                width: 40,
+                                child: CircularProgressIndicator()));
+                      } else if (snapshot.hasError) {
+                        return Text(
+                            'Error while loading data : ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No Recent Collabs'));
+                      } else {
+                        List<DocumentSnapshot> documents = snapshot.data!;
+                        // isFavoriteList = List.filled(documents.length, false);
+
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: documents.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              DocumentSnapshot document = documents[index];
+                              String name = document['company name'];
+                              String image = document['logoLink'];
+                              return serviceWidget(
+                                  index, document, name, image);
+                            });
+                      }
+                    })
+                : Container();
+          }),
         ),
       ],
     );

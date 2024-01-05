@@ -187,6 +187,13 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                           });
                           String result = await _services.addReview(
                               widget.serviceId, reviewController.text, _rating);
+                          final provider = Provider.of<ApplicationState>(
+                              context,
+                              listen: false);
+                          double averageRating = await provider
+                              .calculateAverageRating(widget.serviceId);
+                          await _services.updateAverageRate(
+                              widget.serviceId, averageRating);
                           if (result == 'success') {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

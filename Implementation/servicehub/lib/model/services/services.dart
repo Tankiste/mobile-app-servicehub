@@ -18,6 +18,7 @@ class ServiceData {
   int price;
   String description;
   String delivaryTime;
+  double? averageRate = 0.0;
   String poster;
   List<String>? likes;
 
@@ -25,6 +26,7 @@ class ServiceData {
     required this.uid,
     required this.sellerUid,
     required this.title,
+    this.averageRate,
     required this.category,
     required this.type,
     required this.price,
@@ -45,6 +47,7 @@ class ServiceData {
       'description': description,
       'delivary time': delivaryTime,
       'poster': poster,
+      'average rate': averageRate,
       'likes': likes,
     };
   }
@@ -126,6 +129,7 @@ class Services {
           poster: imageUrl,
         );
 
+        serviceData.averageRate = 0.0;
         serviceData.likes = [];
 
         await newServiceRef.set(serviceData.toMapService());
@@ -366,6 +370,26 @@ class Services {
     } catch (error) {
       print('Error getting liked services: $error');
       return [];
+    }
+  }
+
+  Future<void> updateAverageRate(String serviceId, double averageRating) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('services')
+          .where('service id', isEqualTo: serviceId)
+          .get();
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        String documentId = userDoc.id;
+        // print('Order id is : $documentId');
+        await _firestore
+            .collection('services')
+            .doc(documentId)
+            .update({'average rate': averageRating});
+      }
+    } catch (err) {
+      print('Error updating order: $err');
     }
   }
 }

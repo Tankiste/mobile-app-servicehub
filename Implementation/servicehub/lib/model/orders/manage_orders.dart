@@ -240,4 +240,32 @@ class ManageOrders {
 
     return serviceDocs;
   }
+
+  Future<List<DocumentSnapshot>> getRecentCollabs() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('orders')
+        .where('client id', isEqualTo: currentUser.uid)
+        // .where('terminated', isEqualTo: true)
+        .get();
+
+    List<DocumentSnapshot> orderDocs = querySnapshot.docs;
+
+    List<DocumentSnapshot> sellerDocs = [];
+
+    for (var orderDoc in orderDocs) {
+      String sellerId = orderDoc['seller id'];
+
+      QuerySnapshot sellerQuery = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, isEqualTo: sellerId)
+          .get();
+
+      if (sellerQuery.docs.isNotEmpty) {
+        sellerDocs.add(sellerQuery.docs.first);
+      }
+    }
+
+    return sellerDocs;
+  }
 }
