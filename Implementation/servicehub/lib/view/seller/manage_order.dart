@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
-import 'package:servicehub/model/orders/orders.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
 import 'package:servicehub/view/home_supplier.dart';
 
 class ManageOrderView extends StatefulWidget {

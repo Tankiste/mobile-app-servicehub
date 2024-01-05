@@ -11,6 +11,7 @@ import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/chat_screen.dart';
+import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/order_review.dart';
 import 'package:servicehub/view/result_search_view.dart';
 import 'package:like_button/like_button.dart';
@@ -35,6 +36,7 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
   Services _services = Services();
   late List<DocumentSnapshot> reviews;
   late int totalLike;
+  bool isLoading = false;
   // ApplicationState _appState = ApplicationState();
 
   @override
@@ -177,41 +179,58 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                 height: 100,
               ),
               ElevatedButton(
-                  onPressed: () async {
-                    String result = await _services.addReview(
-                        widget.serviceId, reviewController.text, _rating);
-                    if (result == 'success') {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Review created successfully')),
-                      );
-                    } else if (result == 'exists') {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Review updated successfully')),
-                      );
-                    }
-                    Navigator.pop(context);
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: ((context) =>
-                    //             RequestSend())));
-                  },
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          String result = await _services.addReview(
+                              widget.serviceId, reviewController.text, _rating);
+                          if (result == 'success') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Review created successfully')),
+                            );
+                          } else if (result == 'exists') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Review updated successfully')),
+                            );
+                          }
+                          setState(
+                            () {
+                              isLoading = false;
+                            },
+                          );
+                          Navigator.pop(context);
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: ((context) =>
+                          //             RequestSend())));
+                        },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFC84457),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       )),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.only(
                         left: 90, right: 90, top: 15, bottom: 15),
-                    child: Text(
-                      'Send Review',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Gilroy'),
-                    ),
+                    child: isLoading
+                        ? CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : Text(
+                            'Send Review',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Gilroy'),
+                          ),
                   )),
               const SizedBox(
                 height: 50,
@@ -306,6 +325,13 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                       padding: EdgeInsets.only(right: 5),
                                       onPressed: () {
                                         Navigator.maybePop(context);
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: ((context) =>
+                                        //             ResultSearchView(
+                                        //                 serviceType: widget
+                                        //                     .serviceType))));
                                       },
                                       icon: Icon(
                                           Icons.arrow_back_ios_new_rounded)),
@@ -678,35 +704,50 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: ((context) => OrderReview(
-                                                  serviceId: widget.serviceId,
-                                                ))));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFC84457),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      )),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 58,
-                                        right: 58,
-                                        top: 15,
-                                        bottom: 15),
-                                    child: Text(
-                                      'Continue (XAF ${serviceData!.price})',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Gilroy'),
-                                    ),
-                                  )),
+                              Consumer<ApplicationState>(
+                                  builder: (context, appState, _) {
+                                return ElevatedButton(
+                                    onPressed: () {
+                                      if (appState.getUser != null) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: ((context) =>
+                                                    OrderReview(
+                                                      serviceId:
+                                                          widget.serviceId,
+                                                    ))));
+                                      } else {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: ((context) =>
+                                                    LoginPage())));
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFC84457),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        )),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 58,
+                                          right: 58,
+                                          top: 15,
+                                          bottom: 15),
+                                      child: Text(
+                                        'Continue (XAF ${serviceData!.price})',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'Gilroy'),
+                                      ),
+                                    ));
+                              }),
                               // // const SizedBox(
                               // //   height: 15,
                               // // ),

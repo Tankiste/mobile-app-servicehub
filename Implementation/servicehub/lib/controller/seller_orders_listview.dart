@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:servicehub/model/orders/orders.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
 import 'package:servicehub/view/seller/manage_order.dart';
 
 class SellerOrdersListView extends StatefulWidget {
@@ -30,7 +30,8 @@ class _SellerOrdersListViewState extends State<SellerOrdersListView> {
       String formattedDate,
       String orderDate,
       String clientName,
-      String clientImage) {
+      String clientImage,
+      bool terminated) {
     List<String> splitByComma = formattedDate.split(', ');
     String monthAndDay = splitByComma[1];
     List<String> splitBySpace = monthAndDay.split(' ');
@@ -144,7 +145,7 @@ class _SellerOrdersListViewState extends State<SellerOrdersListView> {
                   ),
                   const SizedBox(width: 15),
                   Text(
-                    '${completion.toString()}%',
+                    terminated ? 'Done' : '${completion.toString()}%',
                     style: TextStyle(
                         color: textColor(),
                         fontSize: 22,
@@ -308,6 +309,7 @@ class _SellerOrdersListViewState extends State<SellerOrdersListView> {
                               DateFormat('dd MMM').format(dateTime);
                           String clientName = order['client name'];
                           String clientImage = order['client image'];
+                          bool terminated = order['terminated'];
 
                           return serviceWidget(
                               index,
@@ -319,7 +321,8 @@ class _SellerOrdersListViewState extends State<SellerOrdersListView> {
                               formattedDate,
                               orderDate,
                               clientName,
-                              clientImage);
+                              clientImage,
+                              terminated);
                         }),
                   ],
                 ),

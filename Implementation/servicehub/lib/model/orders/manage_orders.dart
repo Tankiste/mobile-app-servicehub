@@ -148,6 +148,25 @@ class ManageOrders {
     return querySnapshot.docs;
   }
 
+  Future<Map<String, dynamic>> getOrders(String orderId) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('orders')
+          .where('order id', isEqualTo: orderId)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        return userDoc.data() as Map<String, dynamic>;
+      } else {
+        return {};
+      }
+    } catch (err) {
+      print('Error getting user data: $err');
+      return {};
+    }
+  }
+
   Future<String> updateCompletion(String orderId, int completion) async {
     DocumentSnapshot documentSnapshot =
         await _firestore.collection('orders').doc(orderId).get();
@@ -165,5 +184,60 @@ class ManageOrders {
       resp = e.toString();
     }
     return resp;
+  }
+
+  Future<void> updateOrderStatus(String orderId, bool value) async {
+    try {
+      QuerySnapshot query = await _firestore
+          .collection('orders')
+          .where('order id', isEqualTo: orderId)
+          .get();
+      if (query.docs.isNotEmpty) {
+        var userDoc = query.docs.first;
+        String documentId = userDoc.id;
+        // print('Order id is : $documentId');
+        await _firestore
+            .collection('orders')
+            .doc(documentId)
+            .update({'terminated': value});
+      }
+    } catch (err) {
+      print('Error updating order: $err');
+    }
+  }
+
+  Stream<QuerySnapshot> getCompletedOrdersStream() {
+    return _firestore
+        .collection('orders')
+        .where('terminated', isEqualTo: true)
+        .snapshots();
+  }
+
+  Future<List<DocumentSnapshot>> getRecentOrders() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('orders')
+        .where('client id', isEqualTo: currentUser.uid)
+        // .where('terminated', isEqualTo: true)
+        .get();
+
+    List<DocumentSnapshot> orderDocs = querySnapshot.docs;
+
+    List<DocumentSnapshot> serviceDocs = [];
+
+    for (var orderDoc in orderDocs) {
+      String serviceId = orderDoc['service id'];
+
+      QuerySnapshot serviceQuery = await _firestore
+          .collection('services')
+          .where(FieldPath.documentId, isEqualTo: serviceId)
+          .get();
+
+      if (serviceQuery.docs.isNotEmpty) {
+        serviceDocs.add(serviceQuery.docs.first);
+      }
+    }
+
+    return serviceDocs;
   }
 }

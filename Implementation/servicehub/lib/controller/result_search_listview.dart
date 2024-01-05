@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/services/services.dart';
@@ -48,18 +49,27 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
       DocumentSnapshot document, int index, double averageRating) {
     String? posterUrl = document['poster'];
     String sellerUid = document['seller id'];
-    auth.User currentUser = _auth.currentUser!;
+    auth.User? currentUser = _auth.currentUser;
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
       child: InkWell(
         onTap: () {
-          if (currentUser.uid == sellerUid) {
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: ((context) => NewServiceView(
-                        newServiceId: document.id,
-                        serviceType: document['type']))));
+          if (currentUser != null) {
+            if (currentUser.uid == sellerUid) {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: ((context) => NewServiceView(
+                          newServiceId: document.id,
+                          serviceType: document['type']))));
+            } else {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: ((context) => ServiceDetailView(
+                          serviceId: document.id,
+                          serviceType: widget.serviceType))));
+            }
           } else {
             Navigator.push(
                 context,
@@ -67,6 +77,8 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                     builder: ((context) => ServiceDetailView(
                         serviceId: document.id,
                         serviceType: widget.serviceType))));
+            // Navigator.push(context,
+            //     CupertinoPageRoute(builder: ((context) => LoginPage())));
           }
         },
         child: Container(
@@ -198,7 +210,7 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                             ),
                           ),
                           Text(
-                            'XAF${document['price']}',
+                            'XAF ${document['price']}',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -221,50 +233,53 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       // color: Colors.white,
-      child: FutureBuilder<List<DocumentSnapshot>>(
-          future: services.getResultServices(widget.serviceType),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                  child: Container(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator()));
-            } else if (snapshot.hasError) {
-              return Text('Error while loading data : ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No data found'));
-            } else {
-              List<DocumentSnapshot> documents = snapshot.data!;
-              // isFavoriteList = List.filled(documents.length, false);
+      child: Consumer<ApplicationState>(builder: (context, appState, _) {
+        return FutureBuilder<List<DocumentSnapshot>>(
+            future: services.getResultServices(widget.serviceType),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                    child: Container(
+                        height: 40,
+                        width: 40,
+                        child: CircularProgressIndicator()));
+              } else if (snapshot.hasError) {
+                return Text('Error while loading data : ${snapshot.error}');
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('No data found'));
+              } else {
+                List<DocumentSnapshot> documents = snapshot.data!;
+                // isFavoriteList = List.filled(documents.length, false);
 
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: documents.length,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    DocumentSnapshot document = documents[index];
-                    return FutureBuilder<double>(
-                      future: appState.calculateAverageRating(document.id),
-                      builder: (context, ratingSnapshot) {
-                        if (ratingSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                              child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  child: CircularProgressIndicator()));
-                        } else if (ratingSnapshot.hasError) {
-                          return Text('Error calculating average rating');
-                        } else {
-                          double averageRating = ratingSnapshot.data ?? 0;
-                          return serviceWidget(document, index, averageRating);
-                        }
-                      },
-                    );
-                  });
-            }
-          }),
+                return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: documents.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot document = documents[index];
+                      return FutureBuilder<double>(
+                        future: appState.calculateAverageRating(document.id),
+                        builder: (context, ratingSnapshot) {
+                          if (ratingSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: CircularProgressIndicator()));
+                          } else if (ratingSnapshot.hasError) {
+                            return Text('Error calculating average rating');
+                          } else {
+                            double averageRating = ratingSnapshot.data ?? 0;
+                            return serviceWidget(
+                                document, index, averageRating);
+                          }
+                        },
+                      );
+                    });
+              }
+            });
+      }),
     );
   }
 }

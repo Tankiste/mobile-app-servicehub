@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:servicehub/model/orders/orders.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
 import 'package:servicehub/view/seller/manage_order.dart';
 
 class ClientOrdersListView extends StatefulWidget {
@@ -27,7 +27,8 @@ class _ClientOrdersListViewState extends State<ClientOrdersListView> {
       String deliverMonth,
       String orderDate,
       String sellerName,
-      String sellerImage) {
+      String sellerImage,
+      bool terminated) {
     Color textColor() {
       if (completion >= 75) {
         return Colors.green;
@@ -119,7 +120,7 @@ class _ClientOrdersListViewState extends State<ClientOrdersListView> {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '${completion.toString()}%',
+                  terminated ? 'Done' : '${completion.toString()}%',
                   style: TextStyle(
                       color: textColor(),
                       fontSize: 22,
@@ -268,6 +269,7 @@ class _ClientOrdersListViewState extends State<ClientOrdersListView> {
                               DateFormat('dd MMM').format(dateTime);
                           String sellerName = order['seller name'];
                           String sellerImage = order['seller image'];
+                          bool terminated = order['terminated'];
 
                           return serviceWidget(
                               index,
@@ -279,7 +281,8 @@ class _ClientOrdersListViewState extends State<ClientOrdersListView> {
                               deliverMonth,
                               orderDate,
                               sellerName,
-                              sellerImage);
+                              sellerImage,
+                              terminated);
                         }),
                   ],
                 ),

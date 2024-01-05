@@ -25,14 +25,14 @@ class _ResultSearchViewState extends State<ResultSearchView> {
 
   @override
   void initState() {
-    updateData();
+    // updateData();
     super.initState();
   }
 
-  updateData() async {
-    ApplicationState appState = Provider.of(context, listen: false);
-    await appState.refreshUser();
-  }
+  // updateData() async {
+  //   ApplicationState appState = Provider.of(context, listen: false);
+  //   await appState.refreshUser();
+  // }
 
   Widget buildButton(int index) {
     bool isSelected = selectedIndex == index;

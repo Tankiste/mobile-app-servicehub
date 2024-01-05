@@ -55,6 +55,7 @@ class UserData {
       'uid': uid,
       'CEO name': name,
       'company name': username,
+      'username': username,
       'description': description,
       'sector': sector,
       'address': address,

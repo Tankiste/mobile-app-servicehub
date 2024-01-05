@@ -16,11 +16,11 @@ class _BecomeSellerPageState extends State<BecomeSellerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFFDF9F9),
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
+      body: SingleChildScrollView(
+        // height: double.infinity,
+        // width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(right: 15, top: 40),
+          padding: const EdgeInsets.only(right: 15, top: 40, bottom: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

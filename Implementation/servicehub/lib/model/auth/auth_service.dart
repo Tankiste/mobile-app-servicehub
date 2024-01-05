@@ -474,6 +474,20 @@ class AuthService {
     return resp;
   }
 
+  Stream<QuerySnapshot> getTotalClientsStream() {
+    return _firestore
+        .collection('users')
+        .where('isSeller', isEqualTo: false)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getTotalSuppliersStream() {
+    return _firestore
+        .collection('users')
+        .where('isSeller', isEqualTo: true)
+        .snapshots();
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
   }

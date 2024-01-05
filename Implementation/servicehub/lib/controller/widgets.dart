@@ -9,6 +9,7 @@ import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/home_screen.dart';
 import 'package:servicehub/view/home_supplier.dart';
 import 'package:servicehub/view/inbox_screen.dart';
+import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/order_screen.dart';
 import 'package:servicehub/view/profile_screen.dart';
 import 'package:servicehub/view/search_screen.dart';
@@ -207,12 +208,17 @@ class _LikeState extends State<Like> {
 
       return GestureDetector(
         onTap: () async {
-          setState(() {
-            isLiked = !isLiked;
-          });
-          await services.toggleLike(widget.serviceId);
-          await appState.checkLikeStatus(widget.serviceId);
-          await appState.totalLikes(widget.serviceId);
+          if (appState.getUser != null) {
+            setState(() {
+              isLiked = !isLiked;
+            });
+            await services.toggleLike(widget.serviceId);
+            await appState.checkLikeStatus(widget.serviceId);
+            await appState.totalLikes(widget.serviceId);
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: ((context) => LoginPage())));
+          }
         },
         child: Icon(
           isLiked ? Icons.favorite : Icons.favorite_border_outlined,

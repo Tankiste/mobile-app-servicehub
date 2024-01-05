@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:servicehub/controller/widgets.dart';
 import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
+import 'package:servicehub/model/app_state.dart';
+
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class RelatedServiceListView extends StatefulWidget {
@@ -25,6 +28,7 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
   Services services = Services();
   int selectedIndex = -1;
   late List<bool> isFavoriteList;
+  ApplicationState appState = ApplicationState();
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
@@ -38,14 +42,26 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
     List<DocumentSnapshot> documents =
         await services.getResultServicesExcludingCurrentService(
             widget.serviceType, widget.serviceId);
-    setState(() {
-      isFavoriteList = List.generate(documents.length, (index) => false);
-    });
+    isFavoriteList = List.generate(documents.length, (index) => false);
+
+    for (int i = 0; i < documents.length; i++) {
+      bool isFavorite = await appState.checkLikeStatus(documents[i].id);
+      setState(() {
+        isFavoriteList[i] = isFavorite;
+      });
+    }
   }
 
-  Widget serviceWidget(int index, String sellerUid, String name, String image,
-      int price, String type, String newId) {
-    auth.User currentUser = _auth.currentUser!;
+  Widget serviceWidget(
+      int index,
+      DocumentSnapshot related_service,
+      String sellerUid,
+      String name,
+      String image,
+      int price,
+      String type,
+      String newId) {
+    auth.User? currentUser = _auth.currentUser;
     return Padding(
       padding: const EdgeInsets.only(right: 20),
       child: InkWell(
@@ -53,12 +69,22 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
           // setState(() {
           //   selectedIndex = index;
           // });
-          if (currentUser.uid == sellerUid) {
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: ((context) => NewServiceView(
-                        newServiceId: newId, serviceType: type))));
+          if (currentUser != null) {
+            if (currentUser.uid == sellerUid) {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: ((context) => NewServiceView(
+                          newServiceId: newId, serviceType: type))));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) => ServiceDetailView(
+                            serviceId: newId,
+                            serviceType: type,
+                          ))));
+            }
           } else {
             Navigator.push(
                 context,
@@ -155,18 +181,19 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                         //           ? Colors.red
                         //           : Colors.grey.shade300,
                         //     )),
-                        GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isFavoriteList[index] = !isFavoriteList[index];
-                              });
-                            },
-                            child: Icon(
-                              Icons.favorite,
-                              color: isFavoriteList[index]
-                                  ? Colors.red
-                                  : Colors.grey.shade300,
-                            ))
+                        // GestureDetector(
+                        //     onTap: () {
+                        //       setState(() {
+                        //         isFavoriteList[index] = !isFavoriteList[index];
+                        //       });
+                        //     },
+                        //     child: Icon(
+                        //       Icons.favorite,
+                        //       color: isFavoriteList[index]
+                        //           ? Colors.red
+                        //           : Colors.grey.shade300,
+                        //     ))
+                        Like(serviceId: related_service.id)
                       ],
                     ),
                     SizedBox(
@@ -244,8 +271,8 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                     String type = related_service['type'];
                     String sellerUid = related_service['seller id'];
                     String newId = related_service.id;
-                    return serviceWidget(
-                        index, sellerUid, name, image, price, type, newId);
+                    return serviceWidget(index, related_service, sellerUid,
+                        name, image, price, type, newId);
                   });
             }
           }),

@@ -1,4 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:servicehub/controller/widgets.dart';
+import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
+import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/service_detail_view.dart';
 
 class RecentOrderService extends StatefulWidget {
   const RecentOrderService({super.key});
@@ -8,17 +17,45 @@ class RecentOrderService extends StatefulWidget {
 }
 
 class _RecentOrderServiceState extends State<RecentOrderService> {
-  int selectedIndex = -1;
-  List<bool> isFavoriteList = List.generate(3, (index) => false);
+  ManageOrders orders = ManageOrders();
+  Services services = Services();
+  late List<DocumentSnapshot> documents;
+  late List<bool> isFavoriteList;
+  ApplicationState appState = ApplicationState();
 
-  Widget serviceWidget(int index) {
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    documents = await orders.getRecentOrders();
+    isFavoriteList = List.generate(documents.length, (index) => false);
+
+    for (int i = 0; i < documents.length; i++) {
+      bool isLiked = await appState.checkLikeStatus(documents[i].id);
+      setState(() {
+        isFavoriteList[i] = isLiked;
+      });
+    }
+  }
+
+  Widget serviceWidget(int index, DocumentSnapshot document, String name,
+      String logo, double averageRating) {
+    String? posterUrl = document['poster'];
+    String serviceType = document['type'];
+    String title = document['title'];
+    int price = document['price'];
     return Padding(
       padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
       child: InkWell(
         onTap: () {
-          setState(() {
-            selectedIndex = index;
-          });
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: ((context) => ServiceDetailView(
+                      serviceId: document.id, serviceType: serviceType))));
         },
         child: Container(
           height: 180,
@@ -47,10 +84,26 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15)),
-                  child: Image.asset(
-                    'assets/salle_serveur.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child: posterUrl != null
+                      ? Image.network(posterUrl, fit: BoxFit.cover,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                              child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ));
+                        }, errorBuilder: (BuildContext context,
+                              Object exception, StackTrace? stackTrace) {
+                          return Icon(Icons.error);
+                        })
+                      : Image.asset(
+                          'assets/salle_serveur.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               const SizedBox(height: 5),
@@ -69,10 +122,33 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           height: 32,
                           decoration: BoxDecoration(shape: BoxShape.circle),
                           child: ClipOval(
-                              child: Image.asset(
-                            'assets/supplier.png',
-                            fit: BoxFit.cover,
-                          )),
+                            child: logo != null
+                                ? Image.network(logo, fit: BoxFit.cover,
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                        child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ));
+                                  }, errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                    return Icon(Icons.error);
+                                  })
+                                : Image.asset(
+                                    'assets/supplier.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
                         ),
                         const SizedBox(width: 7),
                         Column(
@@ -80,7 +156,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Binho',
+                              name,
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
@@ -97,27 +173,24 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           ],
                         ),
                         const SizedBox(
-                          width: 15,
+                          width: 25,
                         ),
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isFavoriteList[index] = !isFavoriteList[index];
-                              });
-                            },
-                            icon: Icon(
-                              Icons.favorite,
-                              color: isFavoriteList[index]
-                                  ? Colors.red
-                                  : Colors.grey.shade300,
-                            ))
+                        Like(serviceId: document.id)
                       ],
                     ),
-                    Text(
-                      'Design your database',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      height: 20,
+                      width: 160,
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -131,7 +204,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           size: 17,
                         ),
                         Text(
-                          '5.0',
+                          averageRating.toStringAsFixed(1),
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.yellow.shade700,
@@ -139,7 +212,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           ),
                         ),
                         const SizedBox(
-                          width: 60,
+                          width: 20,
                         ),
                         Text(
                           'From ',
@@ -150,7 +223,7 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           ),
                         ),
                         Text(
-                          '€37.52',
+                          'XAF ${price.toString()}',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -173,13 +246,81 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
     return Container(
       height: 205,
       color: Colors.transparent,
-      child: ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemCount: 3,
-          itemBuilder: (BuildContext context, int index) {
-            return serviceWidget(index);
-          }),
+      child: Consumer<ApplicationState>(builder: (context, appState, _) {
+        return appState.getUser != null
+            ? FutureBuilder<List<DocumentSnapshot>>(
+                future: orders.getRecentOrders(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child: Container(
+                            height: 40,
+                            width: 40,
+                            child: CircularProgressIndicator()));
+                  } else if (snapshot.hasError) {
+                    return Text('Error while loading data : ${snapshot.error}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No Recent Orders'));
+                  } else {
+                    List<DocumentSnapshot> documents = snapshot.data!;
+                    // isFavoriteList = List.filled(documents.length, false);
+
+                    return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: documents.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DocumentSnapshot document = documents[index];
+                          String supplierId = document['seller id'];
+                          return FutureBuilder<double>(
+                            future:
+                                appState.calculateAverageRating(document.id),
+                            builder: (context, ratingSnapshot) {
+                              if (ratingSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        child: CircularProgressIndicator()));
+                              } else if (ratingSnapshot.hasError) {
+                                return Text('Error calculating average rating');
+                              } else {
+                                double averageRating = ratingSnapshot.data ?? 0;
+                                return FutureBuilder<UserData?>(
+                                    future: services.getSupplier(supplierId),
+                                    builder: (context, supplierSnapshot) {
+                                      if (supplierSnapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                            child: Container(
+                                                height: 40,
+                                                width: 40,
+                                                child:
+                                                    CircularProgressIndicator()));
+                                      } else if (supplierSnapshot.hasError) {
+                                        return Text(
+                                            'Error getting supplier info');
+                                      } else {
+                                        UserData? userData =
+                                            supplierSnapshot.data;
+                                        if (userData != null) {
+                                          String name = userData.username ?? '';
+                                          String logo = userData.logo ?? '';
+                                          return serviceWidget(index, document,
+                                              name, logo, averageRating);
+                                        } else {
+                                          return Text('Supplier data is null');
+                                        }
+                                      }
+                                    });
+                              }
+                            },
+                          );
+                        });
+                  }
+                })
+            : Container();
+      }),
     );
   }
 }

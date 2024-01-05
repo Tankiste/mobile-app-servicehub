@@ -244,13 +244,14 @@ class Services {
       String serviceId, String reviewText, int rating) async {
     auth.User currentUser = _auth.currentUser!;
     DocumentSnapshot userSnapshot =
-        await _services.users.doc(currentUser.uid).get();
-    String? userName = userSnapshot['company name'] ?? userSnapshot['username'];
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    String? userName = userSnapshot['username'] ?? userSnapshot['company name'];
+    // print(userName);
     String? userLogo = userSnapshot['logoLink'] ?? null;
 
-    String reviewId = FirebaseFirestore.instance.collection('reviews').doc().id;
+    String reviewId = _firestore.collection('reviews').doc().id;
 
-    QuerySnapshot reviewSnapshot = await FirebaseFirestore.instance
+    QuerySnapshot reviewSnapshot = await _firestore
         .collection('reviews')
         .where('service Id', isEqualTo: serviceId)
         .where('user Id', isEqualTo: currentUser.uid)
@@ -278,10 +279,7 @@ class Services {
       //   rating = existingRating;
       //   reviewText = existingReviewText;
       // });
-      await FirebaseFirestore.instance
-          .collection('reviews')
-          .doc(existingDocId)
-          .update({
+      await _firestore.collection('reviews').doc(existingDocId).update({
         'review text': reviewText,
         'rating': rating,
         'user name': userName,

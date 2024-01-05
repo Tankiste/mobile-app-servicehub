@@ -102,7 +102,7 @@ flutter:
     - assets/undraw_specs.svg
     - assets/digital_marketing.png
     - assets/video-production.png
-    - assets/femme_noire.png
+    # - assets/femme_noire.png
     - assets/undraw_writer_re.svg
     - assets/undraw_color_palette.svg
     - assets/concept-cloud-ai.png

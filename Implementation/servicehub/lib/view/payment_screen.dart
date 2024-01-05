@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:servicehub/model/orders/orders.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
 import 'package:servicehub/side_bar_screens/orders.dart';
 import 'package:servicehub/view/home_client.dart';
 import 'package:servicehub/view/order_screen.dart';
