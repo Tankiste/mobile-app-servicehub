@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:servicehub/controller/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/auth/user_data.dart';
+import 'package:servicehub/model/orders/manage_orders.dart';
+import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/seller/earnings_screen.dart';
 
 class SupplierDashboard extends StatefulWidget {
   const SupplierDashboard({super.key});
@@ -14,8 +19,22 @@ class SupplierDashboard extends StatefulWidget {
 }
 
 class _SupplierDashboardState extends State<SupplierDashboard> {
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+  Services services = Services();
+  ManageOrders manageOrders = ManageOrders();
+  int? ordersTodo;
+  double? withdrawal;
+  int? totalReviews;
+  double? averageRate;
+  double? completedOrders;
+
   @override
   void initState() {
+    getSellerReviews();
+    getSupplierOrders();
+    getSupplierWithdrawal();
+    getSupplierAverageRate();
+    getSupplierOrderCompletion();
     updateData();
     super.initState();
   }
@@ -25,11 +44,75 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
     await appState.refreshUser();
   }
 
+  Future<void> getSellerReviews() async {
+    auth.User currentUser = _auth.currentUser!;
+    int total = await services.getReviewsBySellers(currentUser.uid);
+    setState(() {
+      totalReviews = total;
+    });
+  }
+
+  Future<void> getSupplierOrders() async {
+    int total = await manageOrders.getSupplierOrdersCount();
+    setState(() {
+      ordersTodo = total;
+    });
+  }
+
+  Future<void> getSupplierWithdrawal() async {
+    double total = await manageOrders.getSupplierWithdrawal();
+    setState(() {
+      withdrawal = total;
+    });
+  }
+
+  Future<void> getSupplierAverageRate() async {
+    double total = await services.getSupplierAverageRate();
+    setState(() {
+      averageRate = total;
+    });
+  }
+
+  Future<void> getSupplierOrderCompletion() async {
+    double total = await manageOrders.getSupplierOrderCompletion();
+    setState(() {
+      completedOrders = total;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     String? logoUrl = userData?.logo;
-    return userData == null
+    // Timestamp? timestamp = userData?.date;
+
+    String formatTimestamp(Timestamp? timestamp) {
+      if (timestamp == null) {
+        return '';
+      }
+
+      DateTime currentDate = DateTime.now();
+      DateTime registerDate = timestamp.toDate();
+
+      DateTime nextEvaluationDate = registerDate.add(Duration(days: 30));
+
+      while (nextEvaluationDate.isBefore(currentDate)) {
+        nextEvaluationDate = nextEvaluationDate.add(Duration(days: 30));
+      }
+
+      String formattedDate = DateFormat('MMM dd, y').format(nextEvaluationDate);
+
+      if (nextEvaluationDate.day == currentDate.day &&
+          nextEvaluationDate.month == currentDate.month &&
+          nextEvaluationDate.year == currentDate.year) {
+        nextEvaluationDate = nextEvaluationDate.add(Duration(days: 30));
+        formattedDate = DateFormat('MMM dd, y').format(nextEvaluationDate);
+      }
+
+      return formattedDate;
+    }
+
+    return (userData == null || averageRate == null || completedOrders == null)
         ? Center(
             child: Container(
                 height: 50, width: 50, child: CircularProgressIndicator()),
@@ -173,7 +256,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                       ),
                                     ),
                                     Text(
-                                      'Dec 10, 2023',
+                                      formatTimestamp(userData.date),
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -192,7 +275,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                     Column(
                                       children: [
                                         CircularProgressBar(
-                                          percentage: 100,
+                                          percentage: completedOrders,
                                           isRating: false,
                                         ),
                                         const SizedBox(
@@ -216,7 +299,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                     Column(
                                       children: [
                                         CircularProgressBar(
-                                          percentage: 70,
+                                          percentage: 100,
                                           isRating: false,
                                         ),
                                         const SizedBox(
@@ -239,7 +322,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                     Column(
                                       children: [
                                         CircularProgressBar(
-                                          percentage: 2.0,
+                                          percentage: averageRate,
                                           isRating: true,
                                         ),
                                         const SizedBox(
@@ -338,7 +421,14 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EarningsScreen(),
+                                            ));
+                                      },
                                       child: Text(
                                         'Details',
                                         style: TextStyle(
@@ -361,7 +451,9 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                   ),
                                 ),
                                 Text(
-                                  '\$624.5',
+                                  withdrawal != null
+                                      ? 'XAF ${withdrawal!.toStringAsFixed(0)}'
+                                      : 'loading...',
                                   style: TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,
@@ -403,7 +495,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                   height: 10,
                                 ),
                                 Text(
-                                  '2 Active Orders',
+                                  '${ordersTodo ?? 'loading...'} Active Orders',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -459,7 +551,7 @@ class _SupplierDashboardState extends State<SupplierDashboard> {
                                       ),
                                     ),
                                     Text(
-                                      '38',
+                                      '${totalReviews ?? 'loading...'}',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -570,7 +662,9 @@ class _CircularProgressBarState extends State<CircularProgressBar>
                 Center(
                   child: Text(
                     widget.isRating
-                        ? '${(_ratingAnimation.value * 5).toStringAsFixed(1)}'
+                        ? (_ratingAnimation.value == 0.0)
+                            ? 'N/A'
+                            : '${(_ratingAnimation.value * 5).toStringAsFixed(1)}'
                         : '${(_animation.value * 100).toStringAsFixed(0)}%',
                     style: GoogleFonts.lato(
                         fontSize: 22,
@@ -588,7 +682,9 @@ class _CircularProgressBarState extends State<CircularProgressBar>
   }
 
   Color _getColor(double progress) {
-    if (progress < 0.30) {
+    if (progress == 0) {
+      return Colors.grey;
+    } else if (progress < 0.30) {
       return Colors.red;
     } else if (progress < 0.50) {
       return Colors.orange;

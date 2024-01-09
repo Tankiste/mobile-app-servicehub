@@ -75,6 +75,18 @@ class _ResultSearchViewState extends State<ResultSearchView> {
       return ResultSearchListView(
         serviceType: widget.serviceType,
       );
+    } else if (selectedIndex == 1) {
+      return SearchByAverageListView(
+        serviceType: widget.serviceType,
+      );
+    } else if (selectedIndex == 2) {
+      return SearchByDateListView(
+        serviceType: widget.serviceType,
+      );
+    } else if (selectedIndex == 3) {
+      return SearchByPriceListView(
+        serviceType: widget.serviceType,
+      );
     } else {
       return Padding(
         padding: const EdgeInsets.only(left: 50, top: 120),

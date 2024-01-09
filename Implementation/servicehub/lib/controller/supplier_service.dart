@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/seller/new_service_view.dart';
+import 'package:servicehub/view/service_detail_view.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class SupplierService extends StatefulWidget {
   final DocumentSnapshot data;
@@ -18,6 +20,7 @@ class _SupplierServiceState extends State<SupplierService> {
   // int selectedIndex = -1;
   late List<bool> isFavoriteList;
   ApplicationState appState = ApplicationState();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -37,16 +40,38 @@ class _SupplierServiceState extends State<SupplierService> {
   Widget serviceWidget(
       int index, DocumentSnapshot document, double averageRating) {
     String? posterUrl = document['poster'];
+    auth.User? currentUser = _auth.currentUser;
+
     return Padding(
       padding: const EdgeInsets.only(left: 7, right: 20, bottom: 20),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: ((context) => NewServiceView(
-                      newServiceId: document.id,
-                      serviceType: document['type']))));
+          if (currentUser != null) {
+            if (currentUser.uid == document['seller id']) {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: ((context) => NewServiceView(
+                          newServiceId: document.id,
+                          serviceType: document['type']))));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) => ServiceDetailView(
+                            serviceId: document.id,
+                            serviceType: document['type'],
+                          ))));
+            }
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => ServiceDetailView(
+                          serviceId: document.id,
+                          serviceType: document['type'],
+                        ))));
+          }
         },
         child: Container(
           height: 160,
@@ -202,7 +227,7 @@ class _SupplierServiceState extends State<SupplierService> {
                 return Center(
                   child: Text('No Service yet'),
                 );
-              } else {
+              } else if (snapshot.hasData) {
                 List<DocumentSnapshot> myservices = snapshot.data!;
                 return ListView.builder(
                     shrinkWrap: true,
@@ -222,14 +247,18 @@ class _SupplierServiceState extends State<SupplierService> {
                                     child: CircularProgressIndicator()));
                           } else if (ratingSnapshot.hasError) {
                             return Text('Error calculating average rating');
-                          } else {
+                          } else if (ratingSnapshot.hasData) {
                             double averageRating = ratingSnapshot.data ?? 0;
                             return serviceWidget(
                                 index, document, averageRating);
+                          } else {
+                            return Container();
                           }
                         },
                       );
                     });
+              } else {
+                return Container();
               }
             }),
       ),

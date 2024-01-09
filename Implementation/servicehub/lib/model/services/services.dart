@@ -18,6 +18,7 @@ class ServiceData {
   int price;
   String description;
   String delivaryTime;
+  int? delivaryPeriod;
   double? averageRate = 0.0;
   String poster;
   List<String>? likes;
@@ -32,6 +33,7 @@ class ServiceData {
     required this.price,
     required this.description,
     required this.delivaryTime,
+    this.delivaryPeriod,
     required this.poster,
     // this.likes,
   });
@@ -46,6 +48,7 @@ class ServiceData {
       'price': price,
       'description': description,
       'delivary time': delivaryTime,
+      'delivary period': delivaryPeriod,
       'poster': poster,
       'average rate': averageRate,
       'likes': likes,
@@ -95,6 +98,20 @@ class Services {
     return downloadUrl;
   }
 
+  int convertDeliveryToDays(String delivery) {
+    Map<String, int> deliveryTimeInDays = {
+      '1 day': 1,
+      '3 days': 3,
+      '5 days': 5,
+      '1 week': 7,
+      '2 weeks': 14,
+      '1 month': 30,
+      '3 months': 90,
+    };
+
+    return deliveryTimeInDays[delivery] ?? 0;
+  }
+
   Future<String> createService({
     required String title,
     required String category,
@@ -115,6 +132,7 @@ class Services {
         DocumentReference newServiceRef =
             _firestore.collection('services').doc();
         String newServiceUid = newServiceRef.id;
+        int selectedDelivary = convertDeliveryToDays(delivaryTime);
         // _newService = newServiceUid;
 
         ServiceData serviceData = ServiceData(
@@ -129,6 +147,7 @@ class Services {
           poster: imageUrl,
         );
 
+        serviceData.delivaryPeriod = selectedDelivary;
         serviceData.averageRate = 0.0;
         serviceData.likes = [];
 
@@ -212,6 +231,39 @@ class Services {
     return querySnapshot.docs;
   }
 
+  Future<List<DocumentSnapshot>> getResultServicesByAverageRate(
+      String serviceType) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('type', isEqualTo: serviceType)
+        .orderBy('average rate', descending: true)
+        .get();
+
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> getResultServicesByPrice(
+      String serviceType) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('type', isEqualTo: serviceType)
+        .orderBy('price', descending: false)
+        .get();
+
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> getResultServicesByDate(
+      String serviceType) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('type', isEqualTo: serviceType)
+        .orderBy('delivary period', descending: false)
+        .get();
+
+    return querySnapshot.docs;
+  }
+
   Future<List<DocumentSnapshot>> getResultServicesBySupplier() async {
     auth.User currentUser = _auth.currentUser!;
     QuerySnapshot querySnapshot = await _firestore
@@ -224,7 +276,6 @@ class Services {
 
   Future<List<DocumentSnapshot>> getResultServicesBySupplierId(
       String supplierId) async {
-    auth.User currentUser = _auth.currentUser!;
     QuerySnapshot querySnapshot = await _firestore
         .collection('services')
         .where('seller id', isEqualTo: supplierId)
@@ -391,6 +442,33 @@ class Services {
     } catch (err) {
       print('Error updating order: $err');
     }
+  }
+
+  Future<double> getSupplierAverageRate() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('services')
+        .where('seller id', isEqualTo: currentUser.uid)
+        .get();
+
+    List<DocumentSnapshot> documents = querySnapshot.docs;
+
+    if (documents.isEmpty) {
+      return 0.0;
+    }
+    double totalAverage = 0;
+    double supplierAverageRate = 0;
+
+    for (DocumentSnapshot doc in documents) {
+      totalAverage += doc['average rate'];
+    }
+
+    supplierAverageRate = totalAverage / documents.length;
+    print(totalAverage);
+    print(documents.length);
+    print(supplierAverageRate);
+
+    return supplierAverageRate;
   }
 }
 

@@ -31,9 +31,7 @@ class _MyServicesScreenState extends State<MyServicesScreen> {
                   children: [
                     Container(
                       height: 570,
-                      child: Expanded(
-                        child: SellerService(),
-                      ),
+                      child: SellerService(),
                     ),
                     const SizedBox(
                       height: 20,

@@ -35,9 +35,9 @@ class _CreatedServiceScreenState extends State<CreatedServiceScreen> {
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
       Scaffold(
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
+        body: SingleChildScrollView(
+          // width: double.infinity,
+          // height: double.infinity,
           child: Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, top: 80),
             child: Column(

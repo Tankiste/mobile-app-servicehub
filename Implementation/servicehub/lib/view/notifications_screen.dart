@@ -40,27 +40,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
             width: double.infinity,
             height: double.infinity,
             child: SingleChildScrollView(
-              child: Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: [
-                      Container(
-                          padding: EdgeInsets.fromLTRB(35, 5, 35, 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey.shade200,
-                          ),
-                          child: Text(
-                            'LAST 30 DAYS',
-                            style: GoogleFonts.montserrat(
-                                color: Colors.grey,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          )),
-                      NotificationsListView(),
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Column(
+                  children: [
+                    Container(
+                        padding: EdgeInsets.fromLTRB(35, 5, 35, 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey.shade200,
+                        ),
+                        child: Text(
+                          'LAST 30 DAYS',
+                          style: GoogleFonts.montserrat(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        )),
+                    NotificationsListView(),
+                  ],
                 ),
               ),
             ),

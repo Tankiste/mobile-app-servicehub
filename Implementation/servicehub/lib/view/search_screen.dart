@@ -229,7 +229,14 @@ class _SearchScreenState extends State<SearchScreen>
                                                   const SizedBox(
                                                     width: 15,
                                                   ),
-                                                  Text(data['title']),
+                                                  SizedBox(
+                                                      width: 290,
+                                                      child: Text(
+                                                        data['title'],
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      )),
                                                 ],
                                               ),
                                             ),
@@ -280,7 +287,7 @@ class _SearchScreenState extends State<SearchScreen>
                           //   return RecentOrderSearchView(
                           //     showText: true,
                           //   );
-                        } else {
+                        } else if (snapshot.hasData) {
                           return ListView.builder(
                             itemCount: snapshot.data!.docs.length,
                             shrinkWrap: true,
@@ -334,6 +341,8 @@ class _SearchScreenState extends State<SearchScreen>
                               return Container();
                             },
                           );
+                        } else {
+                          return Container();
                         }
                       },
                     )

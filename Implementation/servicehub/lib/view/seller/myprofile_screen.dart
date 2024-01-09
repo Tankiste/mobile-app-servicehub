@@ -103,117 +103,113 @@ class _MyProfileScreenState extends State<MyProfileScreen>
           child: SingleChildScrollView(
               child: Padding(
             padding: const EdgeInsets.only(top: 50, left: 10, bottom: 20),
-            child: Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.maybePop(context);
-                      },
-                      icon: Icon(Icons.arrow_back_ios_new_rounded)),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 140),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 95,
-                          height: 95,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipOval(
-                            child: logoUrl != null
-                                ? Image.network(logoUrl, fit: BoxFit.cover,
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                        child: CircularProgressIndicator(
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                    ));
-                                  }, errorBuilder: (BuildContext context,
-                                        Object exception,
-                                        StackTrace? stackTrace) {
-                                    return Icon(Icons.error);
-                                  })
-                                : Image.asset(
-                                    "assets/avatar.png",
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(userData!.username,
-                            style: GoogleFonts.roboto(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ))
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.maybePop(context);
+                    },
+                    icon: Icon(Icons.arrow_back_ios_new_rounded)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 140),
+                  child: Column(
                     children: [
-                      TextButton(
-                        onPressed: () => _updateSelectedOption('About'),
-                        child: Text(
-                          'About',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: selectedOption == 'About'
-                                ? Color(0xFFC84457)
-                                : Colors.black,
-                          ),
+                      Container(
+                        width: 95,
+                        height: 95,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: ClipOval(
+                          child: logoUrl != null
+                              ? Image.network(logoUrl, fit: BoxFit.cover,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                      child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ));
+                                }, errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                  return Icon(Icons.error);
+                                })
+                              : Image.asset(
+                                  "assets/avatar.png",
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
-                      TextButton(
-                        onPressed: () => _updateSelectedOption('Services'),
-                        child: Text(
-                          'Services',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: selectedOption == 'Services'
-                                ? Color(0xFFC84457)
-                                : Colors.black,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => _updateSelectedOption('Reviews'),
-                        child: Text(
-                          'Reviews',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: selectedOption == 'Reviews'
-                                ? Color(0xFFC84457)
-                                : Colors.black,
-                          ),
-                        ),
-                      ),
+                      const SizedBox(height: 10),
+                      Text(userData!.username,
+                          style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ))
                     ],
                   ),
-                  buildDivider(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  buildContent(),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () => _updateSelectedOption('About'),
+                      child: Text(
+                        'About',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: selectedOption == 'About'
+                              ? Color(0xFFC84457)
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => _updateSelectedOption('Services'),
+                      child: Text(
+                        'Services',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: selectedOption == 'Services'
+                              ? Color(0xFFC84457)
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => _updateSelectedOption('Reviews'),
+                      child: Text(
+                        'Reviews',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: selectedOption == 'Reviews'
+                              ? Color(0xFFC84457)
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                buildDivider(),
+                const SizedBox(
+                  height: 20,
+                ),
+                buildContent(),
+              ],
             ),
           ))),
     );

@@ -148,6 +148,57 @@ class ManageOrders {
     return querySnapshot.docs;
   }
 
+  Future<int> getSupplierOrdersCount() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('orders')
+        .where('seller id', isEqualTo: currentUser.uid)
+        .where('terminated', isEqualTo: false)
+        .get();
+
+    return querySnapshot.docs.length;
+  }
+
+  Future<double> getSupplierWithdrawal() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('orders')
+        .where('seller id', isEqualTo: currentUser.uid)
+        .where('terminated', isEqualTo: true)
+        .get();
+
+    List<DocumentSnapshot> documents = querySnapshot.docs;
+
+    double withdrawal = 0;
+
+    for (DocumentSnapshot doc in documents) {
+      withdrawal += doc['price'];
+    }
+
+    return withdrawal;
+  }
+
+  Future<double> getSupplierOrderCompletion() async {
+    auth.User currentUser = _auth.currentUser!;
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('orders')
+        .where('seller id', isEqualTo: currentUser.uid)
+        .get();
+
+    List<DocumentSnapshot> documents = querySnapshot.docs;
+
+    if (documents.isEmpty) {
+      return 100.0;
+    }
+
+    int totalOrders = documents.length;
+    int completedOrders =
+        documents.where((doc) => doc['terminated'] == true).length;
+
+    double completedPercentage = (completedOrders / totalOrders) * 100;
+    return completedPercentage;
+  }
+
   Future<Map<String, dynamic>> getOrders(String orderId) async {
     try {
       QuerySnapshot query = await _firestore
@@ -218,16 +269,20 @@ class ManageOrders {
     QuerySnapshot querySnapshot = await _firestore
         .collection('orders')
         .where('client id', isEqualTo: currentUser.uid)
-        // .where('terminated', isEqualTo: true)
         .get();
 
     List<DocumentSnapshot> orderDocs = querySnapshot.docs;
-
-    List<DocumentSnapshot> serviceDocs = [];
+    Set<String> uniqueServiceIds =
+        {}; // Utilisation d'un Set pour stocker les IDs uniques des services
 
     for (var orderDoc in orderDocs) {
       String serviceId = orderDoc['service id'];
+      uniqueServiceIds.add(serviceId); // Ajouter l'ID du service au Set
+    }
 
+    List<DocumentSnapshot> serviceDocs = [];
+
+    for (var serviceId in uniqueServiceIds) {
       QuerySnapshot serviceQuery = await _firestore
           .collection('services')
           .where(FieldPath.documentId, isEqualTo: serviceId)
@@ -246,16 +301,20 @@ class ManageOrders {
     QuerySnapshot querySnapshot = await _firestore
         .collection('orders')
         .where('client id', isEqualTo: currentUser.uid)
-        // .where('terminated', isEqualTo: true)
         .get();
 
     List<DocumentSnapshot> orderDocs = querySnapshot.docs;
-
-    List<DocumentSnapshot> sellerDocs = [];
+    Set<String> uniqueSellers =
+        {}; // Utilisation d'un Set pour stocker les IDs uniques des vendeurs
 
     for (var orderDoc in orderDocs) {
       String sellerId = orderDoc['seller id'];
+      uniqueSellers.add(sellerId); // Ajouter l'ID du vendeur au Set
+    }
 
+    List<DocumentSnapshot> sellerDocs = [];
+
+    for (var sellerId in uniqueSellers) {
       QuerySnapshot sellerQuery = await _firestore
           .collection('users')
           .where(FieldPath.documentId, isEqualTo: sellerId)

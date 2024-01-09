@@ -52,7 +52,7 @@ class _RecentOrderSearchViewState extends State<RecentOrderSearchView> {
     String sellerId = document['seller id'];
     auth.User? currentUser = _auth.currentUser;
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 15),
       child: InkWell(
         onTap: () {
           if (currentUser != null) {
@@ -86,9 +86,11 @@ class _RecentOrderSearchViewState extends State<RecentOrderSearchView> {
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                    color: Colors.grey, blurRadius: 10, offset: Offset(0, 5))
+                    color: Colors.grey.shade500,
+                    blurRadius: 10,
+                    offset: Offset(0, 4))
               ]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -236,8 +238,8 @@ class _RecentOrderSearchViewState extends State<RecentOrderSearchView> {
             ),
           ),
         Container(
-          height: 215,
-          color: Colors.white,
+          height: 260,
+          color: Colors.transparent,
           child: Consumer<ApplicationState>(builder: (context, appState, _) {
             return appState.getUser != null
                 ? FutureBuilder<List<DocumentSnapshot>>(

@@ -7,7 +7,9 @@ import 'package:servicehub/controller/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
 import 'package:servicehub/model/services/services.dart';
+import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -19,6 +21,8 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen> {
   Services services = Services();
   ApplicationState appState = ApplicationState();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+
   bool noMessage = true;
   String serviceType = "";
 
@@ -105,251 +109,292 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     } else if (snapshot.hasData) {
                       List<DocumentSnapshot> favorites = snapshot.data!;
                       return SingleChildScrollView(
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: favorites.length,
-                            itemBuilder: (context, index) {
-                              DocumentSnapshot document = favorites[index];
-                              String? posterUrl = document['poster'];
-                              return FutureBuilder<double>(
-                                future: appState
-                                    .calculateAverageRating(document.id),
-                                builder: (context, ratingSnapshot) {
-                                  if (ratingSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                        child: Container(
-                                            height: 40,
-                                            width: 40,
-                                            child:
-                                                CircularProgressIndicator()));
-                                  } else if (ratingSnapshot.hasError) {
-                                    return Text(
-                                        'Error calculating average rating');
-                                  } else {
-                                    double averageRating =
-                                        ratingSnapshot.data ?? 0;
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15,
-                                          right: 15,
-                                          bottom: 25,
-                                          top: 20),
-                                      child: InkWell(
-                                        onTap: () {
-                                          // Navigator.push(
-                                          //     context,
-                                          //     CupertinoPageRoute(
-                                          //         builder: ((context) =>
-                                          //             ServiceDetailView(
-                                          //                 serviceId: document.id,
-                                          //                 serviceType: widget
-                                          //                     .serviceType))));
-                                        },
-                                        child: Container(
-                                          height: 160,
-                                          // width: 300,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                    color: Colors.grey,
-                                                    blurRadius: 10,
-                                                    offset: Offset(0, 5))
-                                              ]),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                height: 160,
-                                                width: 175,
-                                                decoration: BoxDecoration(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: favorites.length,
+                              itemBuilder: (context, index) {
+                                DocumentSnapshot document = favorites[index];
+                                String? posterUrl = document['poster'];
+                                String type = document['type'];
+                                String sellerUid = document['seller id'];
+                                auth.User? currentUser = _auth.currentUser;
+
+                                return FutureBuilder<double>(
+                                  future: appState
+                                      .calculateAverageRating(document.id),
+                                  builder: (context, ratingSnapshot) {
+                                    if (ratingSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                          child: Container(
+                                              height: 40,
+                                              width: 40,
+                                              child:
+                                                  CircularProgressIndicator()));
+                                    } else if (ratingSnapshot.hasError) {
+                                      return Text(
+                                          'Error calculating average rating');
+                                    } else {
+                                      double averageRating =
+                                          ratingSnapshot.data ?? 0;
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            bottom: 25,
+                                            top: 20),
+                                        child: InkWell(
+                                          onTap: () {
+                                            if (currentUser != null) {
+                                              if (currentUser.uid ==
+                                                  sellerUid) {
+                                                Navigator.push(
+                                                    context,
+                                                    CupertinoPageRoute(
+                                                        builder: ((context) =>
+                                                            NewServiceView(
+                                                                newServiceId:
+                                                                    document.id,
+                                                                serviceType:
+                                                                    document[
+                                                                        'type']))));
+                                              } else {
+                                                Navigator.push(
+                                                    context,
+                                                    CupertinoPageRoute(
+                                                        builder: ((context) =>
+                                                            ServiceDetailView(
+                                                                serviceId:
+                                                                    document.id,
+                                                                serviceType:
+                                                                    type))));
+                                              }
+                                            } else {
+                                              Navigator.push(
+                                                  context,
+                                                  CupertinoPageRoute(
+                                                      builder: ((context) =>
+                                                          ServiceDetailView(
+                                                              serviceId:
+                                                                  document.id,
+                                                              serviceType:
+                                                                  type))));
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 160,
+                                            // width: 300,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                      color: Colors.grey,
+                                                      blurRadius: 10,
+                                                      offset: Offset(0, 5))
+                                                ]),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  height: 160,
+                                                  width: 175,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              topLeft: Radius
+                                                                  .circular(15),
+                                                              bottomLeft: Radius
+                                                                  .circular(
+                                                                      15))),
+                                                  child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.only(
                                                             topLeft: Radius
                                                                 .circular(15),
                                                             bottomLeft:
                                                                 Radius.circular(
-                                                                    15))),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  15),
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  15)),
-                                                  child: posterUrl != null
-                                                      ? Image.network(posterUrl,
-                                                          fit: BoxFit.cover,
-                                                          loadingBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  Widget child,
-                                                                  ImageChunkEvent?
-                                                                      loadingProgress) {
-                                                          if (loadingProgress ==
-                                                              null)
-                                                            return child;
-                                                          return Center(
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                            value: loadingProgress
-                                                                        .expectedTotalBytes !=
-                                                                    null
-                                                                ? loadingProgress
-                                                                        .cumulativeBytesLoaded /
-                                                                    loadingProgress
-                                                                        .expectedTotalBytes!
-                                                                : null,
-                                                          ));
-                                                        }, errorBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  Object
-                                                                      exception,
-                                                                  StackTrace?
-                                                                      stackTrace) {
-                                                          return Icon(
-                                                              Icons.error);
-                                                        })
-                                                      : Image.asset(
-                                                          'assets/digital_marketing.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                                    15)),
+                                                    child: posterUrl != null
+                                                        ? Image.network(
+                                                            posterUrl,
+                                                            fit: BoxFit.cover,
+                                                            loadingBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Widget
+                                                                        child,
+                                                                    ImageChunkEvent?
+                                                                        loadingProgress) {
+                                                            if (loadingProgress ==
+                                                                null)
+                                                              return child;
+                                                            return Center(
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                              value: loadingProgress
+                                                                          .expectedTotalBytes !=
+                                                                      null
+                                                                  ? loadingProgress
+                                                                          .cumulativeBytesLoaded /
+                                                                      loadingProgress
+                                                                          .expectedTotalBytes!
+                                                                  : null,
+                                                            ));
+                                                          }, errorBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Object
+                                                                        exception,
+                                                                    StackTrace?
+                                                                        stackTrace) {
+                                                            return Icon(
+                                                                Icons.error);
+                                                          })
+                                                        : Image.asset(
+                                                            'assets/digital_marketing.png',
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                  ),
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, top: 8),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Colors
-                                                              .yellow.shade700,
-                                                          size: 20,
-                                                        ),
-                                                        Text(
-                                                          averageRating
-                                                              .toStringAsFixed(
-                                                                  1),
-                                                          style: TextStyle(
-                                                            fontSize: 15,
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10, top: 8),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.star,
                                                             color: Colors.yellow
                                                                 .shade700,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 90),
-                                                        // IconButton(
-                                                        //     onPressed: () {
-                                                        //       likeService();
-                                                        //     },
-                                                        //     icon: Icon(
-                                                        //       Icons.favorite,
-                                                        //       color: isFavorite
-                                                        //           ? Colors.red
-                                                        //           : Colors.grey.shade300,
-                                                        //     )),
-                                                        // GestureDetector(
-                                                        //   onTap: () async {
-                                                        //     setState(() {
-                                                        //       isLikedList[index] = !isLikedList[index];
-                                                        //     });
-
-                                                        //     await services.toggleLike(document.id);
-                                                        //     await appState.checkLikeStatus(document.id);
-                                                        //   },
-                                                        //   child: Icon(
-                                                        //     isLikedList[index]
-                                                        //         ? Icons.favorite
-                                                        //         : Icons.favorite_border_outlined,
-                                                        //     color: isLikedList[index]
-                                                        //         ? Colors.red
-                                                        //         : Colors.grey.shade500,
-                                                        //   ),
-                                                        // ),
-                                                        Like(
-                                                            serviceId:
-                                                                document.id)
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      width: 150,
-                                                      child: Text(
-                                                        document['title'],
-                                                        maxLines: 2,
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 50,
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.bottomRight,
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'From ',
-                                                            style: TextStyle(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: Colors.grey
-                                                                  .shade400,
-                                                            ),
+                                                            size: 20,
                                                           ),
                                                           Text(
-                                                            'XAF${document['price']}',
+                                                            averageRating
+                                                                .toStringAsFixed(
+                                                                    1),
                                                             style: TextStyle(
                                                               fontSize: 15,
+                                                              color: Colors
+                                                                  .yellow
+                                                                  .shade700,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w500,
                                                             ),
                                                           ),
+                                                          const SizedBox(
+                                                              width: 90),
+                                                          // IconButton(
+                                                          //     onPressed: () {
+                                                          //       likeService();
+                                                          //     },
+                                                          //     icon: Icon(
+                                                          //       Icons.favorite,
+                                                          //       color: isFavorite
+                                                          //           ? Colors.red
+                                                          //           : Colors.grey.shade300,
+                                                          //     )),
+                                                          // GestureDetector(
+                                                          //   onTap: () async {
+                                                          //     setState(() {
+                                                          //       isLikedList[index] = !isLikedList[index];
+                                                          //     });
+
+                                                          //     await services.toggleLike(document.id);
+                                                          //     await appState.checkLikeStatus(document.id);
+                                                          //   },
+                                                          //   child: Icon(
+                                                          //     isLikedList[index]
+                                                          //         ? Icons.favorite
+                                                          //         : Icons.favorite_border_outlined,
+                                                          //     color: isLikedList[index]
+                                                          //         ? Colors.red
+                                                          //         : Colors.grey.shade500,
+                                                          //   ),
+                                                          // ),
+                                                          Like(
+                                                              serviceId:
+                                                                  document.id)
                                                         ],
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
+                                                      SizedBox(
+                                                        width: 150,
+                                                        child: Text(
+                                                          document['title'],
+                                                          maxLines: 2,
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: TextStyle(
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 50,
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .bottomRight,
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'From ',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade400,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'XAF${document['price']}',
+                                                              style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              );
-                            }),
+                                      );
+                                    }
+                                  },
+                                );
+                              }),
+                        ),
                       );
                     } else {
                       return Container();

@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 15, top: 70, bottom: 100),
-                  child: Expanded(child: Consumer<ApplicationState>(
+                  child: Consumer<ApplicationState>(
                       builder: (context, appState, _) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         RecentOrderService(),
                       ],
                     );
-                  })),
+                  }),
                 ),
               ),
             ),

@@ -313,7 +313,7 @@ class _NewServiceViewState extends State<NewServiceView> {
                             RelatedServiceListView(
                               showText: false,
                               serviceId: widget.newServiceId,
-                              serviceType: widget.serviceType,
+                              serviceType: serviceData!.type,
                             ),
                           ]),
                     ),

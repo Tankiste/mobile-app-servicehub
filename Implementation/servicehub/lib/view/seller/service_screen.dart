@@ -25,6 +25,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
 
   // bool _isChecked = false;
   File? image;
+  bool isLoading = false;
   final _formkey = GlobalKey<FormState>();
 
   List<String> categories = [];
@@ -281,6 +282,9 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
     void createService() async {
       if (_formkey.currentState!.validate()) {
         if (image != null) {
+          setState(() {
+            isLoading = true;
+          });
           String resp = await Services().createService(
               title: _titleController.text,
               category: categoryDropdown!,
@@ -292,6 +296,10 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           bool successResp = resp.contains('success:');
 
           if (successResp) {
+            setState(() {
+              isLoading = false;
+            });
+
             String newServiceId = resp.replaceFirst('success:', '');
             Navigator.push(
                 context,
@@ -662,23 +670,28 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 5),
                           child: ElevatedButton(
-                              onPressed: createService,
+                              onPressed: isLoading ? null : createService,
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFC84457),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   )),
-                              child: const Padding(
+                              child: Padding(
                                 padding: EdgeInsets.only(
                                     left: 90, right: 90, top: 15, bottom: 15),
-                                child: Text(
-                                  'Create Service',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                child: isLoading
+                                    ? CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white))
+                                    : Text(
+                                        'Create Service',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               )),
                         ),
                       ],

@@ -6,7 +6,6 @@ import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
 import 'package:servicehub/model/app_state.dart';
-
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class RelatedServiceListView extends StatefulWidget {
@@ -169,30 +168,6 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                         const SizedBox(
                           width: 75,
                         ),
-                        // IconButton(
-                        //     onPressed: () {
-                        //       setState(() {
-                        //         isFavoriteList[index] = !isFavoriteList[index];
-                        //       });
-                        //     },
-                        //     icon: Icon(
-                        //       Icons.favorite,
-                        //       color: isFavoriteList[index]
-                        //           ? Colors.red
-                        //           : Colors.grey.shade300,
-                        //     )),
-                        // GestureDetector(
-                        //     onTap: () {
-                        //       setState(() {
-                        //         isFavoriteList[index] = !isFavoriteList[index];
-                        //       });
-                        //     },
-                        //     child: Icon(
-                        //       Icons.favorite,
-                        //       color: isFavoriteList[index]
-                        //           ? Colors.red
-                        //           : Colors.grey.shade300,
-                        //     ))
                         Like(serviceId: related_service.id)
                       ],
                     ),
@@ -257,7 +232,7 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
               return Text('Error while retrieving data : ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(child: Text('No related service exists'));
-            } else {
+            } else if (snapshot.hasData) {
               List<DocumentSnapshot> related_services = snapshot.data!;
               return ListView.builder(
                   // shrinkWrap: true,
@@ -274,6 +249,8 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                     return serviceWidget(index, related_service, sellerUid,
                         name, image, price, type, newId);
                   });
+            } else {
+              return Container();
             }
           }),
     );
