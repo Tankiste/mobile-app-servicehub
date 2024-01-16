@@ -41,7 +41,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
             child: Column(
               children: [
                 Text(
-                  '\$624.5',
+                  'XAF 205000',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                                 fontSize: 14, fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            '\$0',
+                            'XAF 0',
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -108,7 +108,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                                 fontSize: 14, fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            '\$300.0',
+                            'XAF 10000',
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -129,7 +129,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                '0',
+                                '2',
                                 style: TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.bold),
                               ),
@@ -137,7 +137,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                                 width: 3,
                               ),
                               Text(
-                                '(\$0)',
+                                '(XAF 85000)',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -159,7 +159,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                                 fontSize: 14, fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            '\$624.5',
+                            'XAF 205000',
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -177,7 +177,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
                                 fontSize: 14, fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            '\$5420.0',
+                            'XAF 205000',
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),

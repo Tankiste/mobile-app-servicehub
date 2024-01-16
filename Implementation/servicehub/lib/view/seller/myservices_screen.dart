@@ -30,7 +30,7 @@ class _MyServicesScreenState extends State<MyServicesScreen> {
                 child: Column(
                   children: [
                     Container(
-                      height: 570,
+                      height: 540,
                       child: SellerService(),
                     ),
                     const SizedBox(

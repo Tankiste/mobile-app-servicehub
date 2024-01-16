@@ -239,48 +239,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: ((context) =>
-                                                MyInterestPage())));
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 45,
-                                        width: 48,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(11),
-                                            color: Colors.grey.shade200),
-                                        child: Icon(
-                                          FontAwesomeIcons.solidBookmark,
-                                          size: 30,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Text(
-                                        'Interests',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      const SizedBox(
-                                        width: 142,
-                                      ),
-                                      Icon(
-                                        Icons.keyboard_arrow_right_rounded,
-                                        size: 30,
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                // const SizedBox(
+                                //   height: 20,
+                                // ),
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //         context,
+                                //         MaterialPageRoute(
+                                //             builder: ((context) =>
+                                //                 MyInterestPage())));
+                                //   },
+                                //   child: Row(
+                                //     children: [
+                                //       Container(
+                                //         height: 45,
+                                //         width: 48,
+                                //         decoration: BoxDecoration(
+                                //             borderRadius:
+                                //                 BorderRadius.circular(11),
+                                //             color: Colors.grey.shade200),
+                                //         child: Icon(
+                                //           FontAwesomeIcons.solidBookmark,
+                                //           size: 30,
+                                //         ),
+                                //       ),
+                                //       const SizedBox(width: 20),
+                                //       Text(
+                                //         'Interests',
+                                //         style: TextStyle(
+                                //             fontSize: 16,
+                                //             fontWeight: FontWeight.w500),
+                                //       ),
+                                //       const SizedBox(
+                                //         width: 142,
+                                //       ),
+                                //       Icon(
+                                //         Icons.keyboard_arrow_right_rounded,
+                                //         size: 30,
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
                                 const SizedBox(
                                   height: 20,
                                 ),

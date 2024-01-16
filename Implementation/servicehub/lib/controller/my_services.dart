@@ -181,57 +181,51 @@ class _SellerServiceState extends State<SellerService> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: FutureBuilder<List<DocumentSnapshot>>(
-            future: services.getResultServicesBySupplier(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: Container(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator()),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                    child: Text('Error retrieving data: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text('No Service yet'),
-                );
-              } else {
-                List<DocumentSnapshot> myservices = snapshot.data!;
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: myservices.length,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      DocumentSnapshot document = myservices[index];
-                      return FutureBuilder<double>(
-                        future: appState.calculateAverageRating(document.id),
-                        builder: (context, ratingSnapshot) {
-                          if (ratingSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                                child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: CircularProgressIndicator()));
-                          } else if (ratingSnapshot.hasError) {
-                            return Text('Error calculating average rating');
-                          } else {
-                            double averageRating = ratingSnapshot.data ?? 0;
-                            return serviceWidget(
-                                index, document, averageRating);
-                          }
-                        },
-                      );
-                    });
-              }
-            }),
-      ),
+    return SingleChildScrollView(
+      child: FutureBuilder<List<DocumentSnapshot>>(
+          future: services.getResultServicesBySupplier(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Container(
+                    height: 50, width: 50, child: CircularProgressIndicator()),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text('Error retrieving data: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text('No Service yet'),
+              );
+            } else {
+              List<DocumentSnapshot> myservices = snapshot.data!;
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: myservices.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    DocumentSnapshot document = myservices[index];
+                    return FutureBuilder<double>(
+                      future: appState.calculateAverageRating(document.id),
+                      builder: (context, ratingSnapshot) {
+                        if (ratingSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                              child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  child: CircularProgressIndicator()));
+                        } else if (ratingSnapshot.hasError) {
+                          return Text('Error calculating average rating');
+                        } else {
+                          double averageRating = ratingSnapshot.data ?? 0;
+                          return serviceWidget(index, document, averageRating);
+                        }
+                      },
+                    );
+                  });
+            }
+          }),
     );
   }
 }

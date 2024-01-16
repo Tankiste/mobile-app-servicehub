@@ -253,7 +253,7 @@ class _RequestsState extends State<Requests> {
     return Column(
       children: [
         const Text(
-          'Sellers Requests',
+          'Users Requests',
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         StreamBuilder<QuerySnapshot>(
@@ -291,7 +291,7 @@ class _RequestsState extends State<Requests> {
                     columns: [
                       DataColumn(
                         label: Text(
-                          'Supplier UID',
+                          'User UID',
                           style: TextStyle(
                             color: Colors.deepPurple.shade800,
                             fontSize: 22,

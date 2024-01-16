@@ -5,6 +5,7 @@ import 'package:servicehub/view/advanced_search_view.dart';
 import 'package:servicehub/view/search_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ResultSearchView extends StatefulWidget {
   final String serviceType;

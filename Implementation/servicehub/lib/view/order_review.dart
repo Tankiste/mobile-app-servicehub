@@ -293,7 +293,7 @@ class _OrderReviewState extends State<OrderReview> {
                         buildOption('PayPal', FontAwesomeIcons.paypal),
                         buildOption(
                             'Credit Card', FontAwesomeIcons.ccMastercard),
-                        buildOption('Visa', FontAwesomeIcons.ccPaypal),
+                        buildOption('Visa', FontAwesomeIcons.ccVisa),
                       ],
                     ),
                     const SizedBox(

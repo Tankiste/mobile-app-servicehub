@@ -277,6 +277,26 @@ class AuthService {
     }
   }
 
+  Future<UserData?> getClient(String clientId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('users').doc(clientId).get();
+
+      if (snapshot.exists) {
+        return UserData(
+            uid: clientId,
+            username: snapshot['username'],
+            email: snapshot['email'],
+            logo: snapshot['logoLink']);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error when fetching user: $e');
+      return null;
+    }
+  }
+
   Future<void> updateUserStatus(String sellerUid, bool value) async {
     try {
       QuerySnapshot query = await _firestore

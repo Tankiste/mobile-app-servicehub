@@ -358,41 +358,41 @@ class _LoginPageState extends State<LoginPage> {
                                       ],
                                     ),
                                   )),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          side: BorderSide(
-                                              color: Colors.grey.shade300))),
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 60, top: 15, bottom: 15),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.mail_outlined,
-                                          color: Colors.black,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          'Sign up with Mail',
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Gilroy'),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
+                              // const SizedBox(
+                              //   height: 15,
+                              // ),
+                              // ElevatedButton(
+                              //     onPressed: () {},
+                              //     style: ElevatedButton.styleFrom(
+                              //         backgroundColor: Colors.white,
+                              //         shape: RoundedRectangleBorder(
+                              //             borderRadius:
+                              //                 BorderRadius.circular(30),
+                              //             side: BorderSide(
+                              //                 color: Colors.grey.shade300))),
+                              //     child: const Padding(
+                              //       padding: EdgeInsets.only(
+                              //           left: 60, top: 15, bottom: 15),
+                              //       child: Row(
+                              //         children: [
+                              //           Icon(
+                              //             Icons.mail_outlined,
+                              //             color: Colors.black,
+                              //           ),
+                              //           SizedBox(
+                              //             width: 10,
+                              //           ),
+                              //           Text(
+                              //             'Sign up with Mail',
+                              //             style: TextStyle(
+                              //                 fontSize: 17,
+                              //                 color: Colors.black,
+                              //                 fontWeight: FontWeight.w600,
+                              //                 fontFamily: 'Gilroy'),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     )),
                               if (errorMessage.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.only(left: 40),

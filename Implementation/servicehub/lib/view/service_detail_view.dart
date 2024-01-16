@@ -816,7 +816,8 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ChatScreen()));
+                                  builder: (context) =>
+                                      ChatScreen(receiverData: supplierData!)));
                         },
                         child: Row(children: [
                           Container(
