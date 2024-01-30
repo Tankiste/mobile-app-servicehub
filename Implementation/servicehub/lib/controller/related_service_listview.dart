@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -120,21 +121,15 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15)),
                   child: image != null
-                      ? Image.network(image, fit: BoxFit.cover, loadingBuilder:
-                          (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                              child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ));
-                        }, errorBuilder: (BuildContext context,
-                          Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.error);
-                        })
+                      ? CachedNetworkImage(
+                          imageUrl: image,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
                       : Image.asset(
                           'assets/floeurs.png',
                           fit: BoxFit.cover,
@@ -173,11 +168,12 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                     ),
                     SizedBox(
                       width: 120,
+                      height: 40,
                       child: Text(
                         name,
                         textAlign: TextAlign.left,
                         maxLines: 2,
-                        overflow: TextOverflow.clip,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -185,7 +181,7 @@ class _RelatedServiceListViewState extends State<RelatedServiceListView> {
                       ),
                     ),
                     const SizedBox(
-                      height: 25,
+                      height: 5,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

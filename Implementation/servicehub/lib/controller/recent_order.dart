@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -109,21 +110,15 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15)),
                   child: posterUrl != null
-                      ? Image.network(posterUrl, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                              child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ));
-                        }, errorBuilder: (BuildContext context,
-                              Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.error);
-                        })
+                      ? CachedNetworkImage(
+                          imageUrl: posterUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
                       : Image.asset(
                           'assets/salle_serveur.png',
                           fit: BoxFit.cover,
@@ -147,29 +142,17 @@ class _RecentOrderServiceState extends State<RecentOrderService> {
                           decoration: BoxDecoration(shape: BoxShape.circle),
                           child: ClipOval(
                             child: logo != null
-                                ? Image.network(logo, fit: BoxFit.cover,
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                        child: CircularProgressIndicator(
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                    ));
-                                  }, errorBuilder: (BuildContext context,
-                                        Object exception,
-                                        StackTrace? stackTrace) {
-                                    return Icon(Icons.error);
-                                  })
+                                ? CachedNetworkImage(
+                                    imageUrl: logo,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  )
                                 : Image.asset(
-                                    'assets/supplier.png',
+                                    'assets/avatar.png',
                                     fit: BoxFit.cover,
                                   ),
                           ),

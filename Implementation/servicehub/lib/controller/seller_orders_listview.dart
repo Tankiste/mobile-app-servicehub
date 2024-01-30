@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,23 +91,15 @@ class _SellerOrdersListViewState extends State<SellerOrdersListView> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: image != null
-                          ? Image.network(image, fit: BoxFit.cover,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ));
-                            }, errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                              return Icon(Icons.error);
-                            })
+                          ? CachedNetworkImage(
+                              imageUrl: image,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )
                           : Image.asset(
                               'assets/concept-cloud-ai.png',
                               fit: BoxFit.cover,
@@ -169,25 +162,15 @@ class _SellerOrdersListViewState extends State<SellerOrdersListView> {
                                   'assets/avatar.png',
                                   fit: BoxFit.cover,
                                 )
-                              : Image.network(clientImage, fit: BoxFit.cover,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                      child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ));
-                                }, errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                  return Icon(Icons.error);
-                                })
+                              : CachedNetworkImage(
+                                  imageUrl: clientImage,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                )
                           : Image.asset(
                               'assets/avatar.png',
                               fit: BoxFit.cover,

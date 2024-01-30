@@ -54,6 +54,7 @@ class AuthService {
             password: password,
             confirmpassword: confirmpassword);
 
+        userData.status = "Offline";
         userData.logo = "";
         userData.isSeller = false;
         userData.sellerMode = false;
@@ -115,6 +116,7 @@ class AuthService {
             password: password,
             confirmpassword: confirmpassword);
 
+        userData.status = "Offline";
         userData.isSeller = false;
         userData.sellerMode = false;
         userData.date = Timestamp.now();
@@ -242,6 +244,13 @@ class AuthService {
     }
 
     return res;
+  }
+
+  Future<void> updateStatus(String status) async {
+    auth.User currentUser = _auth.currentUser!;
+    await _firestore.collection('users').doc(currentUser.uid).update({
+      'status': status,
+    });
   }
 
   Future<UserData> getUserDetails() async {

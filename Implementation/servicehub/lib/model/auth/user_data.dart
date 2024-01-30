@@ -17,6 +17,7 @@ class UserData {
   String email;
   String? password;
   String? confirmpassword;
+  String? status = 'Offline';
   bool? isSeller = false;
   bool sellerMode = false;
   Timestamp? date = Timestamp.now();
@@ -35,6 +36,7 @@ class UserData {
       required this.email,
       this.date,
       this.password,
+      this.status,
       this.isSeller,
       this.confirmpassword});
 
@@ -47,6 +49,7 @@ class UserData {
       'sellerMode': sellerMode,
       'logoLink': logo,
       'register date': date,
+      'status': status,
     };
   }
 
@@ -67,6 +70,7 @@ class UserData {
       'isSeller': isSeller,
       'sellerMode': sellerMode,
       'register date': date,
+      'status': status,
     };
   }
 
@@ -85,6 +89,7 @@ class UserData {
       certification: snapshot['certification'],
       date: snapshot['register date'],
       isSeller: snapshot['isSeller'],
+      status: snapshot['status'],
     );
   }
 

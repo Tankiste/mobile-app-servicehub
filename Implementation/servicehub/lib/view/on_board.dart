@@ -98,7 +98,7 @@ class OnBoard extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) => SelectServicePage())));
+                                  builder: ((context) => const LoginPage())));
                         },
                         child: Container(
                           height: 153,

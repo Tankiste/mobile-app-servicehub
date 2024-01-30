@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:servicehub/controller/widgets.dart';
@@ -133,34 +134,19 @@ class _SupplierProfileScreenState extends State<SupplierProfileScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                               child: logoUrl != null
-                                                  ? Image.network(logoUrl,
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: logoUrl,
                                                       fit: BoxFit.cover,
-                                                      loadingBuilder: (BuildContext
-                                                              context,
-                                                          Widget child,
-                                                          ImageChunkEvent?
-                                                              loadingProgress) {
-                                                      if (loadingProgress ==
-                                                          null) return child;
-                                                      return Center(
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                        value: loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded /
-                                                                loadingProgress
-                                                                    .expectedTotalBytes!
-                                                            : null,
-                                                      ));
-                                                    }, errorBuilder:
-                                                          (BuildContext context,
-                                                              Object exception,
-                                                              StackTrace?
-                                                                  stackTrace) {
-                                                      return Icon(Icons.error);
-                                                    })
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      ),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(Icons.error),
+                                                    )
                                                   : Image.asset(
                                                       "assets/avatar.png",
                                                       fit: BoxFit.cover,

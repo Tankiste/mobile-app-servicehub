@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:servicehub/view/chat_screen.dart';
 import 'package:servicehub/view/login.dart';
 import 'package:servicehub/view/order_review.dart';
 import 'package:servicehub/view/result_search_view.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:like_button/like_button.dart';
 import 'package:servicehub/view/reviews_screen.dart';
 
@@ -30,6 +32,7 @@ class ServiceDetailView extends StatefulWidget {
 class _ServiceDetailViewState extends State<ServiceDetailView> {
   // bool _isFavorite = false;
   TextEditingController reviewController = TextEditingController();
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
   int _rating = 0;
   ServiceData? serviceData;
   UserData? supplierData;
@@ -265,6 +268,7 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
   Widget build(BuildContext context) {
     String? posterUrl = serviceData?.poster;
     String? logoLink = supplierData?.logo;
+    auth.User? currentUser = _auth.currentUser;
 
     return Scaffold(
       body: (serviceData == null || supplierData == null)
@@ -290,27 +294,15 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                 bottomLeft: Radius.circular(20),
                                 bottomRight: Radius.circular(20)),
                             child: posterUrl != null
-                                ? Image.network(posterUrl, fit: BoxFit.cover,
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                        child: CircularProgressIndicator(
-                                      value:
-                                          loadingProgress.expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                    ));
-                                  }, errorBuilder: (BuildContext context,
-                                        Object exception,
-                                        StackTrace? stackTrace) {
-                                    return Icon(Icons.error);
-                                  })
+                                ? CachedNetworkImage(
+                                    imageUrl: posterUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  )
                                 : Image.asset(
                                     'assets/video-production.png',
                                     fit: BoxFit.cover,
@@ -404,34 +396,19 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                                                 shape: BoxShape.circle),
                                             child: ClipOval(
                                               child: logoLink != null
-                                                  ? Image.network(logoLink,
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: logoLink,
                                                       fit: BoxFit.cover,
-                                                      loadingBuilder: (BuildContext
-                                                              context,
-                                                          Widget child,
-                                                          ImageChunkEvent?
-                                                              loadingProgress) {
-                                                      if (loadingProgress ==
-                                                          null) return child;
-                                                      return Center(
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                        value: loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded /
-                                                                loadingProgress
-                                                                    .expectedTotalBytes!
-                                                            : null,
-                                                      ));
-                                                    }, errorBuilder:
-                                                          (BuildContext context,
-                                                              Object exception,
-                                                              StackTrace?
-                                                                  stackTrace) {
-                                                      return Icon(Icons.error);
-                                                    })
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      ),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(Icons.error),
+                                                    )
                                                   : Image.asset(
                                                       "assets/supplier.png",
                                                       fit: BoxFit.cover,
@@ -813,11 +790,20 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChatScreen(receiverData: supplierData!)));
+                          if (currentUser != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                        receiverData: supplierData!)));
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: ((context) => LoginPage())));
+                            // Navigator.push(context,
+                            //     CupertinoPageRoute(builder: ((context) => LoginPage())));
+                          }
                         },
                         child: Row(children: [
                           Container(
@@ -828,27 +814,15 @@ class _ServiceDetailViewState extends State<ServiceDetailView> {
                             ),
                             child: ClipOval(
                               child: logoLink != null
-                                  ? Image.network(logoLink, fit: BoxFit.cover,
-                                      loadingBuilder: (BuildContext context,
-                                          Widget child,
-                                          ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        value: loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                            : null,
-                                      ));
-                                    }, errorBuilder: (BuildContext context,
-                                          Object exception,
-                                          StackTrace? stackTrace) {
-                                      return Icon(Icons.error);
-                                    })
+                                  ? CachedNetworkImage(
+                                      imageUrl: logoLink,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    )
                                   : Image.asset(
                                       "assets/supplier.png",
                                       fit: BoxFit.cover,

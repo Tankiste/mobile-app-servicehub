@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/auth_service.dart';
 import 'package:servicehub/view/explore_screen.dart';
 import 'package:servicehub/view/home_screen.dart';
 import 'package:servicehub/view/inbox_screen.dart';
@@ -18,11 +19,33 @@ class HomeSupplier extends StatefulWidget {
   _HomeSupplierState createState() => _HomeSupplierState();
 }
 
-class _HomeSupplierState extends State<HomeSupplier> {
+class _HomeSupplierState extends State<HomeSupplier>
+    with WidgetsBindingObserver {
+  AuthService _authService = AuthService();
+
   @override
   void initState() {
     updateData();
+    WidgetsBinding.instance.addObserver(this);
+    setStatus('Online');
     super.initState();
+  }
+
+  void setStatus(String status) async {
+    try {
+      await _authService.updateStatus(status);
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setStatus('Online');
+    } else {
+      setStatus('Offline');
+    }
   }
 
   updateData() async {

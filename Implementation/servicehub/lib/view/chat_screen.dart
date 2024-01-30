@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:servicehub/controller/widgets.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:servicehub/model/app_state.dart';
+import 'package:servicehub/model/auth/auth_service.dart';
 import 'package:servicehub/model/auth/user_data.dart';
 import 'package:servicehub/model/chatRoom/chatRoom.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -19,18 +21,38 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   final TextEditingController _messagecontroller = TextEditingController();
   Chats _chats = Chats();
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+  // AuthService _authService = AuthService();
 
   List<Message> messages = [];
 
   @override
   void initState() {
-    _loadMessages();
     super.initState();
+    _loadMessages();
+    WidgetsBinding.instance.addObserver(this);
+    // setStatus('Online');
   }
+
+  // void setStatus(String status) async {
+  //   try {
+  //     await _authService.updateStatus(status);
+  //   } catch (err) {
+  //     rethrow;
+  //   }
+  // }
+
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.resumed) {
+  //     setStatus('Online');
+  //   } else {
+  //     setStatus('Offline');
+  //   }
+  // }
 
   void _loadMessages() async {
     final senderId = _auth.currentUser!.uid;
@@ -54,6 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     String name = widget.receiverData.username;
+    String? status = widget.receiverData.status;
     String? logoUrl = widget.receiverData.logo;
     UserData? userData = Provider.of<ApplicationState>(context).getUser;
     bool? isSeller = userData?.isSeller;
@@ -105,33 +128,18 @@ class _ChatScreenState extends State<ChatScreen> {
                                                 "assets/avatar.png",
                                                 fit: BoxFit.cover,
                                               )
-                                            : Image.network(logoUrl,
+                                            : CachedNetworkImage(
+                                                imageUrl: logoUrl,
                                                 fit: BoxFit.cover,
-                                                loadingBuilder:
-                                                    (BuildContext context,
-                                                        Widget child,
-                                                        ImageChunkEvent?
-                                                            loadingProgress) {
-                                                if (loadingProgress == null)
-                                                  return child;
-                                                return Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  value: loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                      : null,
-                                                ));
-                                              }, errorBuilder: (BuildContext
-                                                        context,
-                                                    Object exception,
-                                                    StackTrace? stackTrace) {
-                                                return Icon(Icons.error);
-                                              })
+                                                placeholder: (context, url) =>
+                                                    Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
+                                              )
                                         : Image.asset(
                                             "assets/avatar.png",
                                             fit: BoxFit.cover,
@@ -141,27 +149,16 @@ class _ChatScreenState extends State<ChatScreen> {
                               ],
                             ),
                             const SizedBox(width: 17),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 120,
-                                  child: Text(name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      )),
-                                ),
-                                // Text('Online',
-                                //     style: TextStyle(
-                                //       fontSize: 13,
-                                //       color: Color(0xFFC84457),
-                                //       fontWeight: FontWeight.w300,
-                                //     ))
-                              ],
+                            SizedBox(
+                              height: 30,
+                              width: 120,
+                              child: Text(name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  )),
                             ),
                             const SizedBox(width: 30),
                             if (!isSeller!)

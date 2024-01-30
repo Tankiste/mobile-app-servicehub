@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class ApplicationState extends ChangeNotifier {
   bool isSwitched = false;
-  bool isSellerMode = false;
+  bool isSellerMode = true;
   bool isSeller = false;
   bool isLiked = false;
   int currentIndex = 0;

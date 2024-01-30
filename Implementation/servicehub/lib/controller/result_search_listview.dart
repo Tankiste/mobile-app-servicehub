@@ -8,6 +8,7 @@ import 'package:servicehub/model/services/services.dart';
 import 'package:servicehub/view/seller/new_service_view.dart';
 import 'package:servicehub/view/service_detail_view.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ResultSearchListView extends StatefulWidget {
   final String serviceType;
@@ -107,21 +108,15 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15)),
                   child: posterUrl != null
-                      ? Image.network(posterUrl, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                              child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ));
-                        }, errorBuilder: (BuildContext context,
-                              Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.error);
-                        })
+                      ? CachedNetworkImage(
+                          imageUrl: posterUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
                       : Image.asset(
                           'assets/digital_marketing.png',
                           fit: BoxFit.cover,
@@ -264,9 +259,10 @@ class _ResultSearchListViewState extends State<ResultSearchListView> {
                               ConnectionState.waiting) {
                             return Center(
                                 child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: CircularProgressIndicator()));
+                              height: 40,
+                              width: 40,
+                              // child: CircularProgressIndicator()
+                            ));
                           } else if (ratingSnapshot.hasError) {
                             return Text('Error calculating average rating');
                           } else {
@@ -384,21 +380,15 @@ class _SearchByAverageListViewState extends State<SearchByAverageListView> {
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15)),
                   child: posterUrl != null
-                      ? Image.network(posterUrl, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                              child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ));
-                        }, errorBuilder: (BuildContext context,
-                              Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.error);
-                        })
+                      ? CachedNetworkImage(
+                          imageUrl: posterUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
                       : Image.asset(
                           'assets/digital_marketing.png',
                           fit: BoxFit.cover,
@@ -513,9 +503,10 @@ class _SearchByAverageListViewState extends State<SearchByAverageListView> {
                               ConnectionState.waiting) {
                             return Center(
                                 child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: CircularProgressIndicator()));
+                              height: 40,
+                              width: 40,
+                              // child: CircularProgressIndicator()
+                            ));
                           } else if (ratingSnapshot.hasError) {
                             return Text('Error calculating average rating');
                           } else {
@@ -631,21 +622,15 @@ class _SearchByPriceListViewState extends State<SearchByPriceListView> {
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15)),
                   child: posterUrl != null
-                      ? Image.network(posterUrl, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                              child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ));
-                        }, errorBuilder: (BuildContext context,
-                              Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.error);
-                        })
+                      ? CachedNetworkImage(
+                          imageUrl: posterUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
                       : Image.asset(
                           'assets/digital_marketing.png',
                           fit: BoxFit.cover,
@@ -760,9 +745,10 @@ class _SearchByPriceListViewState extends State<SearchByPriceListView> {
                               ConnectionState.waiting) {
                             return Center(
                                 child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: CircularProgressIndicator()));
+                              height: 40,
+                              width: 40,
+                              // child: CircularProgressIndicator()
+                            ));
                           } else if (ratingSnapshot.hasError) {
                             return Text('Error calculating average rating');
                           } else {
@@ -878,21 +864,15 @@ class _SearchByDateListViewState extends State<SearchByDateListView> {
                       topLeft: Radius.circular(15),
                       bottomLeft: Radius.circular(15)),
                   child: posterUrl != null
-                      ? Image.network(posterUrl, fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                              child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ));
-                        }, errorBuilder: (BuildContext context,
-                              Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.error);
-                        })
+                      ? CachedNetworkImage(
+                          imageUrl: posterUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        )
                       : Image.asset(
                           'assets/digital_marketing.png',
                           fit: BoxFit.cover,
@@ -1007,9 +987,10 @@ class _SearchByDateListViewState extends State<SearchByDateListView> {
                               ConnectionState.waiting) {
                             return Center(
                                 child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: CircularProgressIndicator()));
+                              height: 40,
+                              width: 40,
+                              // child: CircularProgressIndicator()
+                            ));
                           } else if (ratingSnapshot.hasError) {
                             return Text('Error calculating average rating');
                           } else {

@@ -12,17 +12,16 @@ import 'package:servicehub/model/services/services.dart';
 import 'package:like_button/like_button.dart';
 import 'package:servicehub/view/seller/myservices_screen.dart';
 
-class NewServiceView extends StatefulWidget {
+class ServiceView extends StatefulWidget {
   final String newServiceId;
   final String? serviceType;
-  const NewServiceView(
-      {super.key, required this.newServiceId, this.serviceType});
+  const ServiceView({super.key, required this.newServiceId, this.serviceType});
 
   @override
-  State<NewServiceView> createState() => _NewServiceViewState();
+  State<ServiceView> createState() => _ServiceViewState();
 }
 
-class _NewServiceViewState extends State<NewServiceView> {
+class _ServiceViewState extends State<ServiceView> {
   // bool _isFavorite = false;
   ServiceData? serviceData;
   Services _services = Services();
@@ -303,11 +302,7 @@ class _NewServiceViewState extends State<NewServiceView> {
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeSupplier()),
-                              (Route<dynamic> route) => false,
-                            );
+                            Navigator.of(context).pop();
                             // Navigator.push(
                             //     context,
                             //     MaterialPageRoute(

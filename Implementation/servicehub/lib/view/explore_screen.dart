@@ -144,39 +144,39 @@ class _ExploreScreenState extends State<ExploreScreen>
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
-                        onPressed: () => _updateSelectedOption('Categories'),
-                        child: Text(
-                          'Categories',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: selectedOption == 'Categories'
-                                ? Color(0xFFC84457)
-                                : Colors.grey.shade500,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => _updateSelectedOption('Interest'),
-                        child: Text(
-                          'Interest',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: selectedOption == 'Interest'
-                                ? Color(0xFFC84457)
-                                : Colors.grey.shade500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  buildDivider(),
+                  // const SizedBox(height: 20),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //   children: [
+                  //     TextButton(
+                  //       onPressed: () => _updateSelectedOption('Categories'),
+                  //       child: Text(
+                  //         'Categories',
+                  //         style: TextStyle(
+                  //           fontSize: 20,
+                  //           fontWeight: FontWeight.w500,
+                  //           color: selectedOption == 'Categories'
+                  //               ? Color(0xFFC84457)
+                  //               : Colors.grey.shade500,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     TextButton(
+                  //       onPressed: () => _updateSelectedOption('Interest'),
+                  //       child: Text(
+                  //         'Interest',
+                  //         style: TextStyle(
+                  //           fontSize: 20,
+                  //           fontWeight: FontWeight.w500,
+                  //           color: selectedOption == 'Interest'
+                  //               ? Color(0xFFC84457)
+                  //               : Colors.grey.shade500,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // buildDivider(),
                   buildContent(),
                 ],
               ),

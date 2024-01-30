@@ -1,5 +1,6 @@
 // import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -71,23 +72,15 @@ class _ClientMessagesListViewState extends State<ClientMessagesListView> {
                               "assets/avatar.png",
                               fit: BoxFit.cover,
                             )
-                          : Image.network(logoUrl, fit: BoxFit.cover,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ));
-                            }, errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                              return Icon(Icons.error);
-                            })
+                          : CachedNetworkImage(
+                              imageUrl: logoUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )
                       : Image.asset(
                           "assets/avatar.png",
                           fit: BoxFit.cover,
@@ -134,20 +127,23 @@ class _ClientMessagesListViewState extends State<ClientMessagesListView> {
                         fontWeight: FontWeight.w500,
                         color: Colors.grey.shade300),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFC84457),
-                      shape: BoxShape.circle,
+                  if (!latestMessage.isSentByMe)
+                    Container(
+                      // padding: EdgeInsets.all(7),
+                      height: 15,
+                      width: 15,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFC84457),
+                        shape: BoxShape.circle,
+                      ),
+                      // child: Text(
+                      //   '2',
+                      //   style: TextStyle(
+                      //       fontSize: 14,
+                      //       fontWeight: FontWeight.bold,
+                      //       color: Colors.white),
+                      // ),
                     ),
-                    child: Text(
-                      '2',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
                 ],
               )
             ],
@@ -343,23 +339,15 @@ class _SellerMessagesListViewState extends State<SellerMessagesListView> {
                               "assets/avatar.png",
                               fit: BoxFit.cover,
                             )
-                          : Image.network(logoUrl, fit: BoxFit.cover,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ));
-                            }, errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                              return Icon(Icons.error);
-                            })
+                          : CachedNetworkImage(
+                              imageUrl: logoUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )
                       : Image.asset(
                           "assets/avatar.png",
                           fit: BoxFit.cover,
@@ -406,20 +394,23 @@ class _SellerMessagesListViewState extends State<SellerMessagesListView> {
                         fontWeight: FontWeight.w500,
                         color: Colors.grey.shade300),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFC84457),
-                      shape: BoxShape.circle,
+                  if (!latestMessage.isSentByMe)
+                    Container(
+                      // padding: EdgeInsets.all(7),
+                      height: 15,
+                      width: 15,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFC84457),
+                        shape: BoxShape.circle,
+                      ),
+                      // child: Text(
+                      //   '2',
+                      //   style: TextStyle(
+                      //       fontSize: 14,
+                      //       fontWeight: FontWeight.bold,
+                      //       color: Colors.white),
+                      // ),
                     ),
-                    child: Text(
-                      '2',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
                 ],
               )
             ],

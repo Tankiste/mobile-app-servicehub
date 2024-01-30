@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -102,21 +103,22 @@ class _OrderReviewState extends State<OrderReview> {
                 color: isSelected ? Colors.white : Colors.black,
               ),
             ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.black : Colors.white,
-                    border: Border.all(
-                        color: isSelected ? Colors.white : Colors.black),
-                    shape: BoxShape.circle,
-                  ),
+            // Expanded(
+            // child:
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                width: 15,
+                height: 15,
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.black : Colors.white,
+                  border: Border.all(
+                      color: isSelected ? Colors.white : Colors.black),
+                  shape: BoxShape.circle,
                 ),
               ),
-            )
+            ),
+            // )
           ]),
         ),
       ),
@@ -235,27 +237,15 @@ class _OrderReviewState extends State<OrderReview> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: posterUrl != null
-                                  ? Image.network(posterUrl, fit: BoxFit.cover,
-                                      loadingBuilder: (BuildContext context,
-                                          Widget child,
-                                          ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        value: loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                            : null,
-                                      ));
-                                    }, errorBuilder: (BuildContext context,
-                                          Object exception,
-                                          StackTrace? stackTrace) {
-                                      return Icon(Icons.error);
-                                    })
+                                  ? CachedNetworkImage(
+                                      imageUrl: posterUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    )
                                   : Image.asset(
                                       'assets/concept-cloud-ai.png',
                                       fit: BoxFit.cover,
